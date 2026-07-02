@@ -148,7 +148,7 @@ th{background:#e2e8f0;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.1</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.1b</span></div>
 </div>
 
 <div class="wrap">
@@ -265,7 +265,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=2; // V1.1 真實帶入 G95 候選;每次部署遞增
+var CODE_VERSION=3; // V1.1b 條列/編輯視窗補完成+刪除;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -1052,7 +1052,7 @@ function editItem(id){
    ((DS.groups||[]).length?'<div class="fld"><label>套用小組（點一下＝整組勾選，領班自動帶★，可再增減）</label><div class="row" id="gApply"></div></div>':'')+
    '<div class="fld"><label>指派人員（勾選；★=領班）</label><div id="pickP" style="max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px"></div></div>'+
    '<div class="fld"><label>需求機具（填數量，0=不用）</label><div id="pickM" style="border:1px solid var(--line);border-radius:8px;padding:6px"></div></div>'+
-   '<div class="row"><button class="btn primary" id="saveI">儲存</button><button class="btn" id="cancelM">取消</button></div>';
+   '<div class="row"><button class="btn primary" id="saveI">儲存</button><button class="btn" id="cancelM">取消</button><label style="font-size:13px;margin-left:4px"><input type="checkbox" id="i_done"'+(it.done?' checked':'')+'> 完成</label><span class="spacer"></span><button class="btn danger" id="delI2">刪除這筆</button></div>';
   var slotSel=box.querySelector('#i_slot');slotSel.onchange=function(){box.querySelector('#customWrap').style.display=(slotSel.value==='custom'?'grid':'none');};
   var pickP=box.querySelector('#pickP');
   var gA=box.querySelector('#gApply');
@@ -1065,7 +1065,9 @@ function editItem(id){
   DS.machines.forEach(function(m){var h=(it.machines||[]).filter(function(x){return x.machineId===m.id;})[0];var r=document.createElement('div');r.className='pick-row';
     r.innerHTML='<span style="flex:1">'+esc(m.name)+'（可用 '+m.qty+'）</span><input type="number" min="0" class="mq" data-id="'+m.id+'" value="'+(h?h.qty:0)+'" style="width:74px">';pickM.appendChild(r);});
   box.querySelector('#cancelM').onclick=closeModal;
+  box.querySelector('#delI2').onclick=function(){if(confirm('刪除 '+dnumLabel(it)+' 這筆工作？')){delItem(it);closeModal();}};
   box.querySelector('#saveI').onclick=function(){
+    it.done=box.querySelector('#i_done').checked;it.doneAt=it.done?todayISO():'';
     it.seq=+box.querySelector('#i_seq').value||it.seq;it.unit=box.querySelector('#i_unit').value.trim();it.content=box.querySelector('#i_content').value.trim();it.respVendor=box.querySelector('#i_vendor').value;it.dedVendor=box.querySelector('#i_ded').value.trim();it.mgr=box.querySelector('#i_mgr').value.trim();it.reqCount=+box.querySelector('#i_req').value||0;
     var sv=slotSel.value;if(sv==='custom'){it.slotType='custom';it.start=box.querySelector('#i_start').value;it.end=box.querySelector('#i_end').value;}else{it.slotType='preset';it.slot=sv;}
     var as=[];pickP.querySelectorAll('.cp').forEach(function(cp){if(cp.checked){var lead=pickP.querySelector('.lp[data-id="'+cp.dataset.id+'"]').checked;as.push({personId:cp.dataset.id,foreman:lead});}});it.assignees=as;
@@ -1080,10 +1082,12 @@ function renderWorkList(area){
     itemsOn(day).forEach(function(it){var assigned=(it.assignees||[]).length;var bad=assigned<it.reqCount;var macBad=(it.machines||[]).some(function(m){return conf.m[it.id+'|'+m.machineId];});
       var pl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?((a.foreman?'★':'')+p.name):'';}).join('、');
       var ml=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?(mc.name+'×'+m.qty):'';}).join('、');
-      rows+='<tr'+((bad||macBad)?' style="background:#fffafa"':'')+'><td>'+dayLabel(off)+(it.crossId?'<br><span class="cross">跨兩天</span>':'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit)+'</b></td><td>'+esc(it.content)+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(pl||'—')+'</td><td class="'+(bad?'warn-txt':'ok-txt')+'">'+it.reqCount+' / '+assigned+(bad?' ⚠':' ✓')+'</td><td'+(macBad?' class="warn-txt"':'')+'>'+esc(ml||'—')+(macBad?' ⚠超派':'')+'</td><td><button class="btn sm editI" data-id="'+it.id+'">編輯</button></td></tr>';});});
+      rows+='<tr'+((bad||macBad)?' style="background:#fffafa"':'')+'><td>'+dayLabel(off)+(it.crossId?'<br><span class="cross">跨兩天</span>':'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit)+'</b></td><td>'+esc(it.content)+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(pl||'—')+'</td><td class="'+(bad?'warn-txt':'ok-txt')+'">'+it.reqCount+' / '+assigned+(bad?' ⚠':' ✓')+'</td><td'+(macBad?' class="warn-txt"':'')+'>'+esc(ml||'—')+(macBad?' ⚠超派':'')+'</td><td style="white-space:nowrap"><label style="font-size:12px"><input type="checkbox" class="doneL" data-id="'+it.id+'"'+(it.done?' checked':'')+'>完成</label> <button class="btn sm editI" data-id="'+it.id+'">編輯</button> <button class="btn sm danger delL" data-id="'+it.id+'">刪</button></td></tr>';});});
   var w=document.createElement('div');w.id='day_all';w.style.overflowX='auto';
   w.innerHTML='<table><thead><tr><th>日期</th><th>時段</th><th>流水號</th><th>#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>管理</th><th>指派人員</th><th>需求/已派</th><th>機具</th><th>操作</th></tr></thead><tbody>'+(rows||'<tr><td colspan="12" class="muted">尚無工作事項</td></tr>')+'</tbody></table>';
   w.querySelectorAll('.editI').forEach(function(b){b.onclick=function(){editItem(b.dataset.id);};});
+  w.querySelectorAll('.doneL').forEach(function(c){c.onchange=function(){var it=DS.items.filter(function(x){return x.id===c.dataset.id;})[0];if(!it)return;it.done=c.checked;it.doneAt=c.checked?todayISO():'';save();renderBoard();};});
+  w.querySelectorAll('.delL').forEach(function(b){b.onclick=function(){var it=DS.items.filter(function(x){return x.id===b.dataset.id;})[0];if(!it)return;if(confirm('刪除 '+dnumLabel(it)+'？'))delItem(it);};});
   area.appendChild(w);
 }
 
