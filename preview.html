@@ -323,6 +323,10 @@ function _applyRemoteType(type,snap){
   var arr=DS[type]||[];
   snap.forEach(function(ds){
     var id=ds.id,d=ds.data();
+    if(id==='demo1'){ // V1.1:示範卡若還在雲端,直接墓碑掉
+      if(!d._del&&_cloudOn&&_allowed&&!_readonly){window._fb.setDoc(window._fb.doc(_colRef(type),id),{_del:true,_mt:Date.now()}).catch(function(){});}
+      return;
+    }
     var shield=(_touch[type+'/'+id]||0)>Date.now()-600000;
     var idx=-1;for(var i=0;i<arr.length;i++)if(arr[i].id===id){idx=i;break;}
     if(d._del){
@@ -432,6 +436,7 @@ function _g95Cands(){
 }
 function srcStatus(it){
   if(!it.refId)return{done:false,chg:false};
+  if(!it._live)return{done:!!it.srcDone,chg:!!it.srcChanged}; // 示範/舊資料不跟真實 G95 比對(防假#號撞真實列)
   var r=_g95RowBy(it.refId);
   if(!r)return{done:!!it.srcDone,chg:!!it.srcChanged};
   if(r.actualDone)return{done:true,chg:false};
@@ -972,7 +977,8 @@ function importCandidate(c,off){
   allocSerial(function(n){
     var day=dayOf(off);var seq=itemsOn(day).length+1;
     var content=c.content+(c.note?'（'+c.note+'）':'');
-    DS.items.push({id:uid(),dnum:n,seq:seq,refId:c.refId,round:c.round||'初驗',manual:false,content:content,unit:c.unit,respVendor:c.vendor,mgr:c.mgr||'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[],src:{content:content,unit:c.unit,vendor:c.vendor,due:c.due},srcChanged:false,srcDone:false});
+    var live=!!(window._g95Rows&&window._g95Rows.length);
+    DS.items.push({id:uid(),dnum:n,seq:seq,refId:c.refId,round:c.round||'初驗',manual:false,content:content,unit:c.unit,respVendor:c.vendor,mgr:c.mgr||'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[],src:{content:content,unit:c.unit,vendor:c.vendor,due:c.due},srcChanged:false,srcDone:false,_live:live});
     save();renderBoard();
   });
 }
@@ -1025,7 +1031,7 @@ function makeCross(it){
   var other=(it.day===dayOf(2))?dayOf(1):addDays(it.day,1);
   var gid=it.crossId||uid();it.crossId=gid;
   var seq=itemsOn(other).length+1;
-  DS.items.push({id:uid(),dnum:it.dnum,seq:seq,refId:it.refId,round:it.round||'',manual:it.manual,content:it.content,unit:it.unit,respVendor:it.respVendor,mgr:it.mgr,day:other,crossId:gid,slot:it.slot,slotType:it.slotType,start:it.start,end:it.end,reqCount:it.reqCount,assignees:[],machines:[],src:it.src,srcChanged:it.srcChanged||false,srcDone:it.srcDone||false});
+  DS.items.push({id:uid(),dnum:it.dnum,seq:seq,refId:it.refId,round:it.round||'',manual:it.manual,content:it.content,unit:it.unit,respVendor:it.respVendor,mgr:it.mgr,day:other,crossId:gid,slot:it.slot,slotType:it.slotType,start:it.start,end:it.end,reqCount:it.reqCount,assignees:[],machines:[],src:it.src,srcChanged:it.srcChanged||false,srcDone:it.srcDone||false,_live:it._live||false});
   save();renderBoard();}
 function delItem(it){DS.items=DS.items.filter(function(x){return x.id!==it.id;});save();renderBoard();}
 function editItem(id){
@@ -1212,6 +1218,7 @@ function migrate(){
   (DS.machines||[]).forEach(function(m){if(m.keeper===undefined)m.keeper='';if(m.loc===undefined)m.loc='';if(m.needCert===undefined)m.needCert=/需證照/.test(m.note||'');if(!m.custom)m.custom={};});
   var cutoff=addDays(todayISO(),-10);
   DS.items=(DS.items||[]).filter(function(it){return !it.day||it.day>=cutoff;});
+  DS.items=DS.items.filter(function(it){return it.id!=='demo1';}); // V1.1:移除內建示範卡
   if(DS.vendors&&DS.vendors.length&&typeof DS.vendors[0]==='object'){DS.vendors=DS.vendors.map(function(v){return (v.code||'')+(v.name||'')+'('+(v.type||'')+')';});}
   if(!DS.candidates||!DS.candidates.length||!DS.candidates[0].round){DS.candidates=seed().candidates;}
   if(!DS.serial){DS.serial=1;var seen={};(DS.items||[]).forEach(function(it){if(it.dnum){if(it.dnum>=DS.serial)DS.serial=it.dnum+1;return;}if(it.crossId&&seen[it.crossId]){it.dnum=seen[it.crossId];return;}it.dnum=DS.serial++;if(it.crossId)seen[it.crossId]=it.dnum;});}
