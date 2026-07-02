@@ -148,11 +148,12 @@ th{background:#e2e8f0;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">測試版 V0.10</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.0</span></div>
 </div>
 
 <div class="wrap">
-  <div class="note">本機測試版：資料存在這台裝置（localStorage），附示範資料，<b>不連雲端、不影響任何使用者</b>。雲端同步與真實帶入待接 G95。</div>
+  <div class="note" id="cloudNote">雲端版：資料即時同步（人員/機具/小組/管理人＝公司層全工地共用；派工單＝本工地）。真實帶入 G95 候選待 B 階段。</div>
+  <div id="roBanner" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:9px 12px;font-size:13px;color:#991b1b;margin-bottom:10px"></div>
   <div id="bkBanner" style="display:none;background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:9px 12px;font-size:13px;color:#92400e;margin-bottom:10px">
     📦 週一提醒：請備份上週資料（工單只保留近 10 天）
     <button class="btn sm" id="bkNow" style="margin-left:8px;background:#f59e0b;color:#fff;border-color:#f59e0b">一鍵備份</button>
@@ -224,23 +225,174 @@ th{background:#e2e8f0;}
 <div class="mask on" id="loginMask"><div class="modal">
   <img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:14px;margin-bottom:8px">
   <h3 style="margin:6px 0">點工派遣看板</h3>
-  <p class="muted" style="font-size:13px">本機測試版（不連雲端）。正式版沿用 G95 Google 登入＋9 人名單。</p>
-  <input id="loginName" placeholder="輸入你的名字（測試用）" style="width:100%;margin:8px 0">
-  <button class="btn primary" id="loginBtn" style="width:100%">進入</button>
+  <p class="muted" style="font-size:13px">與 G95 同一組 Google 登入；寫入限 9 人名單，其餘帳號唯讀。</p>
+  <div id="loginStatus" class="muted" style="font-size:13px;margin:8px 0">⏳ 連線中…</div>
+  <button class="btn primary" id="loginBtn" style="width:100%">使用 Google 登入</button>
+  <button class="btn" id="loginLocalBtn" style="width:100%;margin-top:8px;display:none">離線試用（僅存這台裝置）</button>
 </div></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { initializeAppCheck, ReCaptchaV3Provider }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyA4xrql0AZTPOK16SAsAp8oYi3ltb-i6U0",
+  authDomain:        "g95-work.firebaseapp.com",
+  projectId:         "g95-work",
+  storageBucket:     "g95-work.firebasestorage.app",
+  messagingSenderId: "518379622669",
+  appId:             "1:518379622669:web:1deb196d0c5d57872e6044"
+};
+const app = initializeApp(FIREBASE_CONFIG);
+try {
+  initializeAppCheck(app, { provider: new ReCaptchaV3Provider('6Lc3IDItAAAAADGMtZvMcwNApxnc1ecxGuYdHbCx'), isTokenAutoRefreshEnabled: true });
+} catch(e){ console.warn('AppCheck init failed', e); }
+const db = getFirestore(app);
+const auth = getAuth(app);
+window._fb = { db:db, doc:doc, collection:collection, setDoc:setDoc, getDoc:getDoc, getDocs:getDocs, onSnapshot:onSnapshot, runTransaction:runTransaction };
+window._authSignInGoogle = function(){ return signInWithPopup(auth, new GoogleAuthProvider()); };
+window._authSignInGoogleRedirect = function(){ return signInWithRedirect(auth, new GoogleAuthProvider()); };
+window._authSignOut = function(){ return signOut(auth); };
+window._onAuth = function(cb){ return onAuthStateChanged(auth, cb); };
+getRedirectResult(auth).catch(function(e){ console.warn('[auth] redirectResult', e); });
+window._fbReady = true;
+if (window._fbReadyCb) window._fbReadyCb();
+</script>
 
 <script>
 "use strict";
-var LS_KEY='g95dispatch_v1';
+var CODE_VERSION=1; // V1.0 雲端基礎;每次部署遞增
+window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
+var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
+var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
+function _loginAllowed(email){var e=String(email||'').toLowerCase();return LOGIN_ALLOW.map(function(x){return String(x).toLowerCase();}).indexOf(e)>=0;}
+var LS_KEY='g95dispatch_v1_'+SITE;
 var DS=null;
+var _cloudOn=false,_readonly=false,_allowed=false,_userEmail='';
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function todayISO(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function parseISO(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
 function addDays(s,n){var d=parseISO(s);d.setDate(d.getDate()+n);return todayISO(d);}
 function wd(s){return '日一二三四五六'[parseISO(s).getDay()];}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){console.warn(e);}}
-function load(){try{var r=localStorage.getItem(LS_KEY);if(r)return JSON.parse(r);}catch(e){}return null;}
+var _flushTimer=null;
+function save(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){console.warn(e);}
+  if(_cloudOn&&!_readonly){clearTimeout(_flushTimer);_flushTimer=setTimeout(_flush,1200);}
+}
+function load(){try{var r=localStorage.getItem(LS_KEY);if(r)return JSON.parse(r);}catch(e){}
+  try{var o=localStorage.getItem('g95dispatch_v1');if(o)return JSON.parse(o);}catch(e){}return null;}
+
+/* ── 雲端同步引擎(V1.0):per-doc、_mt 新的贏、10分近期編輯保護盾、_del 墓碑 ── */
+var SYNC_TYPES=['people','machines','groups','managers','items'];
+var _lastSync={},_touch={};
+function _siteDoc(){return window._fb.doc(window._fb.db,'dispatch',SITE);}
+function _companyDoc(){return window._fb.doc(window._fb.db,'dispatch','company');}
+function _colRef(type){return type==='items'?window._fb.collection(_siteDoc(),'items'):window._fb.collection(_companyDoc(),type);}
+function _setSync(txt,ok){var el=document.getElementById('syncTag');if(el){el.textContent=txt;el.style.color=ok?'#bbf7d0':'#fecaca';}}
+function _flush(){
+  if(!_cloudOn||_readonly)return;
+  var wrote=0;
+  SYNC_TYPES.forEach(function(type){
+    var arr=DS[type]||[];var last=_lastSync[type]=_lastSync[type]||{};var cur={};
+    arr.forEach(function(o){if(o&&o.id)cur[o.id]=o;});
+    Object.keys(cur).forEach(function(id){
+      var j=JSON.stringify(cur[id]);
+      if(last[id]===j)return;
+      var data=JSON.parse(j);data._mt=Date.now();delete data._del;
+      window._fb.setDoc(window._fb.doc(_colRef(type),id),data).catch(function(e){console.warn('flush',type,id,e);_setSync('⚠ 寫入失敗',false);});
+      last[id]=j;_touch[type+'/'+id]=Date.now();wrote++;
+    });
+    Object.keys(last).forEach(function(id){
+      if(cur[id])return;
+      window._fb.setDoc(window._fb.doc(_colRef(type),id),{_del:true,_mt:Date.now()}).catch(function(e){console.warn(e);});
+      delete last[id];_touch[type+'/'+id]=Date.now();wrote++;
+    });
+  });
+  var mf=JSON.stringify(DS.machineFields||[]);
+  if(_lastSync._mf!==mf){window._fb.setDoc(_companyDoc(),{machineFields:DS.machineFields||[],_mt:Date.now()},{merge:true}).catch(function(e){console.warn(e);});_lastSync._mf=mf;wrote++;}
+  if(wrote)_setSync('✓ 已同步',true);
+}
+function _applyRemoteType(type,snap){
+  var changed=false;
+  var last=_lastSync[type]=_lastSync[type]||{};
+  var arr=DS[type]||[];
+  snap.forEach(function(ds){
+    var id=ds.id,d=ds.data();
+    var shield=(_touch[type+'/'+id]||0)>Date.now()-600000;
+    var idx=-1;for(var i=0;i<arr.length;i++)if(arr[i].id===id){idx=i;break;}
+    if(d._del){
+      if(idx>=0&&!shield){arr.splice(idx,1);delete last[id];changed=true;}
+      return;
+    }
+    var localMt=idx>=0?(arr[idx]._mt||0):0;
+    if(shield&&idx>=0)return;
+    if((d._mt||0)>=localMt){
+      var j=JSON.stringify(d);
+      if(idx>=0){if(last[id]===j)return;arr[idx]=d;}else{arr.push(d);}
+      last[id]=j;changed=true;
+    }
+  });
+  if(changed){
+    DS[type]=arr;
+    try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){}
+    _rerender();
+  }
+}
+function _rerender(){
+  var panes={'pane-board':renderBoard,'pane-sheet':renderSheet,'pane-people':renderPeople,'pane-machine':renderMachine};
+  Object.keys(panes).forEach(function(id){var el=document.getElementById(id);if(el&&el.style.display!=='none')panes[id]();});
+}
+function _markAllSynced(){
+  SYNC_TYPES.forEach(function(type){var last=_lastSync[type]={};(DS[type]||[]).forEach(function(o){if(o&&o.id)last[o.id]=JSON.stringify(o);});});
+  _lastSync._mf=JSON.stringify(DS.machineFields||[]);
+}
+function _cloudBoot(){
+  if(_cloudOn)return;_cloudOn=true;
+  window._fb.getDocs(_colRef('people')).then(function(snap){
+    if(snap.empty&&(DS.people||[]).length&&_allowed&&!window._PREVIEW){
+      if(confirm('雲端尚無資料。要把這台裝置的本機資料（人員/機具/小組/管理人/派工單）上傳作為起始資料嗎？\n按取消＝從空白雲端開始。')){
+        _lastSync={};_flush();
+      }else{DS.people=[];DS.machines=[];DS.groups=[];DS.managers=[];DS.items=[];DS.machineFields=[];save();_rerender();}
+    }else{_markAllSynced();}
+    SYNC_TYPES.forEach(function(type){
+      window._fb.onSnapshot(_colRef(type),function(s){_applyRemoteType(type,s);},function(e){console.warn('snap',type,e);_setSync('⚠ 連線異常',false);});
+    });
+    window._fb.onSnapshot(_siteDoc(),function(ds){
+      var d=ds.exists()?ds.data():{};
+      if((d.serial||0)>(DS.serial||1))DS.serial=d.serial;
+      if(!window._PREVIEW&&(d.codeVersion||0)>CODE_VERSION){
+        _readonly=true;
+        var b=document.getElementById('roBanner');b.style.display='';
+        b.textContent='⚠ 雲端已有更新版本（v'+d.codeVersion+' > v'+CODE_VERSION+'），此頁轉唯讀。請重新整理或更新 App。';
+      }
+    });
+    window._fb.onSnapshot(_companyDoc(),function(ds){
+      var d=ds.exists()?ds.data():{};
+      if(d.machineFields){var j=JSON.stringify(d.machineFields);if(j!==JSON.stringify(DS.machineFields||[])){DS.machineFields=d.machineFields;_lastSync._mf=j;_rerender();}}
+    });
+    if(!window._PREVIEW&&_allowed){window._fb.setDoc(_siteDoc(),{codeVersion:CODE_VERSION},{merge:true}).catch(function(){});}
+    _setSync('✓ 已同步',true);
+  }).catch(function(e){
+    console.warn('cloudBoot',e);_setSync('⚠ 讀取失敗(規則發布了嗎?)',false);
+  });
+}
+function allocSerial(cb){
+  if(!_cloudOn||_readonly){var n=DS.serial||1;DS.serial=n+1;cb(n);return;}
+  window._fb.runTransaction(window._fb.db,function(tx){
+    return tx.get(_siteDoc()).then(function(s){
+      var cur=Math.max((s.exists()&&s.data().serial)||1,DS.serial||1);
+      tx.set(_siteDoc(),{serial:cur+1},{merge:true});
+      return cur;
+    });
+  }).then(function(n){DS.serial=n+1;cb(n);}).catch(function(e){
+    console.warn('serial tx',e);var n=DS.serial||1;DS.serial=n+1;cb(n);
+  });
+}
 
 function seed(){
   var t=todayISO();
@@ -567,7 +719,7 @@ function dayLabel(off){var d=dayOf(off);return d.slice(5).replace('-','/')+'('+w
 function dayShort(off){return dayOf(off).slice(5).replace('-','/');}
 function itemsOn(day){return DS.items.filter(function(i){return i.day===day;});}
 function selOffs(){var s=(DS.selDays&&DS.selDays.length?DS.selDays:[0,1]).slice();s.sort(function(a,b){return a-b;});return s;}
-function dnumLabel(it){return it.dnum?('D-'+String(it.dnum).padStart(4,'0')):'';}
+function dnumLabel(it){return it.dnum?(SITE+'-'+String(it.dnum).padStart(4,'0')):'';}
 function hoursOf(it){if(it.slotType==='custom'){var r=slotRange(it);return Math.max(0,Math.round((r[1]-r[0])/6)/10);}return it.slot==='full'?8:4;}
 function slotSortKey(it){if(it.slotType!=='custom'&&it.slot==='full')return -1;return slotRange(it)[0];}
 function slotPillCls(it){if(it.slotType==='custom')return 'cus';return it.slot==='am'?'am':it.slot==='pm'?'pm':'full';}
@@ -755,15 +907,19 @@ function stgCard(c){
   return d;
 }
 function importCandidate(c,off){
-  var day=dayOf(off);var seq=itemsOn(day).length+1;
-  var content=c.content+(c.note?'（'+c.note+'）':'');
-  DS.items.push({id:uid(),dnum:DS.serial++,seq:seq,refId:c.refId,round:c.round||'初驗',manual:false,content:content,unit:c.unit,respVendor:c.vendor,mgr:c.mgr||'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[],src:{content:content,unit:c.unit,vendor:c.vendor,due:c.due},srcChanged:false,srcDone:false});
-  save();renderBoard();
+  allocSerial(function(n){
+    var day=dayOf(off);var seq=itemsOn(day).length+1;
+    var content=c.content+(c.note?'（'+c.note+'）':'');
+    DS.items.push({id:uid(),dnum:n,seq:seq,refId:c.refId,round:c.round||'初驗',manual:false,content:content,unit:c.unit,respVendor:c.vendor,mgr:c.mgr||'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[],src:{content:content,unit:c.unit,vendor:c.vendor,due:c.due},srcChanged:false,srcDone:false});
+    save();renderBoard();
+  });
 }
 function addManual(off){
-  var day=dayOf(off);var seq=itemsOn(day).length+1;
-  var it={id:uid(),dnum:DS.serial++,seq:seq,refId:'',round:'',manual:true,content:'',unit:'',respVendor:'',mgr:'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[]};
-  DS.items.push(it);save();editItem(it.id);
+  allocSerial(function(n){
+    var day=dayOf(off);var seq=itemsOn(day).length+1;
+    var it={id:uid(),dnum:n,seq:seq,refId:'',round:'',manual:true,content:'',unit:'',respVendor:'',mgr:'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[]};
+    DS.items.push(it);save();editItem(it.id);
+  });
 }
 function itemCard(it,conf){
   var d=document.createElement('div');d.className='wcard drop';
@@ -1003,7 +1159,48 @@ function boot(){
   DS=load();if(!DS){DS=seed();}
   migrate();save();
   _curDay=todayISO();
-  if(DS.user){document.getElementById('loginMask').classList.remove('on');document.getElementById('who').textContent='Hi, '+DS.user;document.getElementById('logoutBtn').style.display='';}
+  // 登入(V1.0):Google 彈窗+轉頁 fallback;連不上雲端 6 秒後開放離線試用
+  document.getElementById('loginBtn').onclick=function(){
+    document.getElementById('loginStatus').textContent='開啟 Google 登入視窗…';
+    window._authSignInGoogle().catch(function(e){
+      console.warn('[auth] popup',e);
+      document.getElementById('loginStatus').textContent='彈窗被擋，改用轉頁登入…';
+      window._authSignInGoogleRedirect().catch(function(e2){
+        document.getElementById('loginStatus').textContent='登入失敗：'+((e2&&e2.code)||e2);
+      });
+    });
+  };
+  document.getElementById('loginLocalBtn').onclick=function(){
+    DS.user='離線測試';save();
+    document.getElementById('loginMask').classList.remove('on');
+    document.getElementById('who').textContent='Hi, 離線測試（僅本機）';
+    document.getElementById('logoutBtn').style.display='';
+    renderBoard();
+  };
+  window._fbReadyCb=function(){
+    document.getElementById('loginStatus').textContent='請用 Google 登入（與 G95 同帳號）';
+    window._onAuth(function(u){
+      if(!u){document.getElementById('loginMask').classList.add('on');return;}
+      _userEmail=u.email||'';_allowed=_loginAllowed(_userEmail);
+      if(!_allowed){
+        _readonly=true;
+        var b=document.getElementById('roBanner');b.style.display='';
+        b.textContent='👁 唯讀模式：此帳號（'+_userEmail+'）不在寫入名單，改動不會存到雲端。';
+      }
+      DS.user=u.displayName||_userEmail;save();
+      document.getElementById('loginMask').classList.remove('on');
+      document.getElementById('who').textContent='Hi, '+DS.user+(_allowed?'':'（唯讀）');
+      document.getElementById('logoutBtn').style.display='';
+      _cloudBoot();renderBoard();
+    });
+  };
+  if(window._fbReady)window._fbReadyCb();
+  setTimeout(function(){
+    if(!window._fbReady){
+      document.getElementById('loginStatus').textContent='⚠ 連不上雲端（離線或 CDN 被擋）';
+      document.getElementById('loginLocalBtn').style.display='';
+    }
+  },6000);
   document.querySelectorAll('.navitem').forEach(function(t){t.onclick=function(){switchTab(t.dataset.tab);};});
   document.getElementById('addPerson').onclick=function(){editPerson('');};
   document.getElementById('expandAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.add('open');});};
@@ -1022,8 +1219,11 @@ function boot(){
   document.getElementById('stgToggle').onclick=function(){var c=document.getElementById('stgBody');var on=c.style.display==='none';c.style.display=on?'':'none';this.textContent=on?'收合':'展開';};
   document.getElementById('exportPdf').onclick=doPdf;
   document.getElementById('capBtn').onclick=doCapture;
-  document.getElementById('logoutBtn').onclick=function(){DS.user=null;save();location.reload();};
-  document.getElementById('loginBtn').onclick=function(){var n=document.getElementById('loginName').value.trim()||'測試者';DS.user=n;save();document.getElementById('loginMask').classList.remove('on');document.getElementById('who').textContent='Hi, '+n;document.getElementById('logoutBtn').style.display='';renderBoard();};
+  document.getElementById('logoutBtn').onclick=function(){
+    DS.user=null;save();
+    if(window._authSignOut){window._authSignOut().then(function(){location.reload();},function(){location.reload();});}
+    else{location.reload();}
+  };
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&_curDay!==todayISO()){_curDay=todayISO();renderBoard();}});
   window.addEventListener('focus',function(){if(_curDay!==todayISO()){_curDay=todayISO();renderBoard();}});
   renderBoard();
