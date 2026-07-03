@@ -151,7 +151,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.3</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V0703-01</span></div>
 </div>
 
 <div class="wrap">
@@ -267,7 +267,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=6; // V1.3 回報佇列(完成→feedback→G95確認銷項);每次部署遞增
+var CODE_VERSION=7; // V0703-01 工單分頁:人員徽章顯示+小組合併簽名列+免簽開關;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -1240,7 +1240,19 @@ function renderWorkList(area){
 }
 
 /* sheet (工單) */
-var _sheetDay=null,_sheetMode='work';
+var _sheetDay=null,_sheetMode='work',_sheetNameMode='full',_sheetNoSign=false;
+(function(){try{var r=localStorage.getItem('g95dispatch_sheetPrefs_'+SITE);if(r){var pr=JSON.parse(r);if(pr.nameMode==='badge')_sheetNameMode='badge';if(pr.noSign)_sheetNoSign=true;}}catch(e){}})();
+function saveSheetPrefs(){try{localStorage.setItem('g95dispatch_sheetPrefs_'+SITE,JSON.stringify({nameMode:_sheetNameMode,noSign:_sheetNoSign}));}catch(e){}}
+function personLabelHTML(p,isForeman){
+  var nm=p?p.name:'?';
+  if(_sheetNameMode==='badge'){
+    var ch=esc(nm.slice(0,1));
+    return '<span title="'+esc(nm)+(isForeman?'（領班）':'')+'" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#1e40af;font-size:11px;font-weight:700;margin:1px 2px">'+ch+
+      (isForeman?'<span style="position:absolute;top:-4px;right:-4px;width:13px;height:13px;border-radius:50%;background:#fef3c7;color:#92400e;font-size:9px;line-height:13px;text-align:center">★</span>':'')+
+      '</span>';
+  }
+  return (isForeman?'★':'')+esc(nm);
+}
 function sheetDates(){
   var t=todayISO();var set={};DS.items.forEach(function(i){if(i.day)set[i.day]=1;});
   var all=Object.keys(set);
@@ -1278,7 +1290,7 @@ function renderSheetList(host){
   host.appendChild(wrap);
 }
 function sheetRowCells(it){
-  var ppl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?((a.foreman?'★':'')+p.name):'';}).join('、');
+  var ppl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?personLabelHTML(p,a.foreman):'';}).join(_sheetNameMode==='badge'?' ':'、');
   var mac=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?(mc.name+'×'+m.qty):'';}).join('、');
   return {ppl:ppl,mac:mac};
 }
@@ -1294,16 +1306,53 @@ function renderSheetOne(host,day){
   var rows='';
   if(_sheetMode==='work'){
     its.forEach(function(it,ix){var x=sheetRowCells(it);
-      rows+='<tr'+(it.done?' style="color:#94a3b8"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br>#'+esc(it.refId):'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+esc(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td><td style="min-width:70px"></td></tr>';});
-    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th>時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>扣款廠商</th><th>管理</th><th>人員(★領班)</th><th>機具</th><th>簽名</th></tr></thead><tbody>'+(rows||'<tr><td colspan="11" class="muted">（無）</td></tr>')+'</tbody></table></div>';
+      rows+='<tr'+(it.done?' style="color:#94a3b8"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br>#'+esc(it.refId):'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
+    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th>時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>扣款廠商</th><th>管理</th><th>人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+(_sheetNoSign?10:11)+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
   }else{
     var by={};its.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
-    Object.keys(by).forEach(function(pid){var p=personById(pid);var list=by[pid].slice().sort(bySlot);
+    var pids=Object.keys(by);
+    var sigOrder=[],sigMap={};
+    pids.forEach(function(pid){
+      var list=by[pid].slice().sort(bySlot);
+      var sig=list.map(function(it){return it.id;}).join('|');
+      if(!sigMap[sig]){sigMap[sig]=[];sigOrder.push(sig);}
+      sigMap[sig].push(pid);
+    });
+    var blocks='';
+    sigOrder.forEach(function(sig){
+      var grp=sigMap[sig];
+      var list=by[grp[0]].slice().sort(bySlot);
+      var isTeam=grp.length>1;
+      var members=grp.map(function(pid){
+        var p=personById(pid);var isF=false;
+        if(list[0]){(list[0].assignees||[]).forEach(function(a){if(a.personId===pid&&a.foreman)isF=true;});}
+        return {p:p,pid:pid,foreman:isF};
+      });
+      members.sort(function(a,b){return (b.foreman?1:0)-(a.foreman?1:0);});
+      var memberRow=isTeam?
+        ('<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0"><span class="muted" style="font-size:11.5px">小組成員：</span>'+
+        members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
+        '</div>') : '';
+      var rows2='';
       list.forEach(function(it,ix){var x=sheetRowCells(it);
-        rows+='<tr'+(it.done?' style="color:#94a3b8"':'')+'><td>'+(ix===0?('<b>'+esc(p?p.name:'?')+'</b>'):'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td><td style="min-width:70px"></td></tr>';});});
+        var nameCell=isTeam?'':'<td>'+(ix===0?personLabelHTML(members[0].p,members[0].foreman):'')+'</td>';
+        rows2+='<tr'+(it.done?' style="color:#94a3b8"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
+      });
+      var headCols=(isTeam?'':'<th>人員</th>')+'<th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>');
+      var signStrip=(!_sheetNoSign&&isTeam)?
+        ('<div style="display:flex;flex-wrap:wrap;gap:18px;padding:10px 16px;border-top:1px solid #e2e8f0;background:#f8fafc"><span class="muted" style="font-size:11.5px">簽名：</span>'+
+        members.map(function(m){return '<span style="font-size:12.5px;border-bottom:1px solid #cbd5e1;padding:0 22px 2px 0">'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')+
+        '</div>') : '';
+      blocks+='<div style="border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;overflow:hidden">'+memberRow+
+        '<div style="overflow-x:auto"><table><thead><tr>'+headCols+'</tr></thead><tbody>'+rows2+'</tbody></table></div>'+signStrip+'</div>';
+    });
     var un=its.filter(function(it){return !(it.assignees||[]).length;});
-    un.forEach(function(it){var x=sheetRowCells(it);rows+='<tr style="background:#fff7ed"><td class="warn-txt">未指派</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td><td></td></tr>';});
-    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>人員</th><th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th><th>簽名</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7" class="muted">（無）</td></tr>')+'</tbody></table></div>';
+    if(un.length){
+      var unRows='';
+      un.forEach(function(it){var x=sheetRowCells(it);unRows+='<tr style="background:#fff7ed"><td class="warn-txt">未指派</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td></td>')+'</tr>';});
+      blocks+='<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden"><div style="overflow-x:auto"><table><thead><tr><th>人員</th><th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+unRows+'</tbody></table></div></div>';
+    }
+    var tbl=blocks?('<div style="padding:12px 16px">'+blocks+'</div>'):'<div class="muted" style="padding:12px 16px">（無）</div>';
   }
   var cross=its.filter(function(i){return i.crossId;}).map(function(i){return dnumLabel(i);}).filter(function(v,i,a){return a.indexOf(v)===i;}).join('、');
   var foot='<div style="margin:0 16px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#475569">'+
@@ -1314,10 +1363,14 @@ function renderSheetOne(host,day){
   var act=document.createElement('div');act.className='row sheet-actions';act.style.marginTop='12px';
   act.innerHTML='<button class="btn primary" id="shPdf">PDF</button><button class="btn" id="shCap">截圖</button>'+
     '<div class="seg" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
+    '<div class="seg" id="shName"><button data-n="full"'+(_sheetNameMode==='full'?' class="on"':'')+'>全名</button><button data-n="badge"'+(_sheetNameMode==='badge'?' class="on"':'')+'>徽章</button></div>'+
+    '<button class="btn sm" id="shSign" style="'+(_sheetNoSign?'background:#fef2f2;border-color:#fca5a5;color:#b91c1c':'')+'">'+(_sheetNoSign?'✓ 免簽':'☐ 免簽')+'</button>'+
     '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="btn" id="shFix" style="background:#fffbeb;border-color:#fcd34d;color:#92400e">✎ 去分配區改這天</button>';
   host.appendChild(act);
   act.querySelector('#shBack').onclick=function(){_sheetDay=null;renderSheet();};
   act.querySelectorAll('#shMode button').forEach(function(b){b.onclick=function(){_sheetMode=b.dataset.m;renderSheet();};});
+  act.querySelectorAll('#shName button').forEach(function(b){b.onclick=function(){_sheetNameMode=b.dataset.n;saveSheetPrefs();renderSheet();};});
+  act.querySelector('#shSign').onclick=function(){_sheetNoSign=!_sheetNoSign;saveSheetPrefs();renderSheet();};
   act.querySelector('#shFix').onclick=function(){
     var off=Math.round((parseISO(day)-parseISO(todayISO()))/86400000);
     if(off>=0&&off<=2){DS.selDays=[off];save();switchTab('board');}
