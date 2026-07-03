@@ -106,6 +106,9 @@ th{background:#e2e8f0;}
 .fld label{font-size:13px;color:#374151;font-weight:600;}
 .fld input,.fld select,.fld textarea{width:100%;}
 .flex2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.flex2 .fld{min-width:0;}
+.fld input,.fld select,.fld textarea{min-width:0;max-width:100%;}
+input[type=date],input[type=time]{min-width:0;width:100%;}
 .pick-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9;}
 /* V0.3 */
 .pill{border:1px solid #cbd5e1;background:#fff;border-radius:17px;padding:7px 13px;font-size:13.5px;color:#64748b;font-weight:600;min-height:34px;}
@@ -148,7 +151,7 @@ th{background:#e2e8f0;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.1b</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.1c</span></div>
 </div>
 
 <div class="wrap">
@@ -265,7 +268,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=3; // V1.1b 條列/編輯視窗補完成+刪除;每次部署遞增
+var CODE_VERSION=4; // V1.1c 修編輯視窗欄位重疊+桌機拖拉吃掉按鈕;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -634,7 +637,10 @@ function renderPeople(){
   var g=document.getElementById('peopleGrid');g.innerHTML='';
   DS.people.forEach(function(p){var st=safetyStatus(p.safety);var d=document.createElement('div');d.className='pcard';
     d.draggable=true;
-    d.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));};
+    d.ondragstart=function(e){
+      if(e.target&&e.target.closest&&e.target.closest('button,input,select,textarea,label')){e.preventDefault();return;} // 按鈕區不啟動拖拉(修桌機點編輯被拖拉吃掉)
+      e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));
+    };
     var gb=groupsOf(p.id).map(function(gr){return '<span class="gbadge">'+esc(gr.name)+'</span>';}).join('');
     var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
     d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star">★</span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
