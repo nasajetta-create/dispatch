@@ -151,7 +151,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.2</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.3</span></div>
 </div>
 
 <div class="wrap">
@@ -235,7 +235,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction }
+import { getFirestore, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction, deleteDoc }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { initializeAppCheck, ReCaptchaV3Provider }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
@@ -255,7 +255,7 @@ try {
 } catch(e){ console.warn('AppCheck init failed', e); }
 const db = getFirestore(app);
 const auth = getAuth(app);
-window._fb = { db:db, doc:doc, collection:collection, setDoc:setDoc, getDoc:getDoc, getDocs:getDocs, onSnapshot:onSnapshot, runTransaction:runTransaction };
+window._fb = { db:db, doc:doc, collection:collection, setDoc:setDoc, getDoc:getDoc, getDocs:getDocs, onSnapshot:onSnapshot, runTransaction:runTransaction, deleteDoc:deleteDoc };
 window._authSignInGoogle = function(){ return signInWithPopup(auth, new GoogleAuthProvider()); };
 window._authSignInGoogleRedirect = function(){ return signInWithRedirect(auth, new GoogleAuthProvider()); };
 window._authSignOut = function(){ return signOut(auth); };
@@ -267,7 +267,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=5; // V1.2 人員分頁大改(分區排序/拖拉/全員編輯/徽章字);每次部署遞增
+var CODE_VERSION=6; // V1.3 回報佇列(完成→feedback→G95確認銷項);每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -436,6 +436,18 @@ function _g95Cands(){
     out.push({refId:String(r.id),round:(r.round==='複驗'?'複驗':'初驗'),unit:_g95RowUnit(r),content:r.issue||'',note:r.note||'',vendor:v,mgr:r.manager||'',due:r.planDone});
   });
   return out;
+}
+/* V1.3:完成回報佇列(dispatch/{SITE}/feedback/{refId};G95 端確認後才真正銷項) */
+function _syncFeedback(refId){
+  if(!refId||!_cloudOn||!_allowed||_readonly||!window._fb)return;
+  var doneIt=null,anyDone=false;
+  DS.items.forEach(function(i){if(i.refId===refId&&i._live&&i.done){anyDone=true;if(!doneIt)doneIt=i;}});
+  var ref=window._fb.doc(window._fb.db,'dispatch',SITE,'feedback',String(refId));
+  if(anyDone){
+    window._fb.setDoc(ref,{refId:String(refId),dnum:doneIt.dnum||0,unit:doneIt.unit||'',content:doneIt.content||'',day:doneIt.day||'',by:_userEmail,at:Date.now(),site:SITE}).catch(function(e){console.warn('feedback',e);});
+  }else{
+    window._fb.deleteDoc(ref).catch(function(){});
+  }
 }
 function srcStatus(it){
   if(!it.refId)return{done:false,chg:false};
@@ -1142,7 +1154,7 @@ function itemCard(it,conf){
     '<div class="row" style="margin-top:8px"><label style="font-size:13px"><input type="checkbox" class="doneI"'+(it.done?' checked':'')+'> 完成</label><button class="btn sm editI">編輯/指派</button>'+(it.crossId?'':'<button class="btn sm crossI">設為跨兩天</button>')+'<button class="btn sm danger delI">刪除</button></div>';
   d.innerHTML=head+body;
   if(it.done)d.style.opacity='0.72';
-  d.querySelector('.doneI').onchange=function(){it.done=this.checked;it.doneAt=this.checked?todayISO():'';save();renderBoard();};
+  d.querySelector('.doneI').onchange=function(){it.done=this.checked;it.doneAt=this.checked?todayISO():'';_syncFeedback(it.refId);save();renderBoard();};
   d.querySelectorAll('.rmA').forEach(function(x){x.onclick=function(){it.assignees=it.assignees.filter(function(a){return a.personId!==x.dataset.p;});save();renderBoard();};});
   d.querySelector('.editI').onclick=function(){editItem(it.id);};
   d.querySelector('.delI').onclick=function(){delItem(it);};
@@ -1169,7 +1181,7 @@ function makeCross(it){
   var seq=itemsOn(other).length+1;
   DS.items.push({id:uid(),dnum:it.dnum,seq:seq,refId:it.refId,round:it.round||'',manual:it.manual,content:it.content,unit:it.unit,respVendor:it.respVendor,mgr:it.mgr,day:other,crossId:gid,slot:it.slot,slotType:it.slotType,start:it.start,end:it.end,reqCount:it.reqCount,assignees:[],machines:[],src:it.src,srcChanged:it.srcChanged||false,srcDone:it.srcDone||false,_live:it._live||false});
   save();renderBoard();}
-function delItem(it){DS.items=DS.items.filter(function(x){return x.id!==it.id;});save();renderBoard();}
+function delItem(it){DS.items=DS.items.filter(function(x){return x.id!==it.id;});if(it.refId)_syncFeedback(it.refId);save();renderBoard();}
 function editItem(id){
   var it=DS.items.filter(function(x){return x.id===id;})[0];if(!it)return;var box=document.getElementById('modalBox');
   var vendorOpts='<option value=""></option>'+DS.vendors.map(function(v){return '<option'+(it.respVendor===v?' selected':'')+'>'+esc(v)+'</option>';}).join('');
@@ -1203,7 +1215,7 @@ function editItem(id){
   box.querySelector('#cancelM').onclick=closeModal;
   box.querySelector('#delI2').onclick=function(){if(confirm('刪除 '+dnumLabel(it)+' 這筆工作？')){delItem(it);closeModal();}};
   box.querySelector('#saveI').onclick=function(){
-    it.done=box.querySelector('#i_done').checked;it.doneAt=it.done?todayISO():'';
+    it.done=box.querySelector('#i_done').checked;it.doneAt=it.done?todayISO():'';_syncFeedback(it.refId);
     it.seq=+box.querySelector('#i_seq').value||it.seq;it.unit=box.querySelector('#i_unit').value.trim();it.content=box.querySelector('#i_content').value.trim();it.respVendor=box.querySelector('#i_vendor').value;it.dedVendor=box.querySelector('#i_ded').value.trim();it.mgr=box.querySelector('#i_mgr').value.trim();it.reqCount=+box.querySelector('#i_req').value||0;
     var sv=slotSel.value;if(sv==='custom'){it.slotType='custom';it.start=box.querySelector('#i_start').value;it.end=box.querySelector('#i_end').value;}else{it.slotType='preset';it.slot=sv;}
     var as=[];pickP.querySelectorAll('.cp').forEach(function(cp){if(cp.checked){var lead=pickP.querySelector('.lp[data-id="'+cp.dataset.id+'"]').checked;as.push({personId:cp.dataset.id,foreman:lead});}});it.assignees=as;
@@ -1222,7 +1234,7 @@ function renderWorkList(area){
   var w=document.createElement('div');w.id='day_all';w.style.overflowX='auto';
   w.innerHTML='<table><thead><tr><th>日期</th><th>時段</th><th>流水號</th><th>#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>管理</th><th>指派人員</th><th>需求/已派</th><th>機具</th><th>操作</th></tr></thead><tbody>'+(rows||'<tr><td colspan="12" class="muted">尚無工作事項</td></tr>')+'</tbody></table>';
   w.querySelectorAll('.editI').forEach(function(b){b.onclick=function(){editItem(b.dataset.id);};});
-  w.querySelectorAll('.doneL').forEach(function(c){c.onchange=function(){var it=DS.items.filter(function(x){return x.id===c.dataset.id;})[0];if(!it)return;it.done=c.checked;it.doneAt=c.checked?todayISO():'';save();renderBoard();};});
+  w.querySelectorAll('.doneL').forEach(function(c){c.onchange=function(){var it=DS.items.filter(function(x){return x.id===c.dataset.id;})[0];if(!it)return;it.done=c.checked;it.doneAt=c.checked?todayISO():'';_syncFeedback(it.refId);save();renderBoard();};});
   w.querySelectorAll('.delL').forEach(function(b){b.onclick=function(){var it=DS.items.filter(function(x){return x.id===b.dataset.id;})[0];if(!it)return;if(confirm('刪除 '+dnumLabel(it)+'？'))delItem(it);};});
   area.appendChild(w);
 }
