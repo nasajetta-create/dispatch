@@ -67,10 +67,11 @@ table{border-collapse:collapse;width:100%;background:#fff;border-radius:10px;ove
 th,td{border:1px solid var(--line);padding:8px;text-align:left;font-size:14px;}
 th{background:#e2e8f0;}
 /* board */
-.staging{background:#fff;border:1px solid #e2e8f0;border-left:5px solid #f59e0b;border-radius:14px;padding:11px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.staging{background:#fff;border:1px solid #f1e8d8;border-left:4px solid #fbbf24;border-radius:14px;padding:11px;margin-bottom:12px;}
 .stg-cards{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
-.stg{min-width:250px;max-width:250px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid #ef4444;border-radius:12px;padding:10px;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.stg{min-width:250px;max-width:250px;background:#fff;border:1px solid #eef2f7;border-left:3px solid #ef4444;border-radius:10px;padding:9px 10px;font-size:13px;}
 .stg.soon{border-left-color:#f59e0b;}
+.bhdr td{background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:12px;padding:4px 10px;}
 .rchip{border:0;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:13px;cursor:pointer;}
 .rchip.ri{background:#dbeafe;color:#1e40af;}
 .rchip.rr{background:#ede9fe;color:#5b21b6;}
@@ -151,7 +152,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V0703-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-01</span></div>
 </div>
 
 <div class="wrap">
@@ -183,14 +184,15 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
       <div class="row">
         <b id="stgTitle">待帶入工作</b>
         <select id="stgDays" class="btn sm"><option value="3">逾期＋3天內</option><option value="5">逾期＋5天內</option><option value="7">逾期＋7天內</option></select>
+        <span class="muted" style="font-size:11.5px">※ 不列印 / 不截圖 · 供判斷是否帶入</span>
         <button class="btn sm" id="stgToggle" style="margin-left:auto">收合</button>
       </div>
       <div class="row" style="margin-top:8px">
         <input id="stgSearch" placeholder="搜尋戶別/廠商/#號…" style="flex:1;min-width:120px">
+        <span id="stgChips" class="row" style="gap:6px;flex-wrap:nowrap"></span>
         <select id="stgSort"><option value="overdue">逾期優先</option><option value="due">到期日</option><option value="unit">戶別</option><option value="vendor">廠商</option></select>
       </div>
-      <div style="color:#dc2626;font-weight:700;font-size:12px;margin-top:6px">※ 此區不列印 / 不截圖 · 供判斷是否帶入</div>
-      <div id="stgBody" style="margin-top:4px"></div>
+      <div id="stgBody" style="margin-top:6px"></div>
     </div>
 
     <div id="capArea"></div>
@@ -267,7 +269,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=7; // V0703-01 工單分頁:人員徽章顯示+小組合併簽名列+免簽開關;每次部署遞增
+var CODE_VERSION=8; // D0704-01 工單工具列置頂+棟別排序分隔列(公設歸棟)+併欄斑馬紋+候選卡瘦身+控制列整併+條列小組合併+扣款廠商欄;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -515,8 +517,9 @@ function mgrColor(name){var pal=['#16a34a','#7c3aed','#0891b2','#db2777','#ea580
 function slotRange(it){if(it.slotType==='custom'&&it.start&&it.end){var a=it.start.split(':'),b=it.end.split(':');return[(+a[0])*60+(+a[1]),(+b[0])*60+(+b[1])];}if(it.slot==='am')return[480,720];if(it.slot==='pm')return[780,1020];return[480,1020];}
 function overlap(a,b){var ra=slotRange(a),rb=slotRange(b);return ra[0]<rb[1]&&rb[0]<ra[1];}
 function slotLabel(it){if(it.slotType==='custom')return (it.start||'')+'–'+(it.end||'');return it.slot==='am'?'上午':it.slot==='pm'?'下午':'全天';}
-function parseUnit(s){s=String(s||'');var fm=s.match(/(\d+)\s*[Ff]/);var floor=fm?+fm[1]:null;var bm=s.match(/([A-Za-z]+)\s*(\d+)/);var bldg=bm?bm[1].toUpperCase():'';var num=bm?+bm[2]:0;return{floor:floor,bldg:bldg,num:num};}
-function unitCompare(a,b){var pa=parseUnit(a),pb=parseUnit(b);var fa=pa.floor==null?-Infinity:pa.floor,fb=pb.floor==null?-Infinity:pb.floor;if(fa!==fb)return fb-fa;if(pa.bldg!==pb.bldg)return pa.bldg<pb.bldg?-1:1;return pa.num-pb.num;}
+function parseUnit(s){s=String(s||'');var fm=s.match(/(\d+)\s*[Ff]/);var floor=fm?+fm[1]:null;var bm=s.match(/([A-Za-z]+)\s*(\d+)/);if(bm)return{floor:floor,bldg:bm[1].toUpperCase(),num:+bm[2],pub:false};var s2=s.replace(/[·・.\s]*\d+\s*[Ff][\s\S]*$/,'');var tm=s2.match(/([A-Za-z])\s*$/);return{floor:floor,bldg:tm?tm[1].toUpperCase():'',num:999,pub:true};}
+function unitCompare(a,b){var pa=parseUnit(a),pb=parseUnit(b);if(pa.bldg!==pb.bldg){if(!pa.bldg)return 1;if(!pb.bldg)return -1;return pa.bldg<pb.bldg?-1:1;}if(pa.num!==pb.num)return pa.num-pb.num;var fa=pa.floor==null?-1:pa.floor,fb=pb.floor==null?-1:pb.floor;if(fa!==fb)return fb-fa;return 0;}
+function bldgKey(u){var p=parseUnit(u||'');return p.bldg?p.bldg+' 棟':'其他';}
 function conflictsFor(day){
   var items=DS.items.filter(function(it){return it.day===day;});var pConf={},mOver={};
   for(var i=0;i<items.length;i++)for(var j=i+1;j<items.length;j++){if(!overlap(items[i],items[j]))continue;
@@ -935,6 +938,7 @@ function hoursOf(it){if(it.slotType==='custom'){var r=slotRange(it);return Math.
 function slotSortKey(it){if(it.slotType!=='custom'&&it.slot==='full')return -1;return slotRange(it)[0];}
 function slotPillCls(it){if(it.slotType==='custom')return 'cus';return it.slot==='am'?'am':it.slot==='pm'?'pm':'full';}
 function bySlot(a,b){var d=slotSortKey(a)-slotSortKey(b);return d||((a.dnum||0)-(b.dnum||0));}
+function byDispatch(a,b){var d=slotSortKey(a)-slotSortKey(b);if(d)return d;d=unitCompare(a.unit||'',b.unit||'');if(d)return d;return (a.dnum||0)-(b.dnum||0);}
 function importedRefs(){return DS.items.filter(function(i){return i.refId;}).map(function(i){return i.refId;});}
 function renderBoard(){
   renderPills();renderCapScope();
@@ -985,7 +989,7 @@ function renderWorkCards(area){
     DS.people.forEach(function(p){var c=document.createElement('span');c.className='pchip';c.draggable=true;c.textContent=(p.foreman?'★':'')+p.name;
       c.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));};strip.appendChild(c);});
     var conf=conflictsFor(day);var list=col.querySelector('.ilist');
-    itemsOn(day).forEach(function(it){list.appendChild(itemCard(it,conf));});
+    itemsOn(day).slice().sort(byDispatch).forEach(function(it){list.appendChild(itemCard(it,conf));});
     col.querySelector('[data-imp]').onclick=function(){document.getElementById('staging').scrollIntoView({behavior:'smooth'});};
     col.querySelector('[data-man]').onclick=function(){addManual(off);};
     board.appendChild(col);
@@ -1015,14 +1019,14 @@ function renderPersonView(area){
     else{
       if(!pids.length){var e=document.createElement('div');e.className='muted';e.style.cssText='padding:6px 4px 10px';e.textContent='（尚無指派）';sec.appendChild(e);}
       pids.forEach(function(pid){sec.appendChild(personRow(pid,by[pid]));});
-      var un=items.filter(function(it){return !(it.assignees||[]).length;}).sort(bySlot);
+      var un=items.filter(function(it){return !(it.assignees||[]).length;}).sort(byDispatch);
       if(un.length){var ub=document.createElement('div');ub.className='unassigned';ub.innerHTML='<div style="font-weight:700;color:#9a3412;margin-bottom:6px">⚠ 未指派（'+un.length+'）</div>';un.forEach(function(it){ub.appendChild(pitemChip(it));});sec.appendChild(ub);}
     }
     area.appendChild(sec);
   });
 }
 function personRow(pid,items){
-  var p=personById(pid);items=items.slice().sort(bySlot);
+  var p=personById(pid);items=items.slice().sort(byDispatch);
   var hrs=0;items.forEach(function(it){hrs+=hoursOf(it);});
   hrs=Math.round(hrs*10)/10;
   var d=document.createElement('div');d.className='prow';
@@ -1049,18 +1053,42 @@ function pitemChip(it){
 }
 function trCells(it){
   var ml=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?mc.name+'×'+m.qty:'';}).join('、');
-  return '<td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(ml||'—')+'</td>';
+  return '<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+'<br><span style="color:#94a3b8;font-size:11px">'+(it.refId?'#'+esc(it.refId):'(手動)')+'</span></td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.dedVendor||'—')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(ml||'—')+'</td>';
 }
 function personTable(day,pids,by){
-  var rows='';
-  pids.forEach(function(pid){var p=personById(pid);var its=by[pid].slice().sort(bySlot);
-    its.forEach(function(it,ix){rows+='<tr data-id="'+it.id+'"><td>'+(ix===0?('<b>'+esc(p?p.name:'?')+'</b>'+(p&&p.foreman?'★':'')):'')+'</td>'+trCells(it)+'</tr>';});});
-  var un=itemsOn(day).filter(function(it){return !(it.assignees||[]).length;}).sort(bySlot);
-  un.forEach(function(it){rows+='<tr data-id="'+it.id+'" style="background:#fff7ed"><td class="warn-txt">未指派</td>'+trCells(it)+'</tr>';});
-  var w=document.createElement('div');w.style.overflowX='auto';
-  w.innerHTML='<table><thead><tr><th>人員</th><th>時段</th><th>流水號</th><th>#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>管理</th><th>機具</th></tr></thead><tbody>'+(rows||'<tr><td colspan="9" class="muted">尚無工作事項</td></tr>')+'</tbody></table>';
-  w.querySelectorAll('tr[data-id]').forEach(function(r){r.style.cursor='pointer';r.onclick=function(){editItem(r.dataset.id);};});
-  return w;
+  var wrap=document.createElement('div');
+  var sigOrder=[],sigMap={};
+  pids.forEach(function(pid){
+    var list=by[pid].slice().sort(byDispatch);
+    var sig=list.map(function(it){return it.id;}).join('|');
+    if(!sigMap[sig]){sigMap[sig]={pids:[],list:list};sigOrder.push(sig);}
+    sigMap[sig].pids.push(pid);
+  });
+  var thead='<thead><tr><th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>扣款廠商</th><th>管理</th><th>機具</th></tr></thead>';
+  function block(title,cnt,list,warn){
+    var d=document.createElement('div');d.style.cssText='border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;overflow:hidden';
+    var rows='';var bl='',z=0,cntB={};list.forEach(function(it){var k=bldgKey(it.unit);cntB[k]=(cntB[k]||0)+1;});
+    list.forEach(function(it){
+      var bk=bldgKey(it.unit);if(bk!==bl){rows+='<tr class="bhdr"><td colspan="7">'+bk+'（'+cntB[bk]+' 件）</td></tr>';bl=bk;z=0;}
+      var st=warn?'background:#fff7ed;':(z%2?'background:#f8fafc;':'');z++;
+      rows+='<tr data-id="'+it.id+'"'+(st?' style="'+st+'"':'')+'>'+trCells(it)+'</tr>';
+    });
+    d.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:7px 12px;background:'+(warn?'#fff7ed':'#eef2ff')+';border-bottom:1px solid #e2e8f0"><b style="font-size:13px;color:'+(warn?'#9a3412':'#3730a3')+'">'+title+'</b><span class="spacer"></span><span class="muted" style="font-size:12px">'+cnt+'</span></div>'+
+      '<div style="overflow-x:auto"><table>'+thead+'<tbody>'+rows+'</tbody></table></div>';
+    return d;
+  }
+  sigOrder.forEach(function(sig){
+    var g=sigMap[sig];
+    var mems=g.pids.map(function(pid){var p=personById(pid);var isF=false;if(g.list[0]){(g.list[0].assignees||[]).forEach(function(a){if(a.personId===pid&&a.foreman)isF=true;});}return{p:p,f:isF};});
+    mems.sort(function(a,b){return (b.f?1:0)-(a.f?1:0);});
+    var names=mems.map(function(m){return (m.f?'★':'')+esc(m.p?m.p.name:'?');}).join('、');
+    wrap.appendChild(block((g.pids.length>1?'👥 ':'')+names,g.pids.length+' 人 · '+g.list.length+' 件',g.list,false));
+  });
+  var un=itemsOn(day).filter(function(it){return !(it.assignees||[]).length;}).sort(byDispatch);
+  if(un.length)wrap.appendChild(block('⚠ 未指派',un.length+' 件',un,true));
+  if(!sigOrder.length&&!un.length){var e=document.createElement('div');e.className='muted';e.textContent='尚無工作事項';wrap.appendChild(e);}
+  wrap.querySelectorAll('tr[data-id]').forEach(function(r){r.style.cursor='pointer';r.onclick=function(){editItem(r.dataset.id);};});
+  return wrap;
 }
 function srcInfo(it){
   var box=document.getElementById('modalBox');
@@ -1097,11 +1125,10 @@ function renderStaging(){
   document.getElementById('stgTitle').textContent='📋 待帶入工作（'+list.length+'）'+(live?' · G95 即時':' · 示範資料');
   var nI=list.filter(function(c){return (c.round||'初驗')==='初驗';}).length;
   var nR=list.length-nI;
-  var chips=document.createElement('div');chips.className='row';chips.style.marginBottom='8px';
+  var chips=document.getElementById('stgChips');
   chips.innerHTML='<button class="rchip ri'+(_stgColl['初驗']?' off':'')+'">🔵 初驗（'+nI+'）</button><button class="rchip rr'+(_stgColl['複驗']?' off':'')+'">🟣 複驗（'+nR+'）</button>';
   chips.querySelector('.ri').onclick=function(){_stgColl['初驗']=!_stgColl['初驗'];renderStaging();};
   chips.querySelector('.rr').onclick=function(){_stgColl['複驗']=!_stgColl['複驗'];renderStaging();};
-  body.appendChild(chips);
   var show=list.filter(function(c){return !_stgColl[c.round||'初驗'];});
   if(!show.length){var em=document.createElement('span');em.className='muted';em.textContent=list.length?'（初驗/複驗都關了 — 點上方膠囊打開）':'（目前範圍內無待帶入工作）';body.appendChild(em);return;}
   var host=document.createElement('div');host.className='stg-cards';
@@ -1114,10 +1141,10 @@ function stgCard(c){
   var diff=dueDiff(c.due);
   var lbl=diff<0?'逾期 '+(-diff)+' 天':diff===0?'今天到期':'到期 '+c.due.slice(5);
   var d=document.createElement('div');d.className='stg'+(diff<0?'':' soon');
-  d.innerHTML='<div class="row"><b style="color:'+(diff<0?'#b91c1c':'#92400e')+'">'+lbl+'</b><span class="badge">'+esc(c.round||'初驗')+'</span><span class="idtag">#'+esc(c.refId)+'</span></div>'+
-    '<div style="font-weight:700;margin:4px 0">'+esc(c.unit)+'　'+esc(c.content)+(c.note?'<span class="muted" style="font-weight:400">（'+esc(c.note)+'）</span>':'')+'</div>'+
-    '<div class="muted" style="font-size:12px">責任廠商：'+esc(c.vendor)+'　預計 '+c.due.slice(5)+'</div>'+
-    '<div class="row" style="margin-top:6px"><button class="btn sm primary" data-d="0" style="border-radius:13px">→'+dayShort(0)+'</button><button class="btn sm" data-d="1" style="border-radius:13px;color:#1d4ed8;border-color:#93c5fd;background:#eff6ff">→'+dayShort(1)+'</button><button class="btn sm" data-d="2" style="border-radius:13px;color:#1d4ed8;border-color:#93c5fd;background:#eff6ff">→'+dayShort(2)+'</button></div>';
+  d.innerHTML='<div class="row" style="gap:6px"><span class="idtag">#'+esc(c.refId)+'</span><span class="badge">'+esc(c.round||'初驗')+'</span><span class="spacer"></span><b style="color:'+(diff<0?'#b91c1c':'#92400e')+';font-size:12.5px">'+lbl+'</b></div>'+
+    '<div style="font-weight:700;margin:3px 0">'+esc(c.unit)+'　'+esc(c.content)+(c.note?'<span class="muted" style="font-weight:400">（'+esc(c.note)+'）</span>':'')+'</div>'+
+    '<div class="muted" style="font-size:12px">'+esc(c.vendor)+'</div>'+
+    '<div class="row" style="margin-top:5px;gap:5px;flex-wrap:nowrap"><span class="muted" style="font-size:11.5px;white-space:nowrap">帶入→</span><button class="btn sm primary" data-d="0" style="border-radius:9px;padding:3px 8px">'+dayShort(0)+'</button><button class="btn sm" data-d="1" style="border-radius:9px;padding:3px 8px;color:#1d4ed8;border-color:#93c5fd;background:#eff6ff">'+dayShort(1)+'</button><button class="btn sm" data-d="2" style="border-radius:9px;padding:3px 8px;color:#1d4ed8;border-color:#93c5fd;background:#eff6ff">'+dayShort(2)+'</button></div>';
   d.querySelectorAll('button[data-d]').forEach(function(b){b.onclick=function(){importCandidate(c,+b.dataset.d);};});
   return d;
 }
@@ -1227,7 +1254,7 @@ function editItem(id){
 function renderWorkList(area){
   var rows='';
   selOffs().forEach(function(off){var day=dayOf(off);var conf=conflictsFor(day);
-    itemsOn(day).forEach(function(it){var assigned=(it.assignees||[]).length;var bad=assigned<it.reqCount;var macBad=(it.machines||[]).some(function(m){return conf.m[it.id+'|'+m.machineId];});
+    itemsOn(day).slice().sort(byDispatch).forEach(function(it){var assigned=(it.assignees||[]).length;var bad=assigned<it.reqCount;var macBad=(it.machines||[]).some(function(m){return conf.m[it.id+'|'+m.machineId];});
       var pl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?((a.foreman?'★':'')+p.name):'';}).join('、');
       var ml=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?(mc.name+'×'+m.qty):'';}).join('、');
       rows+='<tr'+((bad||macBad)?' style="background:#fffafa"':'')+'><td>'+dayLabel(off)+(it.crossId?'<br><span class="cross">跨兩天</span>':'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit)+'</b></td><td>'+esc(it.content)+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(pl||'—')+'</td><td class="'+(bad?'warn-txt':'ok-txt')+'">'+it.reqCount+' / '+assigned+(bad?' ⚠':' ✓')+'</td><td'+(macBad?' class="warn-txt"':'')+'>'+esc(ml||'—')+(macBad?' ⚠超派':'')+'</td><td style="white-space:nowrap"><label style="font-size:12px"><input type="checkbox" class="doneL" data-id="'+it.id+'"'+(it.done?' checked':'')+'>完成</label> <button class="btn sm editI" data-id="'+it.id+'">編輯</button> <button class="btn sm danger delL" data-id="'+it.id+'">刪</button></td></tr>';});});
@@ -1295,7 +1322,7 @@ function sheetRowCells(it){
   return {ppl:ppl,mac:mac};
 }
 function renderSheetOne(host,day){
-  var its=itemsOn(day).slice().sort(bySlot);
+  var its=itemsOn(day).slice().sort(byDispatch);
   var ppl=0,names={},macSum={};
   its.forEach(function(it){(it.assignees||[]).forEach(function(a){ppl++;var p=personById(a.personId);if(p)names[p.name]=1;});
     (it.machines||[]).forEach(function(m){var mc=machineById(m.machineId);if(mc)macSum[mc.name]=(macSum[mc.name]||0)+(+m.qty||0);});});
@@ -1305,15 +1332,18 @@ function renderSheetOne(host,day){
   var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:12px;opacity:.9">共 '+its.length+' 件 · '+ppl+' 人次'+(doneN?' · ✓完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
   var rows='';
   if(_sheetMode==='work'){
+    var _bl='',_z=0,_cnt={};its.forEach(function(it){var k=bldgKey(it.unit);_cnt[k]=(_cnt[k]||0)+1;});
     its.forEach(function(it,ix){var x=sheetRowCells(it);
-      rows+='<tr'+(it.done?' style="color:#94a3b8"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br>#'+esc(it.refId):'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
+      var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+(_sheetNoSign?10:11)+'">'+bk+'（'+_cnt[bk]+' 件）</td></tr>';_bl=bk;_z=0;}
+      var st=(it.done?'color:#94a3b8;':'')+(_z%2?'background:#f8fafc;':'');_z++;
+      rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
     var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th>時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>扣款廠商</th><th>管理</th><th>人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+(_sheetNoSign?10:11)+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
   }else{
     var by={};its.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
     var pids=Object.keys(by);
     var sigOrder=[],sigMap={};
     pids.forEach(function(pid){
-      var list=by[pid].slice().sort(bySlot);
+      var list=by[pid].slice().sort(byDispatch);
       var sig=list.map(function(it){return it.id;}).join('|');
       if(!sigMap[sig]){sigMap[sig]=[];sigOrder.push(sig);}
       sigMap[sig].push(pid);
@@ -1321,7 +1351,7 @@ function renderSheetOne(host,day){
     var blocks='';
     sigOrder.forEach(function(sig){
       var grp=sigMap[sig];
-      var list=by[grp[0]].slice().sort(bySlot);
+      var list=by[grp[0]].slice().sort(byDispatch);
       var isTeam=grp.length>1;
       var members=grp.map(function(pid){
         var p=personById(pid);var isF=false;
@@ -1334,11 +1364,15 @@ function renderSheetOne(host,day){
         members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
         '</div>') : '';
       var rows2='';
+      var _bl2='',_z2=0,_cnt2={};list.forEach(function(it){var k=bldgKey(it.unit);_cnt2[k]=(_cnt2[k]||0)+1;});
+      var _colN=(isTeam?5:6)+(_sheetNoSign?0:1);
       list.forEach(function(it,ix){var x=sheetRowCells(it);
+        var bk=bldgKey(it.unit);if(bk!==_bl2){rows2+='<tr class="bhdr"><td colspan="'+_colN+'">'+bk+'（'+_cnt2[bk]+' 件）</td></tr>';_bl2=bk;_z2=0;}
+        var st=(it.done?'color:#94a3b8;':'')+(_z2%2?'background:#f8fafc;':'');_z2++;
         var nameCell=isTeam?'':'<td>'+(ix===0?personLabelHTML(members[0].p,members[0].foreman):'')+'</td>';
-        rows2+='<tr'+(it.done?' style="color:#94a3b8"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
+        rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
       });
-      var headCols=(isTeam?'':'<th>人員</th>')+'<th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>');
+      var headCols=(isTeam?'':'<th>人員</th>')+'<th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>');
       var signStrip=(!_sheetNoSign&&isTeam)?
         ('<div style="display:flex;flex-wrap:wrap;gap:18px;padding:10px 16px;border-top:1px solid #e2e8f0;background:#f8fafc"><span class="muted" style="font-size:11.5px">簽名：</span>'+
         members.map(function(m){return '<span style="font-size:12.5px;border-bottom:1px solid #cbd5e1;padding:0 22px 2px 0">'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')+
@@ -1359,14 +1393,14 @@ function renderSheetOne(host,day){
     '人員合計：'+(Object.keys(names).join('、')||'—')+'（'+Object.keys(names).length+'人）<br>'+
     '機具合計：'+(Object.keys(macSum).map(function(k){return k+'×'+macSum[k];}).join('、')||'—')+(cross?'｜跨天延續：'+cross:'')+'</div>';
   paper.innerHTML=hd+tbl+foot;
-  host.appendChild(paper);
-  var act=document.createElement('div');act.className='row sheet-actions';act.style.marginTop='12px';
+  var act=document.createElement('div');act.className='row sheet-actions';act.style.margin='0 0 12px';
   act.innerHTML='<button class="btn primary" id="shPdf">PDF</button><button class="btn" id="shCap">截圖</button>'+
     '<div class="seg" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
     '<div class="seg" id="shName"><button data-n="full"'+(_sheetNameMode==='full'?' class="on"':'')+'>全名</button><button data-n="badge"'+(_sheetNameMode==='badge'?' class="on"':'')+'>徽章</button></div>'+
     '<button class="btn sm" id="shSign" style="'+(_sheetNoSign?'background:#fef2f2;border-color:#fca5a5;color:#b91c1c':'')+'">'+(_sheetNoSign?'✓ 免簽':'☐ 免簽')+'</button>'+
     '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="btn" id="shFix" style="background:#fffbeb;border-color:#fcd34d;color:#92400e">✎ 去分配區改這天</button>';
   host.appendChild(act);
+  host.appendChild(paper);
   act.querySelector('#shBack').onclick=function(){_sheetDay=null;renderSheet();};
   act.querySelectorAll('#shMode button').forEach(function(b){b.onclick=function(){_sheetMode=b.dataset.m;renderSheet();};});
   act.querySelectorAll('#shName button').forEach(function(b){b.onclick=function(){_sheetNameMode=b.dataset.n;saveSheetPrefs();renderSheet();};});
