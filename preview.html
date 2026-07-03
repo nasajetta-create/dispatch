@@ -151,7 +151,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.1c</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">V1.2</span></div>
 </div>
 
 <div class="wrap">
@@ -202,10 +202,9 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
   <!-- PEOPLE -->
   <section id="pane-people" style="display:none">
     <div class="groups" id="groupsBox"></div>
-    <div class="row"><button class="btn primary" id="addPerson">＋ 新增人員</button>
-      <button class="btn sm" id="expandAll">全部展開</button><button class="btn sm" id="collapseAll">全部收合</button></div>
+    <div class="row" id="pplBar"></div>
     <div class="muted" style="font-size:12px;margin-top:6px">綠/黃/紅＝勞安六小時：正常 / 剩30天 / 過期</div>
-    <div class="grid-people" id="peopleGrid"></div>
+    <div id="peopleHost"></div>
     <div class="groups" id="mgrBox" style="border-left-color:#0891b2;margin-top:14px"></div>
   </section>
 
@@ -268,7 +267,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=4; // V1.1c 修編輯視窗欄位重疊+桌機拖拉吃掉按鈕;每次部署遞增
+var CODE_VERSION=5; // V1.2 人員分頁大改(分區排序/拖拉/全員編輯/徽章字);每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -321,6 +320,7 @@ function _flush(){
   if(wrote)_setSync('✓ 已同步',true);
 }
 function _applyRemoteType(type,snap){
+  if(type==='people'&&_pplEdit)return; // 全員編輯中暫停蓋入,退出後下一次快照補上
   var changed=false;
   var last=_lastSync[type]=_lastSync[type]||{};
   var arr=DS[type]||[];
@@ -498,7 +498,7 @@ function personById(id){return DS.people.filter(function(p){return p.id===id;})[
 function groupById(id){return (DS.groups||[]).filter(function(g){return g.id===id;})[0];}
 function groupsOf(pid){return (DS.groups||[]).filter(function(g){return (g.memberIds||[]).indexOf(pid)>=0;});}
 function machineById(id){return DS.machines.filter(function(m){return m.id===id;})[0];}
-function mgrCode(name){return name?name.slice(-1):'?';}
+function mgrCode(name){var m=(DS&&DS.managers?DS.managers:[]).filter(function(x){return x.name===name;})[0];if(m&&m.badge)return m.badge;return name?name.slice(-1):'?';}
 function mgrColor(name){var pal=['#16a34a','#7c3aed','#0891b2','#db2777','#ea580c','#0d9488'];var s=0;for(var i=0;i<(name||'').length;i++)s+=name.charCodeAt(i);return pal[s%pal.length];}
 function slotRange(it){if(it.slotType==='custom'&&it.start&&it.end){var a=it.start.split(':'),b=it.end.split(':');return[(+a[0])*60+(+a[1]),(+b[0])*60+(+b[1])];}if(it.slot==='am')return[480,720];if(it.slot==='pm')return[780,1020];return[480,1020];}
 function overlap(a,b){var ra=slotRange(a),rb=slotRange(b);return ra[0]<rb[1]&&rb[0]<ra[1];}
@@ -619,12 +619,13 @@ function editManager(id){
   var box=document.getElementById('modalBox');
   box.innerHTML='<h3>'+(id?'編輯管理人':'新增管理人')+'</h3>'+
    '<div class="fld"><label>姓名（必填）</label><input id="mg_name" value="'+esc(m.name)+'"></div>'+
+   '<div class="fld"><label>徽章字（1字，空白＝名字末字，同 G95）</label><input id="mg_badge" maxlength="1" value="'+esc(m.badge||'')+'" style="width:80px;text-align:center;font-weight:700"></div>'+
    '<div class="fld"><label>電話</label><input id="mg_phone" value="'+esc(m.phone||'')+'"></div>'+
    '<div class="fld"><label>備註</label><input id="mg_note" value="'+esc(m.note||'')+'"></div>'+
    '<div class="row"><button class="btn primary" id="saveMg">儲存</button><button class="btn" id="cancelM">取消</button></div>';
   box.querySelector('#cancelM').onclick=closeModal;
   box.querySelector('#saveMg').onclick=function(){
-    var o={id:m.id||uid(),name:box.querySelector('#mg_name').value.trim(),phone:box.querySelector('#mg_phone').value.trim(),note:box.querySelector('#mg_note').value.trim()};
+    var o={id:m.id||uid(),name:box.querySelector('#mg_name').value.trim(),badge:box.querySelector('#mg_badge').value.trim(),phone:box.querySelector('#mg_phone').value.trim(),note:box.querySelector('#mg_note').value.trim()};
     if(!o.name){alert('請填姓名');return;}
     if(m.id){DS.managers=DS.managers.map(function(x){return x.id===m.id?o:x;});}else{DS.managers=DS.managers||[];DS.managers.push(o);}
     save();closeModal();renderManagers();};
@@ -632,29 +633,158 @@ function editManager(id){
 }
 
 /* people */
+var _pplEdit=false,_pplBackup=null;
+function peopleSorted(list){
+  return list.slice().sort(function(a,b){
+    var ao=(a.ord!=null?a.ord:1e9),bo=(b.ord!=null?b.ord:1e9);
+    if(ao!==bo)return ao-bo;
+    var fa=a.foreman?0:1,fb=b.foreman?0:1;
+    if(fa!==fb)return fa-fb;
+    return String(a.name||'').localeCompare(String(b.name||''),'zh-TW');
+  });
+}
+function _pplSections(){
+  return [
+    {key:'local',label:'👷 本地人員',hd:'background:#eff6ff;color:#1d4ed8',list:peopleSorted(DS.people.filter(function(p){return !p.migrant;}))},
+    {key:'mig',label:'🌏 移工',hd:'background:#fdf4ff;color:#a21caf',list:peopleSorted(DS.people.filter(function(p){return p.migrant;}))}
+  ];
+}
+function _pplSaveOrder(secKey,newList){
+  var i=0;
+  _pplSections().forEach(function(s){
+    var l=(s.key===secKey)?newList:s.list;
+    l.forEach(function(p){p.ord=i++;});
+  });
+  save();renderPeople();
+}
 function renderPeople(){
   renderGroups();renderManagers();
-  var g=document.getElementById('peopleGrid');g.innerHTML='';
-  DS.people.forEach(function(p){var st=safetyStatus(p.safety);var d=document.createElement('div');d.className='pcard';
-    d.draggable=true;
-    d.ondragstart=function(e){
-      if(e.target&&e.target.closest&&e.target.closest('button,input,select,textarea,label')){e.preventDefault();return;} // 按鈕區不啟動拖拉(修桌機點編輯被拖拉吃掉)
-      e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));
-    };
-    var gb=groupsOf(p.id).map(function(gr){return '<span class="gbadge">'+esc(gr.name)+'</span>';}).join('');
-    var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
-    d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star">★</span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
-      '<div class="muted" style="font-size:12px">'+esc(p.company)+' · '+esc(p.skill)+'</div>'+
-      '<div style="font-size:12px;margin-top:3px"><span class="dot" style="background:'+safetyColor(st)+'"></span>勞安 '+(p.safety||'—')+(st==='over'?' 已過期':st==='soon'?' 即將到期':'')+'</div></div>'+
-      '<button class="btn sm toggle">▾</button></div>'+
-      '<div class="pexp"><div class="kv">性別：'+esc(p.gender||'—')+'　年齡：'+(ageOf(p.birth)||'—')+'（'+(p.birth||'—')+'）</div>'+
-      '<div class="kv">勞保：'+(p.laborIns?'有':'無')+'　健保：'+(p.healthIns?'有':'無')+'　領班：'+(p.foreman?'是 ★':'否')+'</div>'+
-      '<div class="kv">備註：'+esc(p.note||'—')+'</div>'+
-      '<div class="row" style="margin-top:6px"><button class="btn sm editP">編輯</button><button class="btn sm danger delP">刪除</button></div></div>';
-    d.querySelector('.toggle').onclick=function(){d.classList.toggle('open');};
-    d.querySelector('.editP').onclick=function(){editPerson(p.id);};
-    d.querySelector('.delP').onclick=function(){if(confirm('刪除 '+p.name+'？')){DS.people=DS.people.filter(function(x){return x.id!==p.id;});(DS.groups||[]).forEach(function(gr){gr.memberIds=(gr.memberIds||[]).filter(function(x){return x!==p.id;});if(gr.leaderId===p.id)gr.leaderId=(gr.memberIds[0]||'');});save();renderPeople();}};
-    g.appendChild(d);});
+  var bar=document.getElementById('pplBar');bar.innerHTML='';
+  var host=document.getElementById('peopleHost');host.innerHTML='';
+  if(_pplEdit){renderPeopleEdit(bar,host);return;}
+  bar.innerHTML='<button class="btn primary" id="bulkEdit">✎ 全員編輯</button><button class="btn sm" id="expandAll">全部展開</button><button class="btn sm" id="collapseAll">全部收合</button><span class="muted" style="font-size:12px">桌面:拖卡片換順序/拖進小組</span>';
+  bar.querySelector('#bulkEdit').onclick=function(){enterBulk(false);};
+  bar.querySelector('#expandAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.add('open');});};
+  bar.querySelector('#collapseAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('open');});};
+  _pplSections().forEach(function(sec){
+    var hd=document.createElement('div');hd.style.cssText=sec.hd+';border-radius:8px;padding:8px 12px;font-weight:700;font-size:13.5px;margin:10px 0 0';hd.textContent=sec.label+'（'+sec.list.length+'）';host.appendChild(hd);
+    var grid=document.createElement('div');grid.className='grid-people';
+    sec.list.forEach(function(p){grid.appendChild(personCard(p,sec));});
+    if(!sec.list.length){var e=document.createElement('div');e.className='muted';e.style.cssText='font-size:12.5px;padding:8px 4px';e.textContent='（無）';grid.appendChild(e);}
+    host.appendChild(grid);
+  });
+}
+function personCard(p,sec){
+  var st=safetyStatus(p.safety);var d=document.createElement('div');d.className='pcard';
+  d.draggable=true;
+  d.ondragstart=function(e){
+    if(e.target&&e.target.closest&&e.target.closest('button,input,select,textarea,label')){e.preventDefault();return;}
+    e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));
+  };
+  d.ondragover=function(e){e.preventDefault();d.classList.add('dragover');};
+  d.ondragleave=function(){d.classList.remove('dragover');};
+  d.ondrop=function(e){
+    e.preventDefault();d.classList.remove('dragover');
+    try{
+      var o=JSON.parse(e.dataTransfer.getData('text/plain'));
+      if(!o.personId||o.personId===p.id)return;
+      var src=personById(o.personId);if(!src)return;
+      if(!!src.migrant!==!!p.migrant)return; // 本勞/移工不能跨區
+      var list=sec.list.filter(function(x){return x.id!==src.id;});
+      var pos=list.indexOf(p);if(pos<0)pos=list.length;
+      list.splice(pos,0,src);
+      _pplSaveOrder(sec.key,list);
+    }catch(err){}
+  };
+  var gb=groupsOf(p.id).map(function(gr){return '<span class="gbadge">'+esc(gr.name)+'</span>';}).join('');
+  var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
+  d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star">★</span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
+    '<div class="muted" style="font-size:12px">'+esc(p.company)+' · '+esc(p.skill)+'</div>'+
+    '<div style="font-size:12px;margin-top:3px"><span class="dot" style="background:'+safetyColor(st)+'"></span>勞安 '+(p.safety||'—')+(st==='over'?' 已過期':st==='soon'?' 即將到期':'')+'</div></div>'+
+    '<button class="btn sm toggle">▾</button></div>'+
+    '<div class="pexp"><div class="kv">性別：'+esc(p.gender||'—')+'　年齡：'+(ageOf(p.birth)||'—')+'（'+(p.birth||'—')+'）</div>'+
+    '<div class="kv">勞保：'+(p.laborIns?'有':'無')+'　健保：'+(p.healthIns?'有':'無')+'　領班：'+(p.foreman?'是 ★':'否')+'</div>'+
+    '<div class="kv">備註：'+esc(p.note||'—')+'</div>'+
+    '<div class="muted" style="font-size:11.5px;margin-top:4px">修改請用上方「✎ 全員編輯」</div></div>';
+  d.querySelector('.toggle').onclick=function(){d.classList.toggle('open');};
+  return d;
+}
+function enterBulk(addNew){
+  _pplBackup=JSON.stringify(DS.people);
+  _pplEdit=true;
+  if(addNew)_pplAddBlank();
+  renderPeople();
+}
+function _pplAddBlank(){DS.people.push({id:uid(),name:'',migrant:false,gender:'男',birth:'',company:'',skill:'',foreman:false,laborIns:false,healthIns:false,safety:'',photo:'',note:''});}
+function renderPeopleEdit(bar,host){
+  bar.innerHTML='<button class="btn" id="bulkOk" style="background:#16a34a;color:#fff;border-color:#16a34a">✔ 確認</button>'+
+    '<button class="btn" id="bulkRevert" style="border-color:#f59e0b;color:#92400e">↩ 全部還原</button>'+
+    '<button class="btn" id="bulkAdd">＋ 新增人員</button>'+
+    '<span class="muted" style="font-size:12px">編輯中暫停雲端同步；卡上「↩」＝只還原該筆</span>';
+  bar.querySelector('#bulkOk').onclick=function(){
+    var bad=DS.people.filter(function(p){return !String(p.name||'').trim();}).length;
+    if(bad){alert('有 '+bad+' 筆姓名空白，請補齊或刪除該卡');return;}
+    (DS.groups||[]).forEach(function(gr){
+      gr.memberIds=(gr.memberIds||[]).filter(function(id){return personById(id);});
+      if(!personById(gr.leaderId))gr.leaderId=gr.memberIds[0]||'';
+    });
+    _pplEdit=false;_pplBackup=null;save();renderPeople();
+  };
+  bar.querySelector('#bulkRevert').onclick=function(){
+    if(confirm('全部退回「進入編輯前」的狀態？（此次編輯的所有改動都會消失）')){DS.people=JSON.parse(_pplBackup);renderPeople();}
+  };
+  bar.querySelector('#bulkAdd').onclick=function(){_pplAddBlank();renderPeople();};
+  _pplSections().forEach(function(sec){
+    var hd=document.createElement('div');hd.style.cssText=sec.hd+';border-radius:8px;padding:8px 12px;font-weight:700;font-size:13.5px;margin:10px 0 0';hd.textContent=sec.label+'（'+sec.list.length+'）— 編輯中';host.appendChild(hd);
+    var grid=document.createElement('div');grid.className='grid-people';
+    sec.list.forEach(function(p){grid.appendChild(personEditCard(p));});
+    host.appendChild(grid);
+  });
+}
+function personEditCard(p){
+  var d=document.createElement('div');d.className='pcard open';
+  function fld(lb,html){return '<div style="margin-bottom:6px"><div class="muted" style="font-size:11px">'+lb+'</div>'+html+'</div>';}
+  var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
+  d.innerHTML='<div class="row" style="margin-bottom:6px">'+thumb+
+    '<input class="eName" placeholder="姓名(必填)" value="'+esc(p.name)+'" style="flex:1;min-width:90px;font-weight:700">'+
+    '<button class="btn sm rvP" title="還原這筆">↩</button><button class="btn sm danger delP">刪</button></div>'+
+    fld('公司 / 專長','<div class="row" style="gap:6px"><input class="eCompany" value="'+esc(p.company||'')+'" style="flex:1;min-width:70px"><input class="eSkill" value="'+esc(p.skill||'')+'" style="flex:1;min-width:70px"></div>')+
+    fld('性別 / 出生','<div class="row" style="gap:6px"><select class="eGender" style="width:70px"><option'+(p.gender==='男'?' selected':'')+'>男</option><option'+(p.gender==='女'?' selected':'')+'>女</option></select><input type="date" class="eBirth" value="'+esc(p.birth||'')+'" style="flex:1"></div>')+
+    fld('勞安六小時到期','<input type="date" class="eSafety" value="'+esc(p.safety||'')+'" style="width:100%">')+
+    '<div class="row" style="gap:10px;font-size:12.5px;margin-bottom:6px">'+
+      '<label><input type="checkbox" class="eMig"'+(p.migrant?' checked':'')+'>移工</label>'+
+      '<label><input type="checkbox" class="eFore"'+(p.foreman?' checked':'')+'>★領班</label>'+
+      '<label><input type="checkbox" class="eLab"'+(p.laborIns?' checked':'')+'>勞保</label>'+
+      '<label><input type="checkbox" class="eHea"'+(p.healthIns?' checked':'')+'>健保</label></div>'+
+    fld('備註','<input class="eNote" value="'+esc(p.note||'')+'" style="width:100%">')+
+    fld('證照縮圖','<input type="file" class="ePhoto" accept="image/*" style="width:100%;font-size:12px">');
+  function bind(cls,ev,fn){d.querySelector(cls)[ev]=fn;}
+  bind('.eName','oninput',function(){p.name=this.value;});
+  bind('.eCompany','oninput',function(){p.company=this.value;});
+  bind('.eSkill','oninput',function(){p.skill=this.value;});
+  bind('.eGender','onchange',function(){p.gender=this.value;});
+  bind('.eBirth','onchange',function(){p.birth=this.value;});
+  bind('.eSafety','onchange',function(){p.safety=this.value;});
+  bind('.eMig','onchange',function(){p.migrant=this.checked;renderPeople();});
+  bind('.eFore','onchange',function(){p.foreman=this.checked;});
+  bind('.eLab','onchange',function(){p.laborIns=this.checked;});
+  bind('.eHea','onchange',function(){p.healthIns=this.checked;});
+  bind('.eNote','oninput',function(){p.note=this.value;});
+  bind('.ePhoto','onchange',function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();
+    rd.onload=function(){var img=new Image();img.onload=function(){var max=240,sc=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement('canvas');c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);p.photo=c.toDataURL('image/jpeg',0.6);renderPeople();};img.src=rd.result;};rd.readAsDataURL(f);});
+  bind('.rvP','onclick',function(){
+    var old=JSON.parse(_pplBackup).filter(function(x){return x.id===p.id;})[0];
+    var idx=-1;for(var i=0;i<DS.people.length;i++)if(DS.people[i].id===p.id){idx=i;break;}
+    if(old){if(idx>=0)DS.people[idx]=old;}
+    else{if(idx>=0)DS.people.splice(idx,1);} // 本次新增的還原=移除
+    renderPeople();
+  });
+  bind('.delP','onclick',function(){
+    if(!confirm('刪除 '+(p.name||'(未命名)')+'？（按「全部還原」可救回）'))return;
+    DS.people=DS.people.filter(function(x){return x.id!==p.id;});
+    renderPeople();
+  });
+  return d;
 }
 function editPerson(id){
   var p=id?personById(id):{id:'',name:'',migrant:false,gender:'男',birth:'',company:'',skill:'',foreman:false,laborIns:false,healthIns:false,safety:'',photo:'',note:''};
@@ -1282,9 +1412,6 @@ function boot(){
     }
   },6000);
   document.querySelectorAll('.navitem').forEach(function(t){t.onclick=function(){switchTab(t.dataset.tab);};});
-  document.getElementById('addPerson').onclick=function(){editPerson('');};
-  document.getElementById('expandAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.add('open');});};
-  document.getElementById('collapseAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('open');});};
   document.getElementById('addMachine').onclick=function(){editMachine('');};
   document.querySelectorAll('#viewSeg button').forEach(function(b){b.onclick=function(){DS.view=b.dataset.v;save();renderBoard();};});
   document.querySelectorAll('#vmSeg button').forEach(function(b){b.onclick=function(){DS.viewMode=b.dataset.vm;save();renderBoard();};});
