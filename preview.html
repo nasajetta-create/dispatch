@@ -159,7 +159,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-05</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0705-01</span></div>
 </div>
 
 <div class="wrap">
@@ -279,7 +279,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=12; // D0704-05 每日件數上限警告(dayCap存site meta,預設6,只警告)+未完成順延橫幅(全部移今天/逐件挑選/忽略);D0704-04=七項UX大包;每次部署遞增
+var CODE_VERSION=13; // D0705-01 候選改優先看G95點工廠商旗標(vendorFlags,名字含點工為fallback)+關頁flush;D0704-05=上限警告+順延;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -308,6 +308,10 @@ function _siteDoc(){return window._fb.doc(window._fb.db,'dispatch',SITE);}
 function _companyDoc(){return window._fb.doc(window._fb.db,'dispatch','company');}
 function _colRef(type){return type==='items'?window._fb.collection(_siteDoc(),'items'):window._fb.collection(_companyDoc(),type);}
 function _setSync(txt,ok){var el=document.getElementById('syncTag');if(el){el.textContent=txt;el.style.color=ok?'#bbf7d0':'#fecaca';}}
+// D0705-01：關頁/切出分頁前把還在防抖等待的變更立刻送出
+document.addEventListener('visibilitychange',function(){
+  try{if(document.visibilityState==='hidden'&&_flushTimer&&_cloudOn&&!_readonly){clearTimeout(_flushTimer);_flushTimer=null;_flush();}}catch(e){}
+});
 function _flush(){
   if(!_cloudOn||_readonly)return;
   var wrote=0;
@@ -415,6 +419,7 @@ function _g95Subscribe(){
     var m=null;
     try{var d=ds.exists()?ds.data():null;m=(d&&d.d)?JSON.parse(d.d):null;}catch(e){console.warn('g95 meta parse',e);}
     if(!m)return;
+    window._g95VendorFlags=(m.vendorFlags&&typeof m.vendorFlags==='object')?m.vendorFlags:null; // D0705-01：G95 點工廠商旗標
     var dirty=false;
     if(Array.isArray(m.vendors)&&m.vendors.length){
       var j=JSON.stringify(m.vendors);
@@ -444,7 +449,13 @@ function _g95Cands(){
   rows.forEach(function(r){
     if(r.actualDone)return;
     var v=String(r.vendor||'');
-    if(v.indexOf('點工')<0)return;
+    // D0705-01：優先看 G95「點工廠商旗標」(vendorFlags)；廠商沒設過旗標時 fallback 舊規則=名字含「點工」
+    var vf=window._g95VendorFlags;
+    if(vf&&Object.keys(vf).length){
+      if(!vf[v]&&v.indexOf('點工')<0)return;
+    }else{
+      if(v.indexOf('點工')<0)return;
+    }
     if(!r.planDone)return;
     out.push({refId:String(r.id),round:(r.round==='複驗'?'複驗':'初驗'),unit:_g95RowUnit(r),content:r.issue||'',note:r.note||'',vendor:v,mgr:r.manager||'',due:r.planDone});
   });
