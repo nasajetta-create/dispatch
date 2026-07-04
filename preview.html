@@ -152,7 +152,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-02</span></div>
 </div>
 
 <div class="wrap">
@@ -269,7 +269,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=8; // D0704-01 工單工具列置頂+棟別排序分隔列(公設歸棟)+併欄斑馬紋+候選卡瘦身+控制列整併+條列小組合併+扣款廠商欄;每次部署遞增
+var CODE_VERSION=9; // D0704-02 修分隔列跨時段重複段件數(改連續段計數);D0704-01=工具列置頂+棟別排序分隔列+併欄斑馬紋+候選卡瘦身+控制列整併+條列小組合併+扣款廠商欄;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -1067,9 +1067,9 @@ function personTable(day,pids,by){
   var thead='<thead><tr><th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>扣款廠商</th><th>管理</th><th>機具</th></tr></thead>';
   function block(title,cnt,list,warn){
     var d=document.createElement('div');d.style.cssText='border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;overflow:hidden';
-    var rows='';var bl='',z=0,cntB={};list.forEach(function(it){var k=bldgKey(it.unit);cntB[k]=(cntB[k]||0)+1;});
+    var rows='';var bl='',z=0,segs=[];list.forEach(function(it){var k=bldgKey(it.unit);if(!segs.length||segs[segs.length-1].k!==k)segs.push({k:k,n:0});segs[segs.length-1].n++;});
     list.forEach(function(it){
-      var bk=bldgKey(it.unit);if(bk!==bl){rows+='<tr class="bhdr"><td colspan="7">'+bk+'（'+cntB[bk]+' 件）</td></tr>';bl=bk;z=0;}
+      var bk=bldgKey(it.unit);if(bk!==bl){rows+='<tr class="bhdr"><td colspan="7">'+bk+'（'+segs.shift().n+' 件）</td></tr>';bl=bk;z=0;}
       var st=warn?'background:#fff7ed;':(z%2?'background:#f8fafc;':'');z++;
       rows+='<tr data-id="'+it.id+'"'+(st?' style="'+st+'"':'')+'>'+trCells(it)+'</tr>';
     });
@@ -1332,9 +1332,9 @@ function renderSheetOne(host,day){
   var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:12px;opacity:.9">共 '+its.length+' 件 · '+ppl+' 人次'+(doneN?' · ✓完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
   var rows='';
   if(_sheetMode==='work'){
-    var _bl='',_z=0,_cnt={};its.forEach(function(it){var k=bldgKey(it.unit);_cnt[k]=(_cnt[k]||0)+1;});
+    var _bl='',_z=0,_segs=[];its.forEach(function(it){var k=bldgKey(it.unit);if(!_segs.length||_segs[_segs.length-1].k!==k)_segs.push({k:k,n:0});_segs[_segs.length-1].n++;});
     its.forEach(function(it,ix){var x=sheetRowCells(it);
-      var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+(_sheetNoSign?10:11)+'">'+bk+'（'+_cnt[bk]+' 件）</td></tr>';_bl=bk;_z=0;}
+      var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+(_sheetNoSign?10:11)+'">'+bk+'（'+_segs.shift().n+' 件）</td></tr>';_bl=bk;_z=0;}
       var st=(it.done?'color:#94a3b8;':'')+(_z%2?'background:#f8fafc;':'');_z++;
       rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
     var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th>時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>扣款廠商</th><th>管理</th><th>人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+(_sheetNoSign?10:11)+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
@@ -1364,10 +1364,10 @@ function renderSheetOne(host,day){
         members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
         '</div>') : '';
       var rows2='';
-      var _bl2='',_z2=0,_cnt2={};list.forEach(function(it){var k=bldgKey(it.unit);_cnt2[k]=(_cnt2[k]||0)+1;});
+      var _bl2='',_z2=0,_segs2=[];list.forEach(function(it){var k=bldgKey(it.unit);if(!_segs2.length||_segs2[_segs2.length-1].k!==k)_segs2.push({k:k,n:0});_segs2[_segs2.length-1].n++;});
       var _colN=(isTeam?5:6)+(_sheetNoSign?0:1);
       list.forEach(function(it,ix){var x=sheetRowCells(it);
-        var bk=bldgKey(it.unit);if(bk!==_bl2){rows2+='<tr class="bhdr"><td colspan="'+_colN+'">'+bk+'（'+_cnt2[bk]+' 件）</td></tr>';_bl2=bk;_z2=0;}
+        var bk=bldgKey(it.unit);if(bk!==_bl2){rows2+='<tr class="bhdr"><td colspan="'+_colN+'">'+bk+'（'+_segs2.shift().n+' 件）</td></tr>';_bl2=bk;_z2=0;}
         var st=(it.done?'color:#94a3b8;':'')+(_z2%2?'background:#f8fafc;':'');_z2++;
         var nameCell=isTeam?'':'<td>'+(ix===0?personLabelHTML(members[0].p,members[0].foreman):'')+'</td>';
         rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(it.unit||'')+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
