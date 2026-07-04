@@ -159,7 +159,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-04</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0704-05</span></div>
 </div>
 
 <div class="wrap">
@@ -186,6 +186,8 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
       <button class="btn sm" id="capBtn">截圖</button>
     </div>
     </div>
+
+    <div id="fwdBanner" class="no-print" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:13px;color:#92400e;margin-bottom:10px"></div>
 
     <div class="staging" id="staging">
       <div class="row">
@@ -277,7 +279,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=11; // D0704-04 小組刪除+膠囊分組引線+候選直列檢視(清潔顯示驗收日)+條列完成勾選+小組收折+匯出分頁(一組一頁/15筆/時間註記)+人次改出工人數;每次部署遞增
+var CODE_VERSION=12; // D0704-05 每日件數上限警告(dayCap存site meta,預設6,只警告)+未完成順延橫幅(全部移今天/逐件挑選/忽略);D0704-04=七項UX大包;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -382,6 +384,7 @@ function _cloudBoot(){
     window._fb.onSnapshot(_siteDoc(),function(ds){
       var d=ds.exists()?ds.data():{};
       if((d.serial||0)>(DS.serial||1))DS.serial=d.serial;
+      if(d.dayCap!=null&&d.dayCap!==window._dayCap){window._dayCap=d.dayCap;try{if(document.getElementById('pane-board').style.display!=='none')renderBoard();}catch(e){}}
       if(!window._PREVIEW&&(d.codeVersion||0)>CODE_VERSION){
         _readonly=true;
         var b=document.getElementById('roBanner');b.style.display='';
@@ -961,8 +964,56 @@ function slotPillCls(it){if(it.slotType==='custom')return 'cus';return it.slot==
 function bySlot(a,b){var d=slotSortKey(a)-slotSortKey(b);return d||((a.dnum||0)-(b.dnum||0));}
 function byDispatch(a,b){var d=slotSortKey(a)-slotSortKey(b);if(d)return d;d=unitCompare(a.unit||'',b.unit||'');if(d)return d;return (a.dnum||0)-(b.dnum||0);}
 function importedRefs(){return DS.items.filter(function(i){return i.refId;}).map(function(i){return i.refId;});}
+/* ── D0704-05 E:每日件數上限警告(手動設、預設6、存雲端 site meta dayCap、只警告不擋) ── */
+function _dayCapVal(){return window._dayCap==null?6:window._dayCap;}
+function setDayCap(v){
+  var n=Math.max(0,parseInt(v,10)||0);window._dayCap=n;
+  try{window._fb.setDoc(_siteDoc(),{dayCap:n},{merge:true}).catch(function(){});}catch(e){}
+  toast(n?('每日上限設為 '+n+' 件（全員同步）'):'已關閉每日上限警告','✅');renderBoard();
+}
+/* ── D0704-05 F:未完成順延(提示+一鍵,不自動動資料) ── */
+function _fwdList(){var t=todayISO();return DS.items.filter(function(it){return it.day&&it.day<t&&!it.done;});}
+function renderFwdBanner(){
+  var b=document.getElementById('fwdBanner');if(!b)return;
+  if(window._fwdDismiss){b.style.display='none';return;}
+  var list=_fwdList();
+  if(!list.length){b.style.display='none';return;}
+  var byDay={};list.forEach(function(it){(byDay[it.day]=byDay[it.day]||[]).push(it);});
+  var days=Object.keys(byDay).sort();
+  b.style.display='';
+  b.innerHTML='<span style="font-weight:700">⚠ '+days.map(function(d){return fmtDay(d)+' 有 '+byDay[d].length+' 件未勾完成';}).join('、')+'</span> '
+   +'<button class="btn sm" id="fwdAll" style="background:#d97706;color:#fff;border-color:#d97706">→ 全部移到今天</button> '
+   +'<button class="btn sm" id="fwdPick">逐件挑選</button> '
+   +'<button class="btn sm" id="fwdIgn">忽略</button>'
+   +'<span class="muted" style="font-size:11.5px;margin-left:6px">移過去＝只改日期，流水號/#G95/人員機具保留，內容加註順延</span>';
+  document.getElementById('fwdAll').onclick=function(){fwdMove(_fwdList().map(function(it){return it.id;}));};
+  document.getElementById('fwdPick').onclick=fwdPick;
+  document.getElementById('fwdIgn').onclick=function(){window._fwdDismiss=1;renderFwdBanner();};
+}
+function fwdMove(ids){
+  var t=todayISO();
+  if(!ids.length)return;
+  if(!confirm('把 '+ids.length+' 件未完成移到今天（'+fmtDay(t)+'）？\n流水號/#G95/人員機具都保留，內容會加註順延。'))return;
+  var n=0;
+  ids.forEach(function(id){
+    var it=DS.items.filter(function(x){return x.id===id;})[0];if(!it||it.done)return;
+    var md=(+String(it.day).slice(5,7))+'/'+(+String(it.day).slice(8,10));
+    it.day=t;if(String(it.content||'').indexOf('順延）')<0)it.content=(it.content||'')+'（'+md+'順延）';n++;
+  });
+  save();toast('已把 '+n+' 件移到今天','✅');renderBoard();
+}
+function fwdPick(){
+  var list=_fwdList();if(!list.length)return;
+  var box=document.getElementById('modalBox');
+  box.innerHTML='<h3>逐件挑選要順延到今天的工作</h3><div style="max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px">'
+   +list.map(function(it){return '<label class="pick-row" style="cursor:pointer;display:flex;gap:6px;align-items:center"><input type="checkbox" class="fw" data-id="'+it.id+'" checked><span style="flex:1;font-size:13px">'+esc(fmtDay(it.day))+'｜'+dnumLabel(it)+'｜<b>'+esc(it.unit||'')+'</b> '+esc(it.content||'')+'</span></label>';}).join('')
+   +'</div><div class="row" style="margin-top:12px"><button class="btn primary" id="fwGo">→ 移到今天</button><button class="btn" id="cancelM">取消</button></div>';
+  box.querySelector('#cancelM').onclick=closeModal;
+  box.querySelector('#fwGo').onclick=function(){var ids=[];box.querySelectorAll('.fw').forEach(function(c){if(c.checked)ids.push(c.dataset.id);});closeModal();fwdMove(ids);};
+  openModal();
+}
 function renderBoard(){
-  renderPills();renderCapScope();
+  renderPills();renderCapScope();renderFwdBanner();
   document.querySelectorAll('#viewSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.v===(DS.view||'card'));});
   document.querySelectorAll('#vmSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.vm===(DS.viewMode||'work'));});
   var lb=document.getElementById('layoutBtn');
@@ -1002,7 +1053,8 @@ function renderWorkCards(area){
     var day=dayOf(off);var its=itemsOn(day);
     var ppl=0;its.forEach(function(it){ppl+=(it.assignees||[]).length;});
     var col=document.createElement('div');col.className='col d'+off;col.id='day_'+off;
-    col.innerHTML='<h2>'+dayLabel(off)+'<span class="cnt">'+its.length+'件 · 出工'+dayHeads(day)+'人</span></h2><div class="people-strip"></div><div class="ilist"></div>'+
+    var _cap2=_dayCapVal();var _over2=_cap2>0&&its.length>_cap2;
+    col.innerHTML='<h2>'+dayLabel(off)+'<span class="cnt">'+its.length+'件 · 出工'+dayHeads(day)+'人'+(_over2?' <span style="background:#dc2626;color:#fff;border-radius:7px;padding:1px 7px;font-size:10.5px;font-weight:700">⚠超上限'+(its.length-_cap2)+'</span>':'')+'</span></h2><div class="people-strip"></div><div class="ilist"></div>'+
       '<div class="row"><button class="btn sm" data-imp="1">＋ 從追蹤總表帶入</button><button class="btn sm green" data-man="'+off+'">＋ 手動新增</button></div>';
     var strip=col.querySelector('.people-strip');strip.innerHTML='<span class="muted" style="font-size:12px">拖人員/小組到工項卡 →</span> ';
     (DS.groups||[]).forEach(function(gr){var c=document.createElement('span');c.className='gchip';c.draggable=true;c.textContent='👥'+gr.name;
@@ -1023,7 +1075,11 @@ function renderPersonView(area){
     var ppl=0;items.forEach(function(it){ppl+=(it.assignees||[]).length;});
     var sec=document.createElement('div');sec.id='day_'+off;sec.style.marginBottom='16px';
     var hd=document.createElement('div');hd.className='dayhdr d'+off;
-    hd.innerHTML='<span>'+dayLabel(off)+' — 共 '+items.length+' 件 · 出工 '+dayHeads(day)+' 人</span><span class="spacer"></span><button class="btn sm green" data-man="'+off+'">＋ 手動新增</button>';
+    var _cap=_dayCapVal();var _over=_cap>0&&items.length>_cap;
+    hd.innerHTML='<span>'+dayLabel(off)+' — 共 <b'+(_over?' style="color:#fecaca"':'')+'>'+items.length+'</b> 件 · 出工 '+dayHeads(day)+' 人</span>'
+      +(_over?'<span style="background:#dc2626;color:#fff;border-radius:8px;padding:2px 10px;font-size:12px;font-weight:700">⚠ 超過上限 '+(items.length-_cap)+' 件（上限 '+_cap+'）</span>':'')
+      +'<span style="font-size:11.5px;opacity:.85;display:inline-flex;align-items:center;gap:3px">上限 <input type="number" min="0" value="'+_cap+'" onchange="setDayCap(this.value)" title="每日件數上限（全員同步；0＝不警告）" style="width:52px;font-size:11.5px;padding:2px 4px;border-radius:6px;border:0"></span>'
+      +'<span class="spacer"></span><button class="btn sm green" data-man="'+off+'">＋ 手動新增</button>';
     hd.querySelector('[data-man]').onclick=function(){addManual(off);};
     sec.appendChild(hd);
     var by={};items.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
