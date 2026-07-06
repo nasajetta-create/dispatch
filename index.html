@@ -159,7 +159,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0705-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0706-01</span></div>
 </div>
 
 <div class="wrap">
@@ -279,7 +279,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=13; // D0705-01 候選改優先看G95點工廠商旗標(vendorFlags,名字含點工為fallback)+關頁flush;D0704-05=上限警告+順延;每次部署遞增
+var CODE_VERSION=14; // D0706-01 讀 G95 rows/meta 相容 gzip {z:base64}(G95 V0706-04 起,原只讀 d.d 造成候選退回示範資料);D0705-01=vendorFlags+關頁flush;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -407,32 +407,45 @@ function _cloudBoot(){
   });
 }
 /* ── V1.1:唯讀訂閱 G95 真實資料(rows/meta) ── */
+// D0706-01：G95 欄位文件解讀——相容 gzip 壓縮 {z:base64}（G95 V0706-04 起）與舊 {d:純JSON}
+function _g95Dec(data){
+  if(!data)return Promise.resolve(null);
+  if(typeof data.z==='string'){
+    try{
+      var bin=atob(data.z);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      var dstream=new DecompressionStream('gzip');var w=dstream.writable.getWriter();w.write(bytes);w.close();
+      return new Response(dstream.readable).arrayBuffer().then(function(buf){try{return JSON.parse(new TextDecoder().decode(buf));}catch(e){return null;}});
+    }catch(e){console.warn('g95 z dec',e);return Promise.resolve(null);}
+  }
+  if(typeof data.d==='string'){try{return Promise.resolve(JSON.parse(data.d));}catch(e){return Promise.resolve(null);}}
+  return Promise.resolve(null);
+}
 function _g95Subscribe(){
   var rowsRef=window._fb.doc(window._fb.db,'projects','main','_fields','rows');
   window._fb.onSnapshot(rowsRef,function(ds){
-    try{var d=ds.exists()?ds.data():null;window._g95Rows=(d&&d.d)?JSON.parse(d.d):[];}
-    catch(e){console.warn('g95 rows parse',e);window._g95Rows=[];}
-    _rerender();
+    var d=ds.exists()?ds.data():null;
+    _g95Dec(d).then(function(v){window._g95Rows=Array.isArray(v)?v:[];_rerender();});
   },function(e){console.warn('g95 rows snap',e);});
   var metaRef=window._fb.doc(window._fb.db,'projects','main','_fields','meta');
   window._fb.onSnapshot(metaRef,function(ds){
-    var m=null;
-    try{var d=ds.exists()?ds.data():null;m=(d&&d.d)?JSON.parse(d.d):null;}catch(e){console.warn('g95 meta parse',e);}
-    if(!m)return;
-    window._g95VendorFlags=(m.vendorFlags&&typeof m.vendorFlags==='object')?m.vendorFlags:null; // D0705-01：G95 點工廠商旗標
-    var dirty=false;
-    if(Array.isArray(m.vendors)&&m.vendors.length){
-      var j=JSON.stringify(m.vendors);
-      if(j!==JSON.stringify(DS.vendors||[])){DS.vendors=m.vendors.slice();dirty=true;}
-    }
-    if(Array.isArray(m.managers)){
-      DS.managers=DS.managers||[];
-      m.managers.forEach(function(name){
-        if(!name)return;
-        if(!DS.managers.some(function(x){return x.name===name;})){DS.managers.push({id:'g95_'+name,name:String(name),phone:'',note:'（G95 同步）'});dirty=true;}
-      });
-    }
-    if(dirty){save();_rerender();}
+    var d=ds.exists()?ds.data():null;
+    _g95Dec(d).then(function(m){
+      if(!m)return;
+      window._g95VendorFlags=(m.vendorFlags&&typeof m.vendorFlags==='object')?m.vendorFlags:null; // D0705-01：G95 點工廠商旗標
+      var dirty=false;
+      if(Array.isArray(m.vendors)&&m.vendors.length){
+        var j=JSON.stringify(m.vendors);
+        if(j!==JSON.stringify(DS.vendors||[])){DS.vendors=m.vendors.slice();dirty=true;}
+      }
+      if(Array.isArray(m.managers)){
+        DS.managers=DS.managers||[];
+        m.managers.forEach(function(name){
+          if(!name)return;
+          if(!DS.managers.some(function(x){return x.name===name;})){DS.managers.push({id:'g95_'+name,name:String(name),phone:'',note:'（G95 同步）'});dirty=true;}
+        });
+      }
+      if(dirty){save();_rerender();}
+    });
   },function(e){console.warn('g95 meta snap',e);});
 }
 function _g95RowBy(refId){
