@@ -45,6 +45,20 @@ input[type=checkbox]{width:20px;height:20px;}
 .seg{display:inline-flex;background:#f1f5f9;border-radius:18px;padding:3px;}
 .seg button{border:0;background:transparent;padding:6px 14px;border-radius:15px;font-weight:600;color:#94a3b8;min-height:30px;font-size:13px;}
 .seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.1);}
+/* D0707-02：工單工具列 C(分段控制器)＋D(彩色圖示鈕) 混搭 */
+.seg.big{background:#e2e8f0;padding:4px;border-radius:22px;}
+.seg.big button{font-size:14px;padding:8px 18px;min-height:38px;border-radius:18px;}
+.seg.big button.on{background:#0d9488;color:#fff;box-shadow:0 1px 3px rgba(13,148,136,.45);}
+.pillb{border:0;border-radius:20px;padding:0 18px;min-height:40px;font-size:14px;font-weight:700;color:#fff;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+.pillb:active{transform:translateY(1px);}
+.pillb.red{background:#dc2626;}.pillb.blue{background:#2563eb;}
+.tglb{border:1.5px solid #cbd5e1;background:#fff;border-radius:12px;padding:0 13px;min-height:38px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;display:inline-flex;align-items:center;gap:4px;}
+.tglb.on{background:#ecfeff;border-color:#22d3ee;color:#0e7490;}
+.tglb.amber.on{background:#fffbeb;border-color:#fcd34d;color:#92400e;}
+.tglb.rose.on{background:#fef2f2;border-color:#fca5a5;color:#b91c1c;}
+.fs-seg{display:inline-flex;background:#e2e8f0;border-radius:20px;padding:3px;align-items:center;}
+.fs-seg button{border:0;background:transparent;min-height:34px;padding:0 12px;border-radius:16px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;}
+.fs-seg button.on{background:#06b6d4;color:#fff;box-shadow:0 1px 2px rgba(6,182,212,.4);}
 .card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:8px 11px;font-size:13px;color:#78350f;margin-bottom:10px;}
 /* people */
@@ -159,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0707-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0707-02</span></div>
 </div>
 
 <div class="wrap">
@@ -279,7 +293,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=15; // D0707-01 工單：字體大小(4段+A-/A+)+記憶(localStorage sheetPrefs)、排序改棟內樓層Z-A+同層戶別A-Z+樓層寫在前(17F・A1)、依人員小組列寫出小組名稱；D0706-01=讀 G95 gzip {z}相容;每次部署遞增
+var CODE_VERSION=16; // D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
@@ -1426,8 +1440,9 @@ function renderWorkList(area){
 /* sheet (工單) */
 var _sheetDay=null,_sheetMode='work',_sheetNameMode='full',_sheetNoSign=false;
 var _sheetFontPct=100,_sheetFontScope='all',_sheetExportStd=false;   // D0706-02：工單字體大小＋範圍＋匯出是否放大（每台裝置記憶）
-(function(){try{var r=localStorage.getItem('g95dispatch_sheetPrefs_'+SITE);if(r){var pr=JSON.parse(r);if(pr.nameMode==='badge')_sheetNameMode='badge';if(pr.noSign)_sheetNoSign=true;if(+pr.fontPct)_sheetFontPct=Math.max(80,Math.min(200,+pr.fontPct));if(pr.fontScope==='main')_sheetFontScope='main';if(pr.exportStd)_sheetExportStd=true;}}catch(e){}})();
-function saveSheetPrefs(){try{localStorage.setItem('g95dispatch_sheetPrefs_'+SITE,JSON.stringify({nameMode:_sheetNameMode,noSign:_sheetNoSign,fontPct:_sheetFontPct,fontScope:_sheetFontScope,exportStd:_sheetExportStd}));}catch(e){}}
+var _sheetShowResp=false,_sheetShowDed=true,_sheetShowMgr=true;   // D0707-02：表格式三欄各自可切（責任廠商預設隱藏）
+(function(){try{var r=localStorage.getItem('g95dispatch_sheetPrefs_'+SITE);if(r){var pr=JSON.parse(r);if(pr.nameMode==='badge')_sheetNameMode='badge';if(pr.noSign)_sheetNoSign=true;if(+pr.fontPct)_sheetFontPct=Math.max(80,Math.min(200,+pr.fontPct));if(pr.fontScope==='main')_sheetFontScope='main';if(pr.exportStd)_sheetExportStd=true;if(pr.showResp===true)_sheetShowResp=true;if(pr.showDed===false)_sheetShowDed=false;if(pr.showMgr===false)_sheetShowMgr=false;}}catch(e){}})();
+function saveSheetPrefs(){try{localStorage.setItem('g95dispatch_sheetPrefs_'+SITE,JSON.stringify({nameMode:_sheetNameMode,noSign:_sheetNoSign,fontPct:_sheetFontPct,fontScope:_sheetFontScope,exportStd:_sheetExportStd,showResp:_sheetShowResp,showDed:_sheetShowDed,showMgr:_sheetShowMgr}));}catch(e){}}
 // D0706-02：工單專用排序＝時段→棟(A→Z)→樓層(高→低 Z-A)→同層戶別/柱(A→Z)；不動全域 byDispatch
 function bySheet(a,b){var d=slotSortKey(a)-slotSortKey(b);if(d)return d;var pa=parseUnit(a.unit||''),pb=parseUnit(b.unit||'');if(pa.bldg!==pb.bldg){if(!pa.bldg)return 1;if(!pb.bldg)return -1;return pa.bldg<pb.bldg?-1:1;}var fa=pa.floor==null?-1:pa.floor,fb=pb.floor==null?-1:pb.floor;if(fa!==fb)return fb-fa;if(pa.num!==pb.num)return pa.num-pb.num;return (a.dnum||0)-(b.dnum||0);}
 // D0706-02：戶別欄「樓層寫在前面」＝17F・A1（純住戶柱；店鋪/公設無樓層則維持原字串）
@@ -1439,6 +1454,7 @@ function _applySheetFontStyle(pct,scope){
   var sc=(+pct||100)/100;
   var st=document.getElementById('sheetFontStyle');if(!st){st=document.createElement('style');st.id='sheetFontStyle';document.head.appendChild(st);}
   var css='.sheetScaled table td,.sheetScaled table th{font-size:'+(14*sc).toFixed(1)+'px !important;line-height:1.35 !important;}';
+  css+='.sheetScaled .sh-memrow{font-size:'+(15*sc).toFixed(1)+'px !important;}.sheetScaled .sh-memrow span{font-size:'+(12*sc).toFixed(1)+'px !important;}';   // D0707-02：小組/成員列跟著放大（不再字太小）
   if(scope==='all'){
     css+='.sheetScaled table td b{font-size:inherit !important;}'
        +'.sheetScaled table td span{font-size:'+(11*sc).toFixed(1)+'px !important;}'
@@ -1508,12 +1524,13 @@ function renderSheetOne(host,day){
   var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:12px;opacity:.9">共 '+its.length+' 件 · 出工 '+Object.keys(names).length+' 人'+(doneN?' · ✓完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
   var rows='';
   if(_sheetMode==='work'){
+    var _colspan=7+(_sheetShowResp?1:0)+(_sheetShowDed?1:0)+(_sheetShowMgr?1:0)+(_sheetNoSign?0:1);   // D0707-02：欄位可切→colspan 動態
     var _bl='',_z=0,_segs=[];its.forEach(function(it){var k=bldgKey(it.unit);if(!_segs.length||_segs[_segs.length-1].k!==k)_segs.push({k:k,n:0});_segs[_segs.length-1].n++;});
     its.forEach(function(it,ix){var x=sheetRowCells(it);
-      var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+(_sheetNoSign?10:11)+'">'+bk+'（'+_segs.shift().n+' 件）</td></tr>';_bl=bk;_z=0;}
+      var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+_colspan+'">'+bk+'（'+_segs.shift().n+' 件）</td></tr>';_bl=bk;_z=0;}
       var st=(it.done?'color:#94a3b8;':'')+(_z%2?'background:#f8fafc;':'');_z++;
-      rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+esc(it.dedVendor||'')+'</td><td>'+esc(it.mgr||'')+'</td><td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
-    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th>時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>扣款廠商</th><th>管理</th><th>人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+(_sheetNoSign?10:11)+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
+      rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td style="white-space:nowrap">'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:11px">#'+esc(it.refId)+'</span>':'')+'</td><td style="white-space:nowrap"><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td>'+(_sheetShowResp?'<td style="white-space:nowrap">'+esc(it.respVendor||'')+'</td>':'')+(_sheetShowDed?'<td style="white-space:nowrap">'+esc(it.dedVendor||'')+'</td>':'')+(_sheetShowMgr?'<td style="white-space:nowrap">'+esc(it.mgr||'')+'</td>':'')+'<td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
+    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th style="white-space:nowrap">時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th>'+(_sheetShowResp?'<th style="white-space:nowrap">責任廠商</th>':'')+(_sheetShowDed?'<th style="white-space:nowrap">扣款廠商</th>':'')+(_sheetShowMgr?'<th>管理</th>':'')+'<th style="white-space:nowrap">人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+_colspan+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
   }else{
     var by={};its.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
     var pids=Object.keys(by);
@@ -1537,7 +1554,7 @@ function renderSheetOne(host,day){
       members.sort(function(a,b){return (b.foreman?1:0)-(a.foreman?1:0);});
       var _gname=isTeam?_teamNameFor(grp):'';
       var memberRow=isTeam?
-        ('<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">'+
+        ('<div class="sh-memrow" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">'+
         (_gname?'<span style="font-size:12.5px;font-weight:700;color:#5b21b6;background:#ede9fe;border:1px solid #c4b5fd;border-radius:9px;padding:1px 9px">👥 '+esc(_gname)+'</span>':'')+
         '<span class="muted" style="font-size:11.5px">'+(_gname?'成員：':'小組成員：')+'</span>'+
         members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
@@ -1572,23 +1589,33 @@ function renderSheetOne(host,day){
     '人員合計：'+(Object.keys(names).join('、')||'—')+'（'+Object.keys(names).length+'人）<br>'+
     '機具合計：'+(Object.keys(macSum).map(function(k){return k+'×'+macSum[k];}).join('、')||'—')+(cross?'｜跨天延續：'+cross:'')+'</div>';
   paper.innerHTML=hd+tbl+foot;
-  var act=document.createElement('div');act.className='row sheet-actions';act.style.margin='0 0 12px';
-  act.innerHTML='<button class="btn primary" id="shPdf">PDF</button><button class="btn" id="shCap">截圖</button>'+
-    '<div class="seg" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
-    '<div class="seg" id="shName"><button data-n="full"'+(_sheetNameMode==='full'?' class="on"':'')+'>全名</button><button data-n="badge"'+(_sheetNameMode==='badge'?' class="on"':'')+'>徽章</button></div>'+
-    '<button class="btn sm" id="shSign" style="'+(_sheetNoSign?'background:#fef2f2;border-color:#fca5a5;color:#b91c1c':'')+'">'+(_sheetNoSign?'✓ 免簽':'☐ 免簽')+'</button>'+
-    '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="btn" id="shFix" style="background:#fffbeb;border-color:#fcd34d;color:#92400e">✎ 去分配區改這天</button>';
+  var act=document.createElement('div');act.className='row sheet-actions';act.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
+  act.innerHTML='<button class="pillb red" id="shPdf">📄 PDF</button><button class="pillb blue" id="shCap">📷 截圖</button>'+
+    '<div class="seg big" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
+    '<div class="seg big" id="shName"><button data-n="full"'+(_sheetNameMode==='full'?' class="on"':'')+'>全名</button><button data-n="badge"'+(_sheetNameMode==='badge'?' class="on"':'')+'>徽章</button></div>'+
+    '<button class="tglb rose'+(_sheetNoSign?' on':'')+'" id="shSign">'+(_sheetNoSign?'✓ 免簽':'☐ 免簽')+'</button>'+
+    '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="tglb amber on" id="shFix">✎ 去分配區改這天</button>';
   host.appendChild(act);
-  // D0706-02：工單字體控制列
-  var fbar=document.createElement('div');fbar.className='row no-print';fbar.style.cssText='margin:0 0 10px;gap:6px;flex-wrap:wrap;align-items:center';
-  var presetBtns=[100,115,130,150].map(function(p){return '<button class="btn sm" data-fp="'+p+'" style="'+(_sheetFontPct===p?'background:#0d9488;color:#fff;border-color:#0d9488;':'')+'padding:5px 9px">'+p+'%</button>';}).join('');
-  fbar.innerHTML='<span class="muted" style="font-size:12.5px;font-weight:700">🔎 字體</span>'+
-    '<div class="seg"><button data-fa="dec">A−</button><button data-fa="inc">A＋</button></div>'+
-    '<b id="fsNow" style="min-width:46px;text-align:center;color:#0d9488;font-size:14px">'+_sheetFontPct+'%</b>'+
-    presetBtns+
-    '<button class="btn sm" id="shScope" style="'+(_sheetFontScope==='main'?'background:#ecfeff;border-color:#67e8f9;color:#0e7490;':'')+'margin-left:4px">'+(_sheetFontScope==='main'?'✓ 只放大主要欄位':'☐ 只放大主要欄位')+'</button>'+
-    '<button class="btn sm" id="shExpStd" style="'+(_sheetExportStd?'background:#fef2f2;border-color:#fca5a5;color:#b91c1c;':'')+'">'+(_sheetExportStd?'✓ 匯出用標準字級':'☐ 匯出用標準字級')+'</button>';
+  // D0706-02/D0707-02：工單字體控制列（分段控制器）
+  var fbar=document.createElement('div');fbar.className='row no-print';fbar.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
+  var fsPresets=[100,115,130,150].map(function(p){return '<button data-fp="'+p+'"'+(_sheetFontPct===p?' class="on"':'')+'>'+p+'</button>';}).join('');
+  fbar.innerHTML='<span class="muted" style="font-size:13px;font-weight:700">🔎 字體</span>'+
+    '<div class="fs-seg" id="shFs"><button data-fa="dec">A−</button>'+fsPresets+'<button data-fa="inc">A＋</button></div>'+
+    '<b id="fsNow" style="min-width:46px;text-align:center;color:#06b6d4;font-size:14px">'+_sheetFontPct+'%</b>'+
+    '<button class="tglb'+(_sheetFontScope==='main'?' on':'')+'" id="shScope">'+(_sheetFontScope==='main'?'✓ 只放大主要欄位':'☐ 只放大主要欄位')+'</button>'+
+    '<button class="tglb rose'+(_sheetExportStd?' on':'')+'" id="shExpStd">'+(_sheetExportStd?'✓ 匯出用標準字級':'☐ 匯出用標準字級')+'</button>';
   host.appendChild(fbar);
+  // D0707-02：表格式欄位顯示切換（責任廠商/扣款廠商/管理，各自可取消；只在表格式有意義）
+  if(_sheetMode==='work'){
+    var cbar=document.createElement('div');cbar.className='row no-print';cbar.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
+    cbar.innerHTML='<span class="muted" style="font-size:13px;font-weight:700">🗂 欄位</span>'+
+      '<button class="tglb'+(_sheetShowResp?' on':'')+'" data-col="resp">'+(_sheetShowResp?'✓ 責任廠商':'☐ 責任廠商')+'</button>'+
+      '<button class="tglb'+(_sheetShowDed?' on':'')+'" data-col="ded">'+(_sheetShowDed?'✓ 扣款廠商':'☐ 扣款廠商')+'</button>'+
+      '<button class="tglb'+(_sheetShowMgr?' on':'')+'" data-col="mgr">'+(_sheetShowMgr?'✓ 管理':'☐ 管理')+'</button>'+
+      '<span class="muted" style="font-size:11.5px">（關掉的欄位工單上不顯示；設定會記住）</span>';
+    host.appendChild(cbar);
+    cbar.querySelectorAll('[data-col]').forEach(function(b){b.onclick=function(){var c=b.dataset.col;if(c==='resp')_sheetShowResp=!_sheetShowResp;else if(c==='ded')_sheetShowDed=!_sheetShowDed;else if(c==='mgr')_sheetShowMgr=!_sheetShowMgr;saveSheetPrefs();renderSheet();};});
+  }
   host.appendChild(paper);
   paper.classList.add('sheetScaled');
   _applySheetFontStyle(_sheetFontPct,_sheetFontScope);
