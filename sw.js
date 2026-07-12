@@ -1,5 +1,5 @@
-// 點工派遣看板 — Service Worker(V3:HTML 網路優先,根治更新後還看到舊版的問題)
-var CACHE = 'dispatch-v3';
+// 點工派遣看板 — Service Worker(V4:HTML 網路優先,根治更新後還看到舊版的問題;v4 換新 App 圖示)
+var CACHE = 'dispatch-v4';
 var ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function(e){
   self.skipWaiting();
