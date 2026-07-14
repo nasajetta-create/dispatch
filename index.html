@@ -173,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0707-02</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0714-01</span></div>
 </div>
 
 <div class="wrap">
@@ -293,10 +293,10 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=16; // D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=17; // D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
-var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com'];
+var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
 function _loginAllowed(email){var e=String(email||'').toLowerCase();return LOGIN_ALLOW.map(function(x){return String(x).toLowerCase();}).indexOf(e)>=0;}
 var LS_KEY='g95dispatch_v1_'+SITE;
 var DS=null;
@@ -1860,3 +1860,4 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window
 </script>
 </body>
 </html>
+<!-- d0714-01 index -->
