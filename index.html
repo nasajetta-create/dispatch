@@ -173,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0714-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0718-01</span></div>
 </div>
 
 <div class="wrap">
@@ -261,7 +261,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction, deleteDoc }
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction, deleteDoc }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { initializeAppCheck, ReCaptchaV3Provider }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
@@ -279,7 +279,12 @@ const app = initializeApp(FIREBASE_CONFIG);
 try {
   initializeAppCheck(app, { provider: new ReCaptchaV3Provider('6Lc3IDItAAAAADGMtZvMcwNApxnc1ecxGuYdHbCx'), isTokenAutoRefreshEnabled: true });
 } catch(e){ console.warn('AppCheck init failed', e); }
-const db = getFirestore(app);
+// D0718-01：開啟 Firestore 本地快取（IndexedDB、多分頁共用）＝改讀 live defects 集合後，
+// 重複開頁只讀差異、不再每次整包 ~3400 筆＝控 Firestore 讀取量。init 失敗（不支援/已初始化）自動退回 getFirestore。
+let db;
+try {
+  db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+} catch(e){ console.warn('[fs] persistentLocalCache init 失敗，退回 getFirestore', e); db = getFirestore(app); }
 const auth = getAuth(app);
 window._fb = { db:db, doc:doc, collection:collection, setDoc:setDoc, getDoc:getDoc, getDocs:getDocs, onSnapshot:onSnapshot, runTransaction:runTransaction, deleteDoc:deleteDoc };
 window._authSignInGoogle = function(){ return signInWithPopup(auth, new GoogleAuthProvider()); };
@@ -293,7 +298,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=17; // D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=18; // D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -435,11 +440,22 @@ function _g95Dec(data){
   return Promise.resolve(null);
 }
 function _g95Subscribe(){
-  var rowsRef=window._fb.doc(window._fb.db,'projects','main','_fields','rows');
-  window._fb.onSnapshot(rowsRef,function(ds){
-    var d=ds.exists()?ds.data():null;
-    _g95Dec(d).then(function(v){window._g95Rows=Array.isArray(v)?v:[];_rerender();});
-  },function(e){console.warn('g95 rows snap',e);});
+  // D0718-01：改讀 live defects 集合（projects/main/defects/{key}={d:列物件,st:'o'/'d',mt,del,by,ver}）。
+  // 原本讀 _fields/rows＝G95 V0716 起已凍結不再更新（勾選=改 defects st:'d'、刪除=defects del:true 墓碑），
+  // 故舊法看不到 G95 端的完成/刪除。改讀 defects：墓碑(del)排除、完成(st:'d')標 actualDone 讓既有銷項/篩掉邏輯生效。
+  var defectsCol=window._fb.collection(window._fb.doc(window._fb.db,'projects','main'),'defects');
+  window._fb.onSnapshot(defectsCol,function(snap){
+    var out=[];
+    snap.forEach(function(ds){
+      var x=ds.data(); if(!x||x.del) return;                 // 墓碑(刪除)→排除
+      var row=x.d; if(!row||typeof row!=='object') return;
+      if(x.st==='d' && !row.actualDone){                      // 完成→補 actualDone＝_g95Cands 會跳過、srcStatus 判定 done
+        row=Object.assign({},row); row.actualDone=(row.planDone||todayISO());
+      }
+      out.push(row);
+    });
+    window._g95Rows=out; _rerender();
+  },function(e){console.warn('g95 defects snap',e);});
   var metaRef=window._fb.doc(window._fb.db,'projects','main','_fields','meta');
   window._fb.onSnapshot(metaRef,function(ds){
     var d=ds.exists()?ds.data():null;
@@ -1861,3 +1877,4 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window
 </body>
 </html>
 <!-- d0714-01 index -->
+<!-- d0718-01 index -->
