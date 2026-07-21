@@ -173,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0721-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0721-02</span></div>
 </div>
 
 <div class="wrap">
@@ -303,7 +303,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=19; // D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=20; // D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -446,10 +446,17 @@ function _g95Dec(data){
   if(typeof data.d==='string'){try{return Promise.resolve(JSON.parse(data.d));}catch(e){return Promise.resolve(null);}}
   return Promise.resolve(null);
 }
-function _g95Subscribe(){
-  // D0718-01：改讀 live defects 集合（projects/main/defects/{key}={d:列物件,st:'o'/'d',mt,del,by,ver}）。
-  // 原本讀 _fields/rows＝G95 V0716 起已凍結不再更新（勾選=改 defects st:'d'、刪除=defects del:true 墓碑），
-  // 故舊法看不到 G95 端的完成/刪除。改讀 defects：墓碑(del)排除、完成(st:'d')標 actualDone 讓既有銷項/篩掉邏輯生效。
+var _g95Mode='';   // D0721-02：''=未定 / 'cands'=讀精簡候選文件 / 'defects'=退回整包
+function _g95ApplyCands(list){
+  var arr=Array.isArray(list)?list:[];
+  window._g95CandList=arr;
+  var by={};for(var i=0;i<arr.length;i++){var c=arr[i];if(c&&c.refId!=null)by[String(c.refId)]=c;}
+  window._g95CandById=by;
+  window._g95CandReady=true;
+  _rerender();
+}
+function _g95SubscribeDefects(){
+  // 退回法（D0718-01）：dispatch_cands 文件不存在（G95 尚未上 D0721-02）時，改讀整包 defects。
   var defectsCol=window._fb.collection(window._fb.doc(window._fb.db,'projects','main'),'defects');
   window._fb.onSnapshot(defectsCol,function(snap){
     var out=[];
@@ -463,6 +470,20 @@ function _g95Subscribe(){
     });
     window._g95Rows=out; _rerender();
   },function(e){console.warn('g95 defects snap',e);});
+}
+function _g95Subscribe(){
+  // D0721-02：優先讀 G95 存檔時算好的精簡候選文件 _fields/dispatch_cands（讀 1 份取代整包 defects ~8000 筆）。
+  // 文件不存在＝G95 尚未上新版→退回讀整包 defects（_g95SubscribeDefects，維持 D0718-01 行為）＝可平滑上線。
+  var candRef=window._fb.doc(window._fb.db,'projects','main','_fields','dispatch_cands');
+  var fellBack=false;
+  window._fb.onSnapshot(candRef,function(ds){
+    if(ds.exists()){
+      _g95Mode='cands';
+      _g95Dec(ds.data()).then(function(list){ _g95ApplyCands(list||[]); });
+    }else{
+      if(!fellBack){fellBack=true;_g95Mode='defects';_g95SubscribeDefects();}
+    }
+  },function(e){console.warn('g95 cands snap',e);if(!fellBack){fellBack=true;_g95Mode='defects';_g95SubscribeDefects();}});
   var metaRef=window._fb.doc(window._fb.db,'projects','main','_fields','meta');
   window._fb.onSnapshot(metaRef,function(ds){
     var d=ds.exists()?ds.data():null;
@@ -493,6 +514,7 @@ function _g95RowBy(refId){
 function _g95RowContent(r){return (r.issue||'')+(r.note?'（'+r.note+'）':'');}
 function _g95RowUnit(r){return String(r.unit||'')+(r.floor?' · '+r.floor:'');}
 function _g95Cands(){
+  if(_g95Mode==='cands')return window._g95CandReady?(window._g95CandList||[]):null; // D0721-02：直接用 G95 算好的候選
   var rows=window._g95Rows;
   if(!rows||!rows.length)return null;
   var out=[];
@@ -526,6 +548,14 @@ function _syncFeedback(refId){
 function srcStatus(it){
   if(!it.refId)return{done:false,chg:false};
   if(!it._live)return{done:!!it.srcDone,chg:!!it.srcChanged}; // 示範/舊資料不跟真實 G95 比對(防假#號撞真實列)
+  if(_g95Mode==='cands'){ // D0721-02：候選文件模式——用候選清單判定完成/變更
+    if(!window._g95CandReady)return{done:!!it.srcDone,chg:!!it.srcChanged};
+    var cc=(window._g95CandById||{})[String(it.refId)];
+    if(!cc)return{done:true,chg:false};   // 不在開放候選＝已完成/刪除/移出點工→銷項（等同舊法 actualDone）
+    var sc=it.src||{};
+    var content2=(cc.content||'')+(cc.note?'（'+cc.note+'）':'');
+    return{done:false,chg:(sc.content||'')!==content2||(sc.unit||'')!==(cc.unit||'')||(sc.vendor||'')!==(cc.vendor||''),content:content2,unit:(cc.unit||''),vendor:(cc.vendor||'')};
+  }
   var r=_g95RowBy(it.refId);
   if(!r)return{done:!!it.srcDone,chg:!!it.srcChanged};
   if(r.actualDone)return{done:true,chg:false};
@@ -1346,7 +1376,7 @@ function importCandidate(c,off){
   allocSerial(function(n){
     var day=dayOf(off);var seq=itemsOn(day).length+1;
     var content=c.content+(c.note?'（'+c.note+'）':'');
-    var live=!!(window._g95Rows&&window._g95Rows.length);
+    var live=!!(window._g95Rows&&window._g95Rows.length)||(_g95Mode==='cands'&&!!window._g95CandReady); // D0721-02
     DS.items.push({id:uid(),dnum:n,seq:seq,refId:c.refId,round:c.round||'初驗',manual:false,content:content,unit:c.unit,respVendor:c.vendor,mgr:c.mgr||'',day:day,crossId:'',slot:'am',slotType:'preset',start:'',end:'',reqCount:1,assignees:[],machines:[],src:{content:content,unit:c.unit,vendor:c.vendor,due:c.due},srcChanged:false,srcDone:false,_live:live});
     save();renderBoard();
   });
@@ -1929,4 +1959,4 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window
 </script>
 </body>
 </html>
-<!-- d0721-01 preview -->
+<!-- d0721-02 preview -->
