@@ -173,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0718-01</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0721-01</span></div>
 </div>
 
 <div class="wrap">
@@ -183,6 +183,11 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
     📦 週一提醒：請備份上週資料（工單只保留近 10 天）
     <button class="btn sm" id="bkNow" style="margin-left:8px;background:#f59e0b;color:#fff;border-color:#f59e0b">一鍵備份</button>
     <button class="btn sm" id="bkLater" style="margin-left:4px">稍後</button>
+  </div>
+  <div id="dispHealth" style="display:none;background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:9px 12px;font-size:13px;color:#854d0e;margin-bottom:10px">
+    <span id="dispHealthTxt"></span>
+    <button class="btn sm" id="dispHealthBk" style="margin-left:8px;background:#f59e0b;color:#fff;border-color:#f59e0b">先備份</button>
+    <button class="btn sm" id="dispHealthOk" style="margin-left:4px">我知道了</button>
   </div>
 
   <!-- BOARD -->
@@ -253,7 +258,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <div class="mask on" id="loginMask"><div class="modal">
   <img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:14px;margin-bottom:8px">
   <h3 style="margin:6px 0">點工派遣看板</h3>
-  <p class="muted" style="font-size:13px">與 G95 同一組 Google 登入；寫入限 9 人名單，其餘帳號唯讀。</p>
+  <p class="muted" style="font-size:13px">與 G95 同一組 Google 登入；寫入限授權名單，其餘帳號唯讀。</p>
   <div id="loginStatus" class="muted" style="font-size:13px;margin:8px 0">⏳ 連線中…</div>
   <button class="btn primary" id="loginBtn" style="width:100%">使用 Google 登入</button>
   <button class="btn" id="loginLocalBtn" style="width:100%;margin-top:8px;display:none">離線試用（僅存這台裝置）</button>
@@ -298,7 +303,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=18; // D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=19; // D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -421,6 +426,8 @@ function _cloudBoot(){
     if(!window._PREVIEW&&_allowed){window._fb.setDoc(_siteDoc(),{codeVersion:CODE_VERSION},{merge:true}).catch(function(){});}
     _g95Subscribe();
     _setSync('✓ 已同步',true);
+    setTimeout(_autoWeeklyBackup,3000);   // D0721-01：雲端就緒後靜默週備份
+    setTimeout(_dispHealthCheck,8000);    // D0721-01：開機健檢（延遲跑，讓快照先到）
   }).catch(function(e){
     console.warn('cloudBoot',e);_setSync('⚠ 讀取失敗(規則發布了嗎?)',false);
   });
@@ -1754,6 +1761,50 @@ function backupNow(){
   var b=document.getElementById('bkBanner');if(b)b.style.display='none';
 }
 function _weekKey(){var d=new Date();var dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);return todayISO(d);}
+/* D0721-01：每週自動備份——本週首次開啟且有雲端寫入權時，靜默寫一份到 dispatch/{SITE}/backups/{週}；無雲端/唯讀/太大＝退回週一橫幅提醒。 */
+function _autoWeeklyBackup(){
+  try{
+    if(DS.bkWeek===_weekKey())return;                         // 本週已備份過
+    if(!_cloudOn||!_allowed||_readonly){                       // 無雲端或唯讀→退回橫幅
+      if(new Date().getDay()===1){var b0=document.getElementById('bkBanner');if(b0)b0.style.display='';}
+      return;
+    }
+    var json=JSON.stringify(DS);
+    if(json.length>900000){                                   // 太大不塞單文件→退回橫幅手動下載
+      var b1=document.getElementById('bkBanner');if(b1)b1.style.display='';
+      return;
+    }
+    var wk=_weekKey();
+    window._fb.setDoc(window._fb.doc(_siteDoc(),'backups',wk),{week:wk,at:Date.now(),by:(DS.user||_userEmail||''),ver:CODE_VERSION,data:json}).then(function(){
+      DS.bkWeek=wk;save();
+      var b=document.getElementById('bkBanner');if(b)b.style.display='none';
+      console.log('[備份] 本週自動備份完成',wk,json.length+' bytes');
+    }).catch(function(e){
+      console.warn('[備份] 自動備份失敗，退回手動',e);
+      if(new Date().getDay()===1){var b2=document.getElementById('bkBanner');if(b2)b2.style.display='';}
+    });
+  }catch(e){console.warn('autoBackup',e);}
+}
+/* D0721-01：開機健檢——掃各集合同內容多份（疑似資料翻倍/重複匯入），只警示不改資料。 */
+function _dispHealthCheck(){
+  try{
+    var dup=0;
+    ['people','machines','managers','groups','items'].forEach(function(type){
+      var seen={},arr=DS[type]||[];
+      arr.forEach(function(o){
+        if(!o)return;
+        var c=Object.assign({},o);delete c.id;delete c._mt;delete c._del;
+        var k=type+'|'+JSON.stringify(c);
+        if(seen[k])dup++;else seen[k]=1;
+      });
+    });
+    if(dup>3){
+      var t=document.getElementById('dispHealthTxt');if(t)t.textContent='⚠ 健檢：偵測到 '+dup+' 筆疑似重複資料（同內容多份），建議先備份再檢查。';
+      var b=document.getElementById('dispHealth');if(b)b.style.display='';
+      console.warn('[健檢] 疑似重複',dup);
+    }else{console.log('[健檢] 資料正常（疑似重複',dup,'筆）');}
+  }catch(e){console.warn('health',e);}
+}
 
 /* export */
 function withClean(cb){var hide=document.querySelectorAll('#ctrlRows, .staging, .bottomnav, .appbar, .note, [data-imp], [data-man], .editI, .crossI, .delI, .rmA, .people-strip, .srcbadge');var arr=[];hide.forEach(function(e){arr.push([e,e.style.display]);e.style.display='none';});setTimeout(function(){cb(function(){arr.forEach(function(p){p[0].style.display=p[1]||'';});});},30);}
@@ -1855,6 +1906,8 @@ function boot(){
   if(new Date().getDay()===1&&DS.bkWeek!==_weekKey()){document.getElementById('bkBanner').style.display='';}
   document.getElementById('bkNow').onclick=backupNow;
   document.getElementById('bkLater').onclick=function(){document.getElementById('bkBanner').style.display='none';};
+  document.getElementById('dispHealthBk').onclick=backupNow;
+  document.getElementById('dispHealthOk').onclick=function(){document.getElementById('dispHealth').style.display='none';};
   document.getElementById('stgSearch').oninput=renderStaging;
   document.getElementById('stgSort').onchange=renderStaging;
   document.getElementById('stgDays').onchange=function(){DS.candDays=+this.value||3;save();renderStaging();};
@@ -1876,5 +1929,4 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window
 </script>
 </body>
 </html>
-<!-- d0714-01 index -->
-<!-- d0718-01 preview -->
+<!-- d0721-01 preview -->
