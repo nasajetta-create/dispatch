@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>點工派遣</title>
 <meta name="theme-color" content="#3D6EA5">
 <meta name="mobile-web-app-capable" content="yes">
@@ -175,12 +175,17 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .wcard .prow{border:none;border-top:1px solid #DDE7F0;margin-bottom:0;background:transparent}
 .wcard .prow:first-of-type{border-top:none}
 .pcard{border:1px solid #D8E4EF;margin-bottom:-1px;background:#fff}
+
+/* D0724-03 ②手機頂列鎖一列（比照 G95 V0724-05） */
+.sub{flex-wrap:nowrap;overflow:hidden}
+.sub>*{white-space:nowrap;flex:none}
+@media(max-width:560px){.sub{font-size:12.5px;gap:7px}}
 </style>
 </head>
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0724-02</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0724-03</span></div>
 </div>
 
 <div class="wrap">
@@ -266,7 +271,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
   <img src="icon-192.png" alt="" style="width:64px;height:64px;border-radius:0;margin-bottom:8px">
   <h3 style="margin:6px 0">點工派遣看板</h3>
   <p class="muted" style="font-size:15px">與 G95 同一組 Google 登入；寫入限授權名單，其餘帳號唯讀。</p>
-  <div id="loginStatus" class="muted" style="font-size:15px;margin:8px 0">⏳ 連線中…</div>
+  <div id="loginStatus" class="muted" style="font-size:15px;margin:8px 0"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M7 3h10M7 21h10M8 3c0 7 8 7 8 11M16 3c0 7-8 7-8 11M8 21c0-4 8-4 8-7M16 21c0-3-8-3-8-7"/></svg> 連線中…</div>
   <button class="btn primary" id="loginBtn" style="width:100%">使用 Google 登入</button>
   <button class="btn" id="loginLocalBtn" style="width:100%;margin-top:8px;display:none">離線試用（僅存這台裝置）</button>
 </div></div>
@@ -318,7 +323,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=22; // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=23; // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -337,7 +342,7 @@ function save(){
   // D0724-01：閒置守門（同 G95 V0723-01）＝閒置 5 分鐘鎖存檔，避免舊分頁把舊狀態寫回
   if(window._idleLocked){
     try{ _dispShowIdleBanner(); }catch(e){}
-    try{ _setSync('⛔ 已閒置，請點「重新連線」',false); }catch(e){}
+    try{ _setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg> 已閒置，請點「重新連線」',false); }catch(e){}
     return;
   }
   try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){console.warn(e);}
@@ -396,7 +401,7 @@ var _lastSync={},_touch={};
 function _siteDoc(){return window._fb.doc(window._fb.db,'dispatch',SITE);}
 function _companyDoc(){return window._fb.doc(window._fb.db,'dispatch','company');}
 function _colRef(type){return type==='items'?window._fb.collection(_siteDoc(),'items'):window._fb.collection(_companyDoc(),type);}
-function _setSync(txt,ok){var el=document.getElementById('syncTag');if(el){el.textContent=txt;el.style.color=ok?'#bbf7d0':'#fecaca';}}
+function _setSync(txt,ok){var el=document.getElementById('syncTag');if(el){el.innerHTML=txt;el.style.color=ok?'#bbf7d0':'#fecaca';}}
 // D0705-01：關頁/切出分頁前把還在防抖等待的變更立刻送出
 document.addEventListener('visibilitychange',function(){
   try{if(document.visibilityState==='hidden'&&_flushTimer&&_cloudOn&&!_readonly){clearTimeout(_flushTimer);_flushTimer=null;_flush();}}catch(e){}
@@ -411,7 +416,7 @@ function _flush(){
       var j=JSON.stringify(cur[id]);
       if(last[id]===j)return;
       var data=JSON.parse(j);data._mt=Date.now();delete data._del;
-      window._fb.setDoc(window._fb.doc(_colRef(type),id),data).catch(function(e){console.warn('flush',type,id,e);_setSync('⚠ 寫入失敗',false);});
+      window._fb.setDoc(window._fb.doc(_colRef(type),id),data).catch(function(e){console.warn('flush',type,id,e);_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 寫入失敗',false);});
       last[id]=j;_touch[type+'/'+id]=Date.now();wrote++;
     });
     Object.keys(last).forEach(function(id){
@@ -422,7 +427,7 @@ function _flush(){
   });
   var mf=JSON.stringify(DS.machineFields||[]);
   if(_lastSync._mf!==mf){window._fb.setDoc(_companyDoc(),{machineFields:DS.machineFields||[],_mt:Date.now()},{merge:true}).catch(function(e){console.warn(e);});_lastSync._mf=mf;wrote++;}
-  if(wrote)_setSync('✓ 已同步',true);
+  if(wrote)_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);
 }
 function _applyRemoteType(type,snap){
   if(type==='people'&&_pplEdit)return; // 全員編輯中暫停蓋入,退出後下一次快照補上
@@ -472,7 +477,7 @@ function _cloudBoot(){
       }else{DS.people=[];DS.machines=[];DS.groups=[];DS.managers=[];DS.items=[];DS.machineFields=[];save();_rerender();}
     }else{_markAllSynced();}
     SYNC_TYPES.forEach(function(type){
-      window._fb.onSnapshot(_colRef(type),function(s){_applyRemoteType(type,s);},function(e){console.warn('snap',type,e);_setSync('⚠ 連線異常',false);});
+      window._fb.onSnapshot(_colRef(type),function(s){_applyRemoteType(type,s);},function(e){console.warn('snap',type,e);_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 連線異常',false);});
     });
     window._fb.onSnapshot(_siteDoc(),function(ds){
       var d=ds.exists()?ds.data():{};
@@ -485,7 +490,7 @@ function _cloudBoot(){
         if(!window._vgCd){
           window._vgCd=10;
           var _tick=function(){
-            b.textContent='⚠ 偵測到新版本（v'+d.codeVersion+' > v'+CODE_VERSION+'），此頁已轉唯讀，'+window._vgCd+' 秒後自動更新…';
+            b.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 偵測到新版本（v'+d.codeVersion+' > v'+CODE_VERSION+'），此頁已轉唯讀，'+window._vgCd+' 秒後自動更新…';
             if(window._vgCd<=0){ try{ location.replace((location.pathname||'/')+'?cb='+Date.now()); }catch(e){ location.reload(); } return; }
             window._vgCd--; setTimeout(_tick,1000);
           };
@@ -499,11 +504,11 @@ function _cloudBoot(){
     });
     if(!window._PREVIEW&&_allowed){window._fb.setDoc(_siteDoc(),{codeVersion:CODE_VERSION},{merge:true}).catch(function(){});}
     _g95Subscribe();
-    _setSync('✓ 已同步',true);
+    _setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);
     setTimeout(_autoWeeklyBackup,3000);   // D0721-01：雲端就緒後靜默週備份
     setTimeout(_dispHealthCheck,8000);    // D0721-01：開機健檢（延遲跑，讓快照先到）
   }).catch(function(e){
-    console.warn('cloudBoot',e);_setSync('⚠ 讀取失敗(規則發布了嗎?)',false);
+    console.warn('cloudBoot',e);_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 讀取失敗(規則發布了嗎?)',false);
   });
 }
 /* ── V1.1:唯讀訂閱 G95 真實資料(rows/meta) ── */
@@ -553,6 +558,7 @@ function _g95Subscribe(){
   window._fb.onSnapshot(candRef,function(ds){
     if(ds.exists()){
       _g95Mode='cands';
+      try{window._g95CandsMt=ds.data()._mt||0;}catch(e){window._g95CandsMt=0;}
       _g95Dec(ds.data()).then(function(list){ _g95ApplyCands(list||[]); });
     }else{
       if(!fellBack){fellBack=true;_g95Mode='defects';_g95SubscribeDefects();}
@@ -733,7 +739,7 @@ function renderGroups(){
 function groupCard(g){
   var d=document.createElement('div');d.className='gcard';
   var mem=(g.memberIds||[]).slice().sort(function(a,b){return (b===g.leaderId?1:0)-(a===g.leaderId?1:0);});
-  var chips=mem.map(function(pid){var p=personById(pid);if(!p)return'';var lead=pid===g.leaderId;return '<span class="chip'+(lead?' lead':'')+'">'+(lead?'★':'')+esc(p.name)+'</span>';}).join('');
+  var chips=mem.map(function(pid){var p=personById(pid);if(!p)return'';var lead=pid===g.leaderId;return '<span class="chip'+(lead?' lead':'')+'">'+(lead?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+'</span>';}).join('');
   d.innerHTML='<div class="row"><span class="gname">'+esc(g.name)+'</span><span class="spacer"></span><span class="muted" style="font-size:13.5px">'+(g.memberIds||[]).length+'人</span></div>'+
     '<div style="margin:7px 0 9px">'+(chips||'<span class="muted" style="font-size:13.5px">（無成員）</span>')+'</div>'+
     '<div class="row"><button class="btn sm editG">編輯</button><button class="btn sm danger delG">刪除</button></div>';
@@ -750,7 +756,7 @@ function editGroup(id,presetIds){
   var box=document.getElementById('modalBox');
   var rows=DS.people.map(function(p){var on=(g.memberIds||[]).indexOf(p.id)>=0;
     return '<div class="pick-row"><label style="flex:1"><input type="checkbox" class="gm" data-id="'+p.id+'"'+(on?' checked':'')+'> '+esc(p.name)+(p.migrant?' <span class="badge">移工</span>':'')+' <span class="muted" style="font-size:13.5px">'+esc(p.company)+'·'+esc(p.skill)+'</span></label>'+
-      '<label class="muted"><input type="radio" name="gl" class="gl" data-id="'+p.id+'"'+(g.leaderId===p.id?' checked':'')+'> ★組領班</label></div>';}).join('');
+      '<label class="muted"><input type="radio" name="gl" class="gl" data-id="'+p.id+'"'+(g.leaderId===p.id?' checked':'')+'> <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>組領班</label></div>';}).join('');
   box.innerHTML='<h3>'+(id?'編輯小組':'新增小組')+'</h3>'+
    '<div class="fld"><label>組名（必填）</label><input id="g_name" value="'+esc(g.name)+'"></div>'+
    '<div class="fld"><label>成員（勾選）＋組領班（必選一人）</label><div style="max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:0;padding:6px">'+rows+'</div></div>'+
@@ -778,7 +784,7 @@ function editGroup(id,presetIds){
 function manageGroups(){
   var box=document.getElementById('modalBox');
   var list=(DS.groups||[]).map(function(g){
-    var names=(g.memberIds||[]).map(function(pid){var p=personById(pid);return p?((pid===g.leaderId?'★':'')+p.name):'';}).join('、');
+    var names=(g.memberIds||[]).map(function(pid){var p=personById(pid);return p?((pid===g.leaderId?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+p.name):'';}).join('、');
     return '<div class="pick-row"><div style="flex:1"><b style="color:#5b21b6">'+esc(g.name)+'</b><div class="muted" style="font-size:13.5px">'+names+'</div></div><button class="btn sm eG" data-id="'+g.id+'">編輯</button></div>';}).join('');
   box.innerHTML='<h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg> 常用小組</h3>'+(list||'<p class="muted">尚無小組</p>')+
    '<div class="row" style="margin-top:12px"><button class="btn sm" id="newG" style="background:#7c3aed;color:#fff;border-color:#7c3aed">＋ 新增小組</button><span class="spacer"></span><button class="btn" id="cancelM">關閉</button></div>';
@@ -896,12 +902,12 @@ function personCard(p,sec){
   };
   var gb=groupsOf(p.id).map(function(gr){return '<span class="gbadge">'+esc(gr.name)+'</span>';}).join('');
   var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
-  d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star">★</span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
+  d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg></span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
     '<div class="muted" style="font-size:13.5px">'+esc(p.company)+' · '+esc(p.skill)+'</div>'+
     '<div style="font-size:13.5px;margin-top:3px"><span class="dot" style="background:'+safetyColor(st)+'"></span>勞安 '+(p.safety||'—')+(st==='over'?' 已過期':st==='soon'?' 即將到期':'')+'</div></div>'+
     '<button class="btn sm toggle">▾</button></div>'+
     '<div class="pexp"><div class="kv">性別：'+esc(p.gender||'—')+'　年齡：'+(ageOf(p.birth)||'—')+'（'+(p.birth||'—')+'）</div>'+
-    '<div class="kv">勞保：'+(p.laborIns?'有':'無')+'　健保：'+(p.healthIns?'有':'無')+'　領班：'+(p.foreman?'是 ★':'否')+'</div>'+
+    '<div class="kv">勞保：'+(p.laborIns?'有':'無')+'　健保：'+(p.healthIns?'有':'無')+'　領班：'+(p.foreman?'是 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'否')+'</div>'+
     '<div class="kv">備註：'+esc(p.note||'—')+'</div>'+
     '<div class="muted" style="font-size:11.5px;margin-top:4px">修改請用上方「<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 全員編輯」</div></div>';
   d.querySelector('.toggle').onclick=function(){d.classList.toggle('open');};
@@ -915,7 +921,7 @@ function enterBulk(addNew){
 }
 function _pplAddBlank(){DS.people.push({id:uid(),name:'',migrant:false,gender:'男',birth:'',company:'',skill:'',foreman:false,laborIns:false,healthIns:false,safety:'',photo:'',note:''});}
 function renderPeopleEdit(bar,host){
-  bar.innerHTML='<button class="btn" id="bulkOk" style="background:#16a34a;color:#fff;border-color:#16a34a">✔ 確認</button>'+
+  bar.innerHTML='<button class="btn" id="bulkOk" style="background:#16a34a;color:#fff;border-color:#16a34a"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 確認</button>'+
     '<button class="btn" id="bulkRevert" style="border-color:#f59e0b;color:#92400e">↩ 全部還原</button>'+
     '<button class="btn" id="bulkAdd">＋ 新增人員</button>'+
     '<span class="muted" style="font-size:13.5px">編輯中暫停雲端同步；卡上「↩」＝只還原該筆</span>';
@@ -951,7 +957,7 @@ function personEditCard(p){
     fld('勞安六小時到期','<input type="date" class="eSafety" value="'+esc(p.safety||'')+'" style="width:100%">')+
     '<div class="row" style="gap:10px;font-size:12.5px;margin-bottom:6px">'+
       '<label><input type="checkbox" class="eMig"'+(p.migrant?' checked':'')+'>移工</label>'+
-      '<label><input type="checkbox" class="eFore"'+(p.foreman?' checked':'')+'>★領班</label>'+
+      '<label><input type="checkbox" class="eFore"'+(p.foreman?' checked':'')+'><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班</label>'+
       '<label><input type="checkbox" class="eLab"'+(p.laborIns?' checked':'')+'>勞保</label>'+
       '<label><input type="checkbox" class="eHea"'+(p.healthIns?' checked':'')+'>健保</label></div>'+
     fld('備註','<input class="eNote" value="'+esc(p.note||'')+'" style="width:100%">')+
@@ -998,7 +1004,7 @@ function editPerson(id){
    '</div>'+
    '<div class="row" style="margin:6px 0;gap:16px">'+
      '<label><input type="checkbox" id="f_migrant"'+(p.migrant?' checked':'')+'> 移工</label>'+
-     '<label><input type="checkbox" id="f_foreman"'+(p.foreman?' checked':'')+'> ★領班</label>'+
+     '<label><input type="checkbox" id="f_foreman"'+(p.foreman?' checked':'')+'> <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班</label>'+
      '<label><input type="checkbox" id="f_labor"'+(p.laborIns?' checked':'')+'> 勞保</label>'+
      '<label><input type="checkbox" id="f_health"'+(p.healthIns?' checked':'')+'> 健保</label>'+
    '</div>'+
@@ -1033,7 +1039,7 @@ function machineCard(m){
   var bars=selOffs().map(function(off){
     var day=dayOf(off);var used=machUsedOn(day,m.id);var left=m.qty-used;var isOver=left<0;if(isOver)over=true;
     var pct=m.qty>0?Math.min(100,Math.round(used/m.qty*100)):0;
-    var txt=used===0?dayLabel(off)+' 未派出 · 剩 '+m.qty+' 台':isOver?dayLabel(off)+' 已派 '+used+' 台 · 超派 '+(-left)+' 台 ⚠':dayLabel(off)+' 已派 '+used+' 台 · 剩 '+left+' 台';
+    var txt=used===0?dayLabel(off)+' 未派出 · 剩 '+m.qty+' 台':isOver?dayLabel(off)+' 已派 '+used+' 台 · 超派 '+(-left)+' 台 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>':dayLabel(off)+' 已派 '+used+' 台 · 剩 '+left+' 台';
     var col=isOver?'#ef4444':'#5B9BD5';
     return '<div style="font-size:12.5px;margin-top:6px;color:'+(isOver?'#dc2626;font-weight:700':used===0?'#16a34a':'#475569')+'">'+txt+'</div>'+
       '<div style="height:9px;border-radius:0;background:'+(isOver?'#fee2e2':'#C9DCEE')+';margin-top:3px"><div style="height:9px;border-radius:0;width:'+pct+'%;background:'+col+'"></div></div>';
@@ -1075,7 +1081,7 @@ function editMachine(id){
   var m=id?machineById(id):{id:'',serial:nextSerial(),name:'',qty:1,keeper:'',loc:'',needCert:false,custom:{},note:''};
   var box=document.getElementById('modalBox');
   var customRows=(DS.machineFields||[]).map(function(f){
-    return '<div class="fld"><label>'+esc(f.label)+' <b class="rmF" data-k="'+esc(f.key)+'" style="cursor:pointer;color:#b91c1c;font-weight:400">✕移除欄位</b></label><input class="cf" data-k="'+esc(f.key)+'" value="'+esc((m.custom||{})[f.key]||'')+'"></div>';}).join('');
+    return '<div class="fld"><label>'+esc(f.label)+' <b class="rmF" data-k="'+esc(f.key)+'" style="cursor:pointer;color:#b91c1c;font-weight:400"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 5l14 14M19 5L5 19"/></svg>移除欄位</b></label><input class="cf" data-k="'+esc(f.key)+'" value="'+esc((m.custom||{})[f.key]||'')+'"></div>';}).join('');
   box.innerHTML='<h3>'+(id?'編輯機具':'新增機具')+'</h3><div class="flex2">'+
    '<div class="fld"><label>編號（可改）</label><input id="m_serial" value="'+esc(m.serial)+'"></div>'+
    '<div class="fld"><label>數量</label><input type="number" min="1" id="m_qty" value="'+m.qty+'"></div>'+
@@ -1146,7 +1152,7 @@ function renderFwdBanner(){
   var byDay={};list.forEach(function(it){(byDay[it.day]=byDay[it.day]||[]).push(it);});
   var days=Object.keys(byDay).sort();
   b.style.display='';
-  b.innerHTML='<span style="font-weight:700">⚠ '+days.map(function(d){return fmtDay(d)+' 有 '+byDay[d].length+' 件未勾完成';}).join('、')+'</span> '
+  b.innerHTML='<span style="font-weight:700"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> '+days.map(function(d){return fmtDay(d)+' 有 '+byDay[d].length+' 件未勾完成';}).join('、')+'</span> '
    +'<button class="btn sm" id="fwdAll" style="background:#d97706;color:#fff;border-color:#d97706">→ 全部移到今天</button> '
    +'<button class="btn sm" id="fwdPick">逐件挑選</button> '
    +'<button class="btn sm" id="fwdIgn">忽略</button>'
@@ -1219,12 +1225,12 @@ function renderWorkCards(area){
     var ppl=0;its.forEach(function(it){ppl+=(it.assignees||[]).length;});
     var col=document.createElement('div');col.className='col d'+off;col.id='day_'+off;
     var _cap2=_dayCapVal();var _over2=_cap2>0&&its.length>_cap2;
-    col.innerHTML='<h2>'+dayLabel(off)+'<span class="cnt">'+its.length+'件 · 出工'+dayHeads(day)+'人'+(_over2?' <span style="background:#dc2626;color:#fff;border-radius:0;padding:1px 7px;font-size:10.5px;font-weight:700">⚠超上限'+(its.length-_cap2)+'</span>':'')+'</span></h2><div class="people-strip"></div><div class="ilist"></div>'+
+    col.innerHTML='<h2>'+dayLabel(off)+'<span class="cnt">'+its.length+'件 · 出工'+dayHeads(day)+'人'+(_over2?' <span style="background:#dc2626;color:#fff;border-radius:0;padding:1px 7px;font-size:10.5px;font-weight:700"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>超上限'+(its.length-_cap2)+'</span>':'')+'</span></h2><div class="people-strip"></div><div class="ilist"></div>'+
       '<div class="row"><button class="btn sm" data-imp="1">＋ 從追蹤總表帶入</button><button class="btn sm green" data-man="'+off+'">＋ 手動新增</button></div>';
     var strip=col.querySelector('.people-strip');strip.innerHTML='<span class="muted" style="font-size:13.5px">拖人員/小組到工項卡 →</span> ';
-    (DS.groups||[]).forEach(function(gr){var c=document.createElement('span');c.className='gchip';c.draggable=true;c.textContent='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg>'+gr.name;
+    (DS.groups||[]).forEach(function(gr){var c=document.createElement('span');c.className='gchip';c.draggable=true;c.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg>'+gr.name;
       c.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({groupId:gr.id}));};strip.appendChild(c);});
-    DS.people.forEach(function(p){var c=document.createElement('span');c.className='pchip';c.draggable=true;c.textContent=(p.foreman?'★':'')+p.name;
+    DS.people.forEach(function(p){var c=document.createElement('span');c.className='pchip';c.draggable=true;c.textContent=(p.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+p.name;
       c.ondragstart=function(e){e.dataTransfer.setData('text/plain',JSON.stringify({personId:p.id}));};strip.appendChild(c);});
     var conf=conflictsFor(day);var list=col.querySelector('.ilist');
     itemsOn(day).slice().sort(byDispatch).forEach(function(it){list.appendChild(itemCard(it,conf));});
@@ -1242,7 +1248,7 @@ function renderPersonView(area){
     var hd=document.createElement('div');hd.className='dayhdr d'+off;
     var _cap=_dayCapVal();var _over=_cap>0&&items.length>_cap;
     hd.innerHTML='<span>'+dayLabel(off)+' — 共 <b'+(_over?' style="color:#fecaca"':'')+'>'+items.length+'</b> 件 · 出工 '+dayHeads(day)+' 人</span>'
-      +(_over?'<span style="background:#dc2626;color:#fff;border-radius:0;padding:2px 10px;font-size:13.5px;font-weight:700">⚠ 超過上限 '+(items.length-_cap)+' 件（上限 '+_cap+'）</span>':'')
+      +(_over?'<span style="background:#dc2626;color:#fff;border-radius:0;padding:2px 10px;font-size:13.5px;font-weight:700"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 超過上限 '+(items.length-_cap)+' 件（上限 '+_cap+'）</span>':'')
       +'<span style="font-size:11.5px;opacity:.85;display:inline-flex;align-items:center;gap:3px">上限 <input type="number" min="0" value="'+_cap+'" onchange="setDayCap(this.value)" title="每日件數上限（全員同步；0＝不警告）" style="width:52px;font-size:11.5px;padding:2px 4px;border-radius:0;border:0"></span>'
       +'<span class="spacer"></span><button class="btn sm green" data-man="'+off+'">＋ 手動新增</button>';
     hd.querySelector('[data-man]').onclick=function(){addManual(off);};
@@ -1262,7 +1268,7 @@ function renderPersonView(area){
       if(!pids.length){var e=document.createElement('div');e.className='muted';e.style.cssText='padding:6px 4px 10px';e.textContent='（尚無指派）';sec.appendChild(e);}
       pids.forEach(function(pid){sec.appendChild(personRow(pid,by[pid]));});
       var un=items.filter(function(it){return !(it.assignees||[]).length;}).sort(byDispatch);
-      if(un.length){var ub=document.createElement('div');ub.className='unassigned';ub.innerHTML='<div style="font-weight:700;color:#9a3412;margin-bottom:6px">⚠ 未指派（'+un.length+'）</div>';un.forEach(function(it){ub.appendChild(pitemChip(it));});sec.appendChild(ub);}
+      if(un.length){var ub=document.createElement('div');ub.className='unassigned';ub.innerHTML='<div style="font-weight:700;color:#9a3412;margin-bottom:6px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 未指派（'+un.length+'）</div>';un.forEach(function(it){ub.appendChild(pitemChip(it));});sec.appendChild(ub);}
     }
     area.appendChild(sec);
   });
@@ -1273,9 +1279,9 @@ function personRow(pid,items){
   hrs=Math.round(hrs*10)/10;
   var d=document.createElement('div');d.className='prow';
   d.innerHTML='<div class="pinfo"><span class="avat">'+esc((p?p.name:'?').slice(0,2))+'</span><div>'+
-    '<div style="font-weight:700">'+esc(p?p.name:'(已刪除)')+(p&&p.foreman?' <span class="star">★</span>':'')+(p&&p.migrant?' <span class="badge">移工</span>':'')+'</div>'+
+    '<div style="font-weight:700">'+esc(p?p.name:'(已刪除)')+(p&&p.foreman?' <span class="star"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg></span>':'')+(p&&p.migrant?' <span class="badge">移工</span>':'')+'</div>'+
     (p?'<div class="muted" style="font-size:13.5px">'+esc(p.company)+' · '+esc(p.skill)+'</div>':'')+
-    '<div style="margin-top:4px"><span class="chip"'+(hrs>8?' style="background:#fee2e2;color:#b91c1c"':'')+'>'+items.length+' 件 · '+hrs+'h'+(hrs>8?' ⚠':'')+'</span></div>'+
+    '<div style="margin-top:4px"><span class="chip"'+(hrs>8?' style="background:#fee2e2;color:#b91c1c"':'')+'>'+items.length+' 件 · '+hrs+'h'+(hrs>8?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>':'')+'</span></div>'+
     '</div></div><div class="pitems"></div>';
   var host=d.querySelector('.pitems');
   items.forEach(function(it){host.appendChild(pitemChip(it));});
@@ -1286,7 +1292,7 @@ function pitemChip(it){
   var n=(it.assignees||[]).length;
   var mtxt=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?mc.name+'×'+m.qty:'';}).join('、');
   el.innerHTML='<span class="slotpill '+slotPillCls(it)+'">'+esc(slotLabel(it))+'</span><span class="dnum">'+dnumLabel(it)+'</span>'+
-    '<span style="flex:1;min-width:120px'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+(it.done?'✓ ':'')+(it.refId?'#'+esc(it.refId)+' ':'(手動) ')+esc(it.unit||'')+(it.unit?' ':'')+esc(it.content||'(未填內容)')+(mtxt?'｜'+esc(mtxt):'')+'</span>'+
+    '<span style="flex:1;min-width:120px'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+(it.refId?'#'+esc(it.refId)+' ':'(手動) ')+esc(it.unit||'')+(it.unit?' ':'')+esc(it.content||'(未填內容)')+(mtxt?'｜'+esc(mtxt):'')+'</span>'+
     (n>1?'<span class="samebadge">同單·共'+n+'人</span>':'')+
     (it.crossId?'<span class="cross">跨兩天</span>':'')+
     (function(){var st=srcStatus(it);return (st.chg?'<button class="srcbadge chg">⟳來源已變更</button>':'')+(st.done?'<button class="srcbadge done"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18"/><path d="M8 12l3 3 5-6"/></svg>來源已完成</button>':'');})();
@@ -1307,7 +1313,7 @@ function personTable(day,pids,by){
     if(!sigMap[sig]){sigMap[sig]={pids:[],list:list};sigOrder.push(sig);}
     sigMap[sig].pids.push(pid);
   });
-  var thead='<thead><tr><th style="width:36px;text-align:center">✓</th><th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>扣款廠商</th><th>管理</th><th>機具</th></tr></thead>';
+  var thead='<thead><tr><th style="width:36px;text-align:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg></th><th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>扣款廠商</th><th>管理</th><th>機具</th></tr></thead>';
   function block(title,cnt,list,warn,key){
     var coll=!!_ptColl[key];
     var d=document.createElement('div');d.style.cssText='border:1px solid #C9DCEE;border-radius:0;margin-bottom:10px;overflow:hidden';d.setAttribute('data-ptblock','1');
@@ -1330,11 +1336,11 @@ function personTable(day,pids,by){
     var g=sigMap[sig];
     var mems=g.pids.map(function(pid){var p=personById(pid);var isF=false;if(g.list[0]){(g.list[0].assignees||[]).forEach(function(a){if(a.personId===pid&&a.foreman)isF=true;});}return{p:p,f:isF};});
     mems.sort(function(a,b){return (b.f?1:0)-(a.f?1:0);});
-    var names=mems.map(function(m){return (m.f?'★':'')+esc(m.p?m.p.name:'?');}).join('、');
+    var names=mems.map(function(m){return (m.f?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(m.p?m.p.name:'?');}).join('、');
     wrap.appendChild(block((g.pids.length>1?'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg> ':'')+names,g.pids.length+' 人 · '+g.list.length+' 件',g.list,false,day+'|'+sig));
   });
   var un=itemsOn(day).filter(function(it){return !(it.assignees||[]).length;}).sort(byDispatch);
-  if(un.length)wrap.appendChild(block('⚠ 未指派',un.length+' 件',un,true,day+'|__un'));
+  if(un.length)wrap.appendChild(block('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 未指派',un.length+' 件',un,true,day+'|__un'));
   if(!sigOrder.length&&!un.length){var e=document.createElement('div');e.className='muted';e.textContent='尚無工作事項';wrap.appendChild(e);}
   wrap.querySelectorAll('tr[data-id]').forEach(function(r){r.style.cursor='pointer';r.onclick=function(){editItem(r.dataset.id);};});
   wrap.querySelectorAll('.doneP').forEach(function(c){
@@ -1366,6 +1372,17 @@ function srcInfo(it){
   openModal();
 }
 function dueDiff(due){return Math.round((parseISO(due)-parseISO(todayISO()))/86400000);}
+
+// D0724-03 ③候選新鮮度：G95 那邊多久沒更新候選＝派工前一眼判斷（>24h 變警色）
+function _candFreshHTML(){
+  try{
+    if(_g95Mode!=='cands'||!window._g95CandsMt) return '';
+    var m=Math.round((Date.now()-window._g95CandsMt)/60000);
+    var t=m<1?'剛剛':(m<60?(m+' 分鐘前'):(m<1440?(Math.round(m/60)+' 小時前'):(Math.round(m/1440)+' 天前')));
+    var warn=m>=1440;
+    return '<span style="float:right;font-size:12px;font-weight:600;color:'+(warn?'#b45309':'#6b7280')+'">'+(warn?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> ':'')+'候選更新於 '+t+'</span>';
+  }catch(e){return '';}
+}
 function renderStaging(){
   var body=document.getElementById('stgBody');body.innerHTML='';
   document.getElementById('stgDays').value=String(DS.candDays||3);
@@ -1375,7 +1392,7 @@ function renderStaging(){
   var list=(live||DS.candidates).filter(function(c){return imp.indexOf(c.refId)<0&&dueDiff(c.due)<=N;});
   if(q)list=list.filter(function(c){return (c.unit+c.vendor+c.content+(c.note||'')+c.refId).indexOf(q)>=0;});
   list.sort(function(a,b){if(sort==='unit')return unitCompare(a.unit,b.unit);if(sort==='vendor')return a.vendor.localeCompare(b.vendor);return a.due.localeCompare(b.due);});
-  document.getElementById('stgTitle').textContent='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="6" y="4" width="12" height="17"/><path d="M9 4V2h6v2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg> 待帶入工作（'+list.length+'）'+(live?' · G95 即時':' · 示範資料');
+  document.getElementById('stgTitle').innerHTML=_candFreshHTML()+'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="6" y="4" width="12" height="17"/><path d="M9 4V2h6v2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg> 待帶入工作（'+list.length+'）'+(live?' · G95 即時':' · 示範資料');
   var nI=list.filter(function(c){return (c.round||'初驗')==='初驗';}).length;
   var nR=list.length-nI;
   var nC=list.filter(function(c){return _stgKindOf(c)==='clean';}).length;
@@ -1442,7 +1459,7 @@ function importUnitWhole(unit,off){
   var imp=importedRefs();var N=+(DS.candDays||3);
   var live=_g95Cands();
   var list=(live||DS.candidates).filter(function(x){return x.unit===unit&&imp.indexOf(x.refId)<0&&dueDiff(x.due)<=N;});
-  if(!list.length){toast('這一戶已沒有可帶入的候選','⚠️');return;}
+  if(!list.length){toast('這一戶已沒有可帶入的候選','<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>️');return;}
   if(!confirm('把 '+unit+' 的 '+list.length+' 筆候選全部帶入 '+dayLabel(off)+'？'))return;
   var i=0;(function next(){if(i>=list.length){toast('已帶入 '+unit+' 共 '+list.length+' 筆','<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18"/><path d="M8 12l3 3 5-6"/></svg>');return;}var c=list[i++];importCandidate(c,off);setTimeout(next,180);})();
 }
@@ -1471,11 +1488,11 @@ function itemCard(it,conf){
   var mgrHtml=it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'';
   var st=srcStatus(it);
   var head='<div class="wh"><span class="seq'+((bad||macBad||pBad)?' warn':'')+'">'+it.seq+'</span><span class="dnum">'+dnumLabel(it)+'</span><b>'+esc(it.unit||'(未填戶別)')+'</b>'+(it.crossId?'<span class="cross">跨兩天</span>':'')+mgrHtml+'<span class="slot">'+esc(slotLabel(it))+'</span>'+(st.chg?'<button class="srcbadge chg srcI">⟳變更</button>':'')+(st.done?'<button class="srcbadge done srcI"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18"/><path d="M8 12l3 3 5-6"/></svg>完成</button>':'')+'<span class="idtag">'+(it.refId?('#'+it.refId):'手動')+'</span></div>';
-  var pchips=(it.assignees||[]).map(function(a){var p=personById(a.personId);if(!p)return'';var cf=conf.p[it.id+'|'+a.personId];return '<span class="chip'+(a.foreman?' lead':'')+(cf?' over':'')+'">'+(a.foreman?'★':'')+esc(p.name)+'<b class="rmA" data-p="'+a.personId+'" style="cursor:pointer;color:#94a3b8">✕</b></span>';}).join('');
+  var pchips=(it.assignees||[]).map(function(a){var p=personById(a.personId);if(!p)return'';var cf=conf.p[it.id+'|'+a.personId];return '<span class="chip'+(a.foreman?' lead':'')+(cf?' over':'')+'">'+(a.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+'<b class="rmA" data-p="'+a.personId+'" style="cursor:pointer;color:#94a3b8"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 5l14 14M19 5L5 19"/></svg></b></span>';}).join('');
   var mchips=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);if(!mc)return'';var cf=conf.m[it.id+'|'+m.machineId];return '<span class="chip mac'+(cf?' over':'')+'">'+esc(mc.name)+'×'+m.qty+'</span>';}).join('');
   var body='<div style="margin:6px 0'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+esc(it.content||'(未填工作內容)')+'</div>'+(it.respVendor?'<div class="chip">責任廠商：'+esc(it.respVendor)+'</div>':'')+(it.dedVendor?'<div class="chip" style="background:#fee2e2;color:#991b1b">扣款：'+esc(it.dedVendor)+'</div>':'')+
-    '<div style="margin-top:6px">指派：'+(pchips||'<span class="muted">未指派</span>')+' <span class="'+(bad?'warn-txt':'ok-txt')+'">需求'+it.reqCount+' / 已派'+assigned+(bad?' ⚠ 不足':' ✓')+'</span>'+(pBad?' <span class="warn-txt">⚠ 同時段人員重複</span>':'')+'</div>'+
-    '<div style="margin-top:4px">機具：'+(mchips||'<span class="muted">—</span>')+(macBad?' <span class="warn-txt">⚠ 同時段超派</span>':'')+'</div>'+
+    '<div style="margin-top:6px">指派：'+(pchips||'<span class="muted">未指派</span>')+' <span class="'+(bad?'warn-txt':'ok-txt')+'">需求'+it.reqCount+' / 已派'+assigned+(bad?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 不足':' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>')+'</span>'+(pBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段人員重複</span>':'')+'</div>'+
+    '<div style="margin-top:4px">機具：'+(mchips||'<span class="muted">—</span>')+(macBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段超派</span>':'')+'</div>'+
     '<div class="row" style="margin-top:8px"><label style="font-size:15px"><input type="checkbox" class="doneI"'+(it.done?' checked':'')+'> 完成</label><button class="btn sm editI">編輯/指派</button>'+(it.crossId?'':'<button class="btn sm crossI">設為跨兩天</button>')+'<button class="btn sm danger delI">刪除</button></div>';
   d.innerHTML=head+body;
   if(it.done)d.style.opacity='0.72';
@@ -1522,8 +1539,8 @@ function editItem(id){
      '<div class="fld"><label>時段</label><select id="i_slot"><option value="am"'+(it.slot==='am'&&it.slotType!=='custom'?' selected':'')+'>上午</option><option value="pm"'+(it.slot==='pm'&&it.slotType!=='custom'?' selected':'')+'>下午</option><option value="full"'+(it.slot==='full'&&it.slotType!=='custom'?' selected':'')+'>全天</option><option value="custom"'+(it.slotType==='custom'?' selected':'')+'>自訂時間</option></select></div>'+
    '</div>'+
    '<div class="flex2" id="customWrap" style="display:'+(it.slotType==='custom'?'grid':'none')+'"><div class="fld"><label>起</label><input type="time" id="i_start" value="'+esc(it.start)+'"></div><div class="fld"><label>訖</label><input type="time" id="i_end" value="'+esc(it.end)+'"></div></div>'+
-   ((DS.groups||[]).length?'<div class="fld"><label>套用小組（點一下＝整組勾選，領班自動帶★，可再增減）</label><div class="row" id="gApply"></div></div>':'')+
-   '<div class="fld"><label>指派人員（勾選；★=領班）</label><div id="pickP" style="max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:0;padding:6px"></div></div>'+
+   ((DS.groups||[]).length?'<div class="fld"><label>套用小組（點一下＝整組勾選，領班自動帶<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>，可再增減）</label><div class="row" id="gApply"></div></div>':'')+
+   '<div class="fld"><label>指派人員（勾選；<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>=領班）</label><div id="pickP" style="max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:0;padding:6px"></div></div>'+
    '<div class="fld"><label>需求機具（填數量，0=不用）</label><div id="pickM" style="border:1px solid var(--line);border-radius:0;padding:6px"></div></div>'+
    '<div class="row"><button class="btn primary" id="saveI">儲存</button><button class="btn" id="cancelM">取消</button><label style="font-size:15px;margin-left:4px"><input type="checkbox" id="i_done"'+(it.done?' checked':'')+'> 完成</label><span class="spacer"></span><button class="btn danger" id="delI2">刪除這筆</button></div>';
   var slotSel=box.querySelector('#i_slot');slotSel.onchange=function(){box.querySelector('#customWrap').style.display=(slotSel.value==='custom'?'grid':'none');};
@@ -1533,7 +1550,7 @@ function editItem(id){
     b.onclick=function(){(gr.memberIds||[]).forEach(function(pid){var cp=pickP.querySelector('.cp[data-id="'+pid+'"]');if(cp)cp.checked=true;var lp=pickP.querySelector('.lp[data-id="'+pid+'"]');if(lp&&pid===gr.leaderId)lp.checked=true;});};
     gA.appendChild(b);});}
   DS.people.forEach(function(p){var a=(it.assignees||[]).filter(function(x){return x.personId===p.id;})[0];var r=document.createElement('div');r.className='pick-row';
-    r.innerHTML='<label style="flex:1"><input type="checkbox" class="cp" data-id="'+p.id+'"'+(a?' checked':'')+'> '+esc(p.name)+(p.migrant?' <span class="badge">移工</span>':'')+'</label><label class="muted"><input type="checkbox" class="lp" data-id="'+p.id+'"'+(a&&a.foreman?' checked':'')+'> ★領班</label>';pickP.appendChild(r);});
+    r.innerHTML='<label style="flex:1"><input type="checkbox" class="cp" data-id="'+p.id+'"'+(a?' checked':'')+'> '+esc(p.name)+(p.migrant?' <span class="badge">移工</span>':'')+'</label><label class="muted"><input type="checkbox" class="lp" data-id="'+p.id+'"'+(a&&a.foreman?' checked':'')+'> <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班</label>';pickP.appendChild(r);});
   var pickM=box.querySelector('#pickM');
   DS.machines.forEach(function(m){var h=(it.machines||[]).filter(function(x){return x.machineId===m.id;})[0];var r=document.createElement('div');r.className='pick-row';
     r.innerHTML='<span style="flex:1">'+esc(m.name)+'（可用 '+m.qty+'）</span><input type="number" min="0" class="mq" data-id="'+m.id+'" value="'+(h?h.qty:0)+'" style="width:74px">';pickM.appendChild(r);});
@@ -1553,9 +1570,9 @@ function renderWorkList(area){
   var rows='';
   selOffs().forEach(function(off){var day=dayOf(off);var conf=conflictsFor(day);
     itemsOn(day).slice().sort(byDispatch).forEach(function(it){var assigned=(it.assignees||[]).length;var bad=assigned<it.reqCount;var macBad=(it.machines||[]).some(function(m){return conf.m[it.id+'|'+m.machineId];});
-      var pl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?((a.foreman?'★':'')+p.name):'';}).join('、');
+      var pl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?((a.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+p.name):'';}).join('、');
       var ml=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?(mc.name+'×'+m.qty):'';}).join('、');
-      rows+='<tr'+((bad||macBad)?' style="background:#fffafa"':'')+'><td>'+dayLabel(off)+(it.crossId?'<br><span class="cross">跨兩天</span>':'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit)+'</b></td><td>'+esc(it.content)+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(pl||'—')+'</td><td class="'+(bad?'warn-txt':'ok-txt')+'">'+it.reqCount+' / '+assigned+(bad?' ⚠':' ✓')+'</td><td'+(macBad?' class="warn-txt"':'')+'>'+esc(ml||'—')+(macBad?' ⚠超派':'')+'</td><td style="white-space:nowrap"><label style="font-size:13.5px"><input type="checkbox" class="doneL" data-id="'+it.id+'"'+(it.done?' checked':'')+'>完成</label> <button class="btn sm editI" data-id="'+it.id+'">編輯</button> <button class="btn sm danger delL" data-id="'+it.id+'">刪</button></td></tr>';});});
+      rows+='<tr'+((bad||macBad)?' style="background:#fffafa"':'')+'><td>'+dayLabel(off)+(it.crossId?'<br><span class="cross">跨兩天</span>':'')+'</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td>'+(it.refId?'#'+esc(it.refId):'(手動)')+'</td><td><b>'+esc(it.unit)+'</b></td><td>'+esc(it.content)+'</td><td>'+esc(it.respVendor||'')+'</td><td>'+(it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'')+'</td><td>'+esc(pl||'—')+'</td><td class="'+(bad?'warn-txt':'ok-txt')+'">'+it.reqCount+' / '+assigned+(bad?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>':' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>')+'</td><td'+(macBad?' class="warn-txt"':'')+'>'+esc(ml||'—')+(macBad?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>超派':'')+'</td><td style="white-space:nowrap"><label style="font-size:13.5px"><input type="checkbox" class="doneL" data-id="'+it.id+'"'+(it.done?' checked':'')+'>完成</label> <button class="btn sm editI" data-id="'+it.id+'">編輯</button> <button class="btn sm danger delL" data-id="'+it.id+'">刪</button></td></tr>';});});
   var w=document.createElement('div');w.id='day_all';w.style.overflowX='auto';
   w.innerHTML='<table><thead><tr><th>日期</th><th>時段</th><th>流水號</th><th>#G95</th><th>戶別</th><th>工作內容</th><th>責任廠商</th><th>管理</th><th>指派人員</th><th>需求/已派</th><th>機具</th><th>操作</th></tr></thead><tbody>'+(rows||'<tr><td colspan="12" class="muted">尚無工作事項</td></tr>')+'</tbody></table>';
   w.querySelectorAll('.editI').forEach(function(b){b.onclick=function(){editItem(b.dataset.id);};});
@@ -1594,10 +1611,10 @@ function personLabelHTML(p,isForeman){
   if(_sheetNameMode==='badge'){
     var ch=esc(nm.slice(0,1));
     return '<span title="'+esc(nm)+(isForeman?'（領班）':'')+'" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#EAF4FC;color:#26476b;font-size:12.5px;font-weight:700;margin:1px 2px">'+ch+
-      (isForeman?'<span style="position:absolute;top:-4px;right:-4px;width:13px;height:13px;border-radius:50%;background:#fef3c7;color:#92400e;font-size:9px;line-height:13px;text-align:center">★</span>':'')+
+      (isForeman?'<span style="position:absolute;top:-4px;right:-4px;width:13px;height:13px;border-radius:50%;background:#fef3c7;color:#92400e;font-size:9px;line-height:13px;text-align:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg></span>':'')+
       '</span>';
   }
-  return (isForeman?'★':'')+esc(nm);
+  return (isForeman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(nm);
 }
 function sheetDates(){
   var t=todayISO();var set={};DS.items.forEach(function(i){if(i.day)set[i.day]=1;});
@@ -1625,7 +1642,7 @@ function renderSheetList(host){
     var its=itemsOn(day);var ppl=0,done=0;its.forEach(function(it){ppl+=(it.assignees||[]).length;if(it.done)done++;});
     var c=document.createElement('div');c.className='gcard';c.style.cssText=hist?'background:#F2F7FC;border-color:#C9DCEE':'background:#f0fdf4;border-color:#86efac';
     c.innerHTML='<div class="row"><b style="color:'+(hist?'#94a3b8':'#15803d')+';font-size:15px">'+fmtDay(day)+(day===t?'（今天）':'')+(hist?' 〈歷史〉':'')+'</b></div>'+
-      '<div class="muted" style="font-size:12.5px;margin:6px 0">'+its.length+'件 · 出工'+dayHeads(day)+'人'+(done?' · ✓完成'+done:'')+'</div>'+
+      '<div class="muted" style="font-size:12.5px;margin:6px 0">'+its.length+'件 · 出工'+dayHeads(day)+'人'+(done?' · <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>完成'+done:'')+'</div>'+
       '<button class="btn sm" style="'+(hist?'':'background:#16a34a;color:#fff;border-color:#16a34a')+'">開單 →</button>';
     c.querySelector('button').onclick=function(){_sheetDay=day;renderSheet();};
     wrap.appendChild(c);
@@ -1648,7 +1665,7 @@ function renderSheetOne(host,day){
   var doneN=its.filter(function(i){return i.done;}).length;
   var now=new Date();
   var paper=document.createElement('div');paper.id='sheetPaper';paper.className='card';paper.style.cssText='padding:0;overflow:hidden';
-  var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:13.5px;opacity:.9">共 '+its.length+' 件 · 出工 '+Object.keys(names).length+' 人'+(doneN?' · ✓完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
+  var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:13.5px;opacity:.9">共 '+its.length+' 件 · 出工 '+Object.keys(names).length+' 人'+(doneN?' · <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
   var rows='';
   if(_sheetMode==='work'){
     var _colspan=7+(_sheetShowResp?1:0)+(_sheetShowDed?1:0)+(_sheetShowMgr?1:0)+(_sheetNoSign?0:1);   // D0707-02：欄位可切→colspan 動態
@@ -1656,8 +1673,8 @@ function renderSheetOne(host,day){
     its.forEach(function(it,ix){var x=sheetRowCells(it);
       var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+_colspan+'">'+bk+'（'+_segs.shift().n+' 件）</td></tr>';_bl=bk;_z=0;}
       var st=(it.done?'color:#94a3b8;':'')+(_z%2?'background:#F2F7FC;':'');_z++;
-      rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'✓ ':'')+(ix+1)+'</td><td style="white-space:nowrap">'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td style="white-space:nowrap"><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td>'+(_sheetShowResp?'<td style="white-space:nowrap">'+esc(it.respVendor||'')+'</td>':'')+(_sheetShowDed?'<td style="white-space:nowrap">'+esc(it.dedVendor||'')+'</td>':'')+(_sheetShowMgr?'<td style="white-space:nowrap">'+esc(it.mgr||'')+'</td>':'')+'<td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
-    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th style="white-space:nowrap">時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th>'+(_sheetShowResp?'<th style="white-space:nowrap">責任廠商</th>':'')+(_sheetShowDed?'<th style="white-space:nowrap">扣款廠商</th>':'')+(_sheetShowMgr?'<th>管理</th>':'')+'<th style="white-space:nowrap">人員(★領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+_colspan+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
+      rows+='<tr'+(st?' style="'+st+'"':'')+'><td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+(ix+1)+'</td><td style="white-space:nowrap">'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td style="white-space:nowrap"><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td>'+(_sheetShowResp?'<td style="white-space:nowrap">'+esc(it.respVendor||'')+'</td>':'')+(_sheetShowDed?'<td style="white-space:nowrap">'+esc(it.dedVendor||'')+'</td>':'')+(_sheetShowMgr?'<td style="white-space:nowrap">'+esc(it.mgr||'')+'</td>':'')+'<td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
+    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr><th>項次</th><th style="white-space:nowrap">時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th>'+(_sheetShowResp?'<th style="white-space:nowrap">責任廠商</th>':'')+(_sheetShowDed?'<th style="white-space:nowrap">扣款廠商</th>':'')+(_sheetShowMgr?'<th>管理</th>':'')+'<th style="white-space:nowrap">人員(<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+_colspan+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
   }else{
     var by={};its.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
     var pids=Object.keys(by);
@@ -1684,7 +1701,7 @@ function renderSheetOne(host,day){
         ('<div class="sh-memrow" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 16px;background:#F2F7FC;border-bottom:1px solid #C9DCEE">'+
         (_gname?'<span style="font-size:12.5px;font-weight:700;color:#5b21b6;background:#ede9fe;border:1px solid #c4b5fd;border-radius:0;padding:1px 9px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg> '+esc(_gname)+'</span>':'')+
         '<span class="muted" style="font-size:11.5px">'+(_gname?'成員：':'小組成員：')+'</span>'+
-        members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
+        members.map(function(m){return _sheetNameMode==='badge'?personLabelHTML(m.p,m.foreman):('<b>'+(m.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(m.p?m.p.name:'?')+'</b>');}).join(_sheetNameMode==='badge'?' ':'、')+
         '</div>') : '';
       var rows2='';
       var _bl2='',_z2=0,_segs2=[];list.forEach(function(it){var k=bldgKey(it.unit);if(!_segs2.length||_segs2[_segs2.length-1].k!==k)_segs2.push({k:k,n:0});_segs2[_segs2.length-1].n++;});
@@ -1693,12 +1710,12 @@ function renderSheetOne(host,day){
         var bk=bldgKey(it.unit);if(bk!==_bl2){rows2+='<tr class="bhdr"><td colspan="'+_colN+'">'+bk+'（'+_segs2.shift().n+' 件）</td></tr>';_bl2=bk;_z2=0;}
         var st=(it.done?'color:#94a3b8;':'')+(_z2%2?'background:#F2F7FC;':'');_z2++;
         var nameCell=isTeam?'':'<td>'+(ix===0?personLabelHTML(members[0].p,members[0].foreman):'')+'</td>';
-        rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+(it.done?'✓ ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
+        rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+nameCell+'<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
       });
       var headCols=(isTeam?'':'<th>人員</th>')+'<th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>');
       var signStrip=(!_sheetNoSign&&isTeam)?
         ('<div style="display:flex;flex-wrap:wrap;gap:18px;padding:10px 16px;border-top:1px solid #C9DCEE;background:#F2F7FC"><span class="muted" style="font-size:11.5px">簽名：</span>'+
-        members.map(function(m){return '<span style="font-size:12.5px;border-bottom:1px solid #9DC3E6;padding:0 22px 2px 0">'+(m.foreman?'★':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')+
+        members.map(function(m){return '<span style="font-size:12.5px;border-bottom:1px solid #9DC3E6;padding:0 22px 2px 0">'+(m.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')+
         '</div>') : '';
       blocks+='<div data-shblock="1" style="border:1px solid #C9DCEE;border-radius:0;margin-bottom:10px;overflow:hidden">'+memberRow+
         '<div style="overflow-x:auto"><table><thead><tr>'+headCols+'</tr></thead><tbody>'+rows2+'</tbody></table></div>'+signStrip+'</div>';
@@ -1720,7 +1737,7 @@ function renderSheetOne(host,day){
   act.innerHTML='<button class="pillb red" id="shPdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg> PDF</button><button class="pillb blue" id="shCap"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg> 截圖</button>'+
     '<div class="seg big" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
     '<div class="seg big" id="shName"><button data-n="full"'+(_sheetNameMode==='full'?' class="on"':'')+'>全名</button><button data-n="badge"'+(_sheetNameMode==='badge'?' class="on"':'')+'>徽章</button></div>'+
-    '<button class="tglb rose'+(_sheetNoSign?' on':'')+'" id="shSign">'+(_sheetNoSign?'✓ 免簽':'☐ 免簽')+'</button>'+
+    '<button class="tglb rose'+(_sheetNoSign?' on':'')+'" id="shSign">'+(_sheetNoSign?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 免簽':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 免簽')+'</button>'+
     '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="tglb amber on" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
   host.appendChild(act);
   // D0706-02/D0707-02：工單字體控制列（分段控制器）
@@ -1729,16 +1746,16 @@ function renderSheetOne(host,day){
   fbar.innerHTML='<span class="muted" style="font-size:15px;font-weight:700"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> 字體</span>'+
     '<div class="fs-seg" id="shFs"><button data-fa="dec">A−</button>'+fsPresets+'<button data-fa="inc">A＋</button></div>'+
     '<b id="fsNow" style="min-width:46px;text-align:center;color:#06b6d4;font-size:14px">'+_sheetFontPct+'%</b>'+
-    '<button class="tglb'+(_sheetFontScope==='main'?' on':'')+'" id="shScope">'+(_sheetFontScope==='main'?'✓ 只放大主要欄位':'☐ 只放大主要欄位')+'</button>'+
-    '<button class="tglb rose'+(_sheetExportStd?' on':'')+'" id="shExpStd">'+(_sheetExportStd?'✓ 匯出用標準字級':'☐ 匯出用標準字級')+'</button>';
+    '<button class="tglb'+(_sheetFontScope==='main'?' on':'')+'" id="shScope">'+(_sheetFontScope==='main'?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 只放大主要欄位':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 只放大主要欄位')+'</button>'+
+    '<button class="tglb rose'+(_sheetExportStd?' on':'')+'" id="shExpStd">'+(_sheetExportStd?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 匯出用標準字級':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 匯出用標準字級')+'</button>';
   host.appendChild(fbar);
   // D0707-02：表格式欄位顯示切換（責任廠商/扣款廠商/管理，各自可取消；只在表格式有意義）
   if(_sheetMode==='work'){
     var cbar=document.createElement('div');cbar.className='row no-print';cbar.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
     cbar.innerHTML='<span class="muted" style="font-size:15px;font-weight:700"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 7h6l2 2h10v10H3z"/><path d="M3 7V5h6l2 2"/></svg> 欄位</span>'+
-      '<button class="tglb'+(_sheetShowResp?' on':'')+'" data-col="resp">'+(_sheetShowResp?'✓ 責任廠商':'☐ 責任廠商')+'</button>'+
-      '<button class="tglb'+(_sheetShowDed?' on':'')+'" data-col="ded">'+(_sheetShowDed?'✓ 扣款廠商':'☐ 扣款廠商')+'</button>'+
-      '<button class="tglb'+(_sheetShowMgr?' on':'')+'" data-col="mgr">'+(_sheetShowMgr?'✓ 管理':'☐ 管理')+'</button>'+
+      '<button class="tglb'+(_sheetShowResp?' on':'')+'" data-col="resp">'+(_sheetShowResp?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 責任廠商':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 責任廠商')+'</button>'+
+      '<button class="tglb'+(_sheetShowDed?' on':'')+'" data-col="ded">'+(_sheetShowDed?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 扣款廠商':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 扣款廠商')+'</button>'+
+      '<button class="tglb'+(_sheetShowMgr?' on':'')+'" data-col="mgr">'+(_sheetShowMgr?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 管理':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 管理')+'</button>'+
       '<span class="muted" style="font-size:11.5px">（關掉的欄位工單上不顯示；設定會記住）</span>';
     host.appendChild(cbar);
     cbar.querySelectorAll('[data-col]').forEach(function(b){b.onclick=function(){var c=b.dataset.col;if(c==='resp')_sheetShowResp=!_sheetShowResp;else if(c==='ded')_sheetShowDed=!_sheetShowDed;else if(c==='mgr')_sheetShowMgr=!_sheetShowMgr;saveSheetPrefs();renderSheet();};});
@@ -1903,7 +1920,7 @@ function _dispHealthCheck(){
       });
     });
     if(dup>3){
-      var t=document.getElementById('dispHealthTxt');if(t)t.textContent='⚠ 健檢：偵測到 '+dup+' 筆疑似重複資料（同內容多份），建議先備份再檢查。';
+      var t=document.getElementById('dispHealthTxt');if(t)t.textContent='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 健檢：偵測到 '+dup+' 筆疑似重複資料（同內容多份），建議先備份再檢查。';
       var b=document.getElementById('dispHealth');if(b)b.style.display='';
       console.warn('[健檢] 疑似重複',dup);
     }else{console.log('[健檢] 資料正常（疑似重複',dup,'筆）');}
@@ -1985,7 +2002,7 @@ function boot(){
       if(!_allowed){
         _readonly=true;
         var b=document.getElementById('roBanner');b.style.display='';
-        b.textContent='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg> 唯讀模式：此帳號（'+_userEmail+'）不在寫入名單，改動不會存到雲端。';
+        b.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg> 唯讀模式：此帳號（'+_userEmail+'）不在寫入名單，改動不會存到雲端。';
       }
       DS.user=u.displayName||_userEmail;save();
       document.getElementById('loginMask').classList.remove('on');
@@ -1997,7 +2014,7 @@ function boot(){
   if(window._fbReady)window._fbReadyCb();
   setTimeout(function(){
     if(!window._fbReady){
-      document.getElementById('loginStatus').textContent='⚠ 連不上雲端（離線或 CDN 被擋）';
+      document.getElementById('loginStatus').textContent='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 連不上雲端（離線或 CDN 被擋）';
       document.getElementById('loginLocalBtn').style.display='';
     }
   },6000);
@@ -2031,6 +2048,11 @@ function boot(){
 boot();
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 </script>
+
+<script>
+// D0724-03：手機鎖縮放（G95 V0718-09；iOS 忽略 user-scalable、要攔 gesture 才可靠）
+try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});document.addEventListener('gesturechange',function(e){e.preventDefault();},{passive:false});}catch(e){}
+</script>
 </body>
 </html>
-<!-- d0724-02 preview -->
+<!-- d0724-03 preview -->
