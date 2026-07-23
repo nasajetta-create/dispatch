@@ -173,7 +173,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0721-02</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:12px"></span><span onclick="dispForceResync()" style="cursor:pointer;font-size:12px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0724-01</span></div>
 </div>
 
 <div class="wrap">
@@ -266,7 +266,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction, deleteDoc }
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, collection, setDoc, getDoc, getDocs, onSnapshot, runTransaction, deleteDoc, terminate, clearIndexedDbPersistence }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { initializeAppCheck, ReCaptchaV3Provider }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js';
@@ -292,6 +292,14 @@ try {
 } catch(e){ console.warn('[fs] persistentLocalCache init 失敗，退回 getFirestore', e); db = getFirestore(app); }
 const auth = getAuth(app);
 window._fb = { db:db, doc:doc, collection:collection, setDoc:setDoc, getDoc:getDoc, getDocs:getDocs, onSnapshot:onSnapshot, runTransaction:runTransaction, deleteDoc:deleteDoc };
+// D0724-01：強制重抓（同 G95 _fbForceResync＝清這台 Firestore 離線快取後重載；不刪雲端、不登出）
+window._fbForceResync = async function(){
+  try{ await terminate(db); }catch(e){ console.warn('terminate 失敗', e); }
+  try{ await clearIndexedDbPersistence(db); }catch(e){ console.warn('clearIndexedDbPersistence 失敗，改直接刪 IndexedDB', e);
+    try{ await new Promise(function(res){ var q=indexedDB.deleteDatabase('firestore/[DEFAULT]/g95-work/main'); q.onsuccess=q.onerror=q.onblocked=function(){res();}; setTimeout(res,3000); }); }catch(_e){}
+  }
+  try{ var base=(location.pathname||'/'); location.replace(base+'?cb='+Date.now()); }catch(e){ location.reload(); }
+};
 window._authSignInGoogle = function(){ return signInWithPopup(auth, new GoogleAuthProvider()); };
 window._authSignInGoogleRedirect = function(){ return signInWithRedirect(auth, new GoogleAuthProvider()); };
 window._authSignOut = function(){ return signOut(auth); };
@@ -303,7 +311,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=20; // D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=21; // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -319,9 +327,59 @@ function wd(s){return '日一二三四五六'[parseISO(s).getDay()];}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 var _flushTimer=null;
 function save(){
+  // D0724-01：閒置守門（同 G95 V0723-01）＝閒置 5 分鐘鎖存檔，避免舊分頁把舊狀態寫回
+  if(window._idleLocked){
+    try{ _dispShowIdleBanner(); }catch(e){}
+    try{ _setSync('⛔ 已閒置，請點「重新連線」',false); }catch(e){}
+    return;
+  }
   try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){console.warn(e);}
   if(_cloudOn&&!_readonly){clearTimeout(_flushTimer);_flushTimer=setTimeout(_flush,1200);}
 }
+// ── D0724-01：重抓＋閒置守門＋回前景自動重抓（比照 G95 V0723-01/05 全套；dispatch 資料小、重載很快）──
+function dispForceResync(){
+  if(!confirm('要「強制重抓雲端資料」嗎？\n\n用途：這台的畫面和其他人對不上時。\n動作：清掉這台的離線快取後重新整理，從雲端重抓最新。\n\n• 不會刪雲端資料、也不會把你登出。'))return;
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  if(typeof window._fbForceResync==='function'){ window._fbForceResync(); }
+  else { try{ location.replace((location.pathname||'/')+'?cb='+Date.now()); }catch(e){ try{location.reload();}catch(_){} } }
+}
+(function(){
+  var IDLE_MS=5*60*1000, _idleTimer=null, _hiddenAt=0, _mm=0;
+  window._idleLocked=false;
+  window._dispShowIdleBanner=function(){
+    var el=document.getElementById('dispIdleBar');
+    if(!el){
+      el=document.createElement('div'); el.id='dispIdleBar';
+      el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9000;background:#FFF6D6;border-bottom:1px solid #E9CE6A;color:#5a4a10;padding:10px 14px;font-size:14px;line-height:1.5;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.15);border-radius:0';
+      el.innerHTML='<span style="flex:1 1 auto">已閒置 5 分鐘，畫面資料可能不是最新，已暫停存檔。請點「重新連線」重抓最新後再操作。</span>'
+        +'<button type="button" onclick="_dispIdleReconnect()" style="flex:none;margin-left:auto;background:#2563eb;color:#fff;border:none;padding:8px 18px;font-size:14px;font-weight:700;cursor:pointer;border-radius:0">重新連線</button>';
+      (document.body||document.documentElement).appendChild(el);
+    }
+    el.style.display='flex';
+  };
+  window._dispIdleReconnect=function(){
+    var el=document.getElementById('dispIdleBar'); if(el)el.style.display='none';
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    if(typeof window._fbForceResync==='function'){ window._fbForceResync(); }
+    else { try{ location.replace((location.pathname||'/')+'?cb='+Date.now()); }catch(e){ try{location.reload();}catch(_){} } }
+  };
+  function _lock(){ if(_readonly)return; if(window._idleLocked)return; window._idleLocked=true; window._dispShowIdleBanner(); }
+  function _resetIdle(){ if(window._idleLocked)return; if(_idleTimer)clearTimeout(_idleTimer); _idleTimer=setTimeout(_lock,IDLE_MS); }
+  function _onMove(){ var t=Date.now(); if(t-_mm<4000)return; _mm=t; _resetIdle(); }
+  ['pointerdown','keydown','touchstart','wheel','scroll','click'].forEach(function(ev){ document.addEventListener(ev,_resetIdle,{passive:true}); });
+  document.addEventListener('mousemove',_onMove,{passive:true});
+  document.addEventListener('visibilitychange',function(){
+    try{
+      if(document.visibilityState==='hidden'){ _hiddenAt=Date.now(); return; }
+      if(_hiddenAt && (Date.now()-_hiddenAt)>=IDLE_MS && typeof window._fbForceResync==='function'){
+        _hiddenAt=0; try{ localStorage.removeItem(LS_KEY); }catch(e){}
+        window._fbForceResync(); return;
+      }
+      _hiddenAt=0; _resetIdle();
+    }catch(e){}
+  });
+  try{ _resetIdle(); }catch(e){}
+})();
 function load(){try{var r=localStorage.getItem(LS_KEY);if(r)return JSON.parse(r);}catch(e){}
   try{var o=localStorage.getItem('g95dispatch_v1');if(o)return JSON.parse(o);}catch(e){}return null;}
 
@@ -416,7 +474,16 @@ function _cloudBoot(){
       if(!window._PREVIEW&&(d.codeVersion||0)>CODE_VERSION){
         _readonly=true;
         var b=document.getElementById('roBanner');b.style.display='';
-        b.textContent='⚠ 雲端已有更新版本（v'+d.codeVersion+' > v'+CODE_VERSION+'），此頁轉唯讀。請重新整理或更新 App。';
+        // D0724-01：比照 G95 V0720-11＝10 秒倒數自動重整到新版（擺著不理也會更新；寫入已被 _readonly 擋住）
+        if(!window._vgCd){
+          window._vgCd=10;
+          var _tick=function(){
+            b.textContent='⚠ 偵測到新版本（v'+d.codeVersion+' > v'+CODE_VERSION+'），此頁已轉唯讀，'+window._vgCd+' 秒後自動更新…';
+            if(window._vgCd<=0){ try{ location.replace((location.pathname||'/')+'?cb='+Date.now()); }catch(e){ location.reload(); } return; }
+            window._vgCd--; setTimeout(_tick,1000);
+          };
+          _tick();
+        }
       }
     });
     window._fb.onSnapshot(_companyDoc(),function(ds){
@@ -1959,4 +2026,4 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){window
 </script>
 </body>
 </html>
-<!-- d0721-02 index -->
+<!-- d0724-01 index -->
