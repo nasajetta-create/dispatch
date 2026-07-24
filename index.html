@@ -62,7 +62,7 @@ input[type=checkbox]{width:20px;height:20px;}
 .card{background:#fff;border-radius:0;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:0;padding:8px 11px;font-size:15px;color:#78350f;margin-bottom:10px;}
 /* people */
-.grid-people{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px;}
+.grid-people{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,240px));gap:10px;margin-top:12px;}
 .pcard{background:#fff;border:1px solid var(--line);border-radius:0;padding:11px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
 .pcard .thumb{width:42px;height:42px;border-radius:0;object-fit:cover;background:#eef2f6;border:1px dashed #9DC3E6;display:inline-flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12.5px;}
 .pcard .ph-head{display:flex;gap:10px;align-items:flex-start;}
@@ -180,6 +180,23 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .sub{flex-wrap:nowrap;overflow:hidden}
 .sub>*{white-space:nowrap;flex:none}
 @media(max-width:560px){.sub{font-size:12.5px;gap:7px}}
+/* D0724-06 ②B②C③A'BC：人員/機具 段落容器化＋卡片寬度上限＋機具卡標題鎖一行/操作列貼底 */
+.psec{border:1px solid #9DC3E6;border-radius:0;margin:12px 0 0;background:#fff}
+.psec-hd{padding:8px 12px;font-weight:700;font-size:13.5px;border-bottom:1px solid #9DC3E6;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.psec-hd .psec-r{font-weight:400;font-size:12.5px;color:#475569;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.psec-bd{padding:12px}
+.psec-bd>.grid-people{margin-top:0}
+@media(max-width:560px){.psec-bd{padding:9px}.psec-hd{padding:7px 10px;font-size:13px}}
+/* 手機維持整寬（②B 的寬度上限只在桌機才需要，手機上限會讓右邊空一塊） */
+@media(max-width:560px){.grid-people{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important}#machineGrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important}}
+.mcard{display:flex;flex-direction:column}
+.mcard .mhead{flex-wrap:nowrap;align-items:center}
+.mcard .mhead .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard .mhead>:not(.nm){flex:0 0 auto}
+.mcard .mhead>.spacer{flex:1 1 auto;min-width:0}
+.mcard .mops{margin-top:auto;padding-top:9px;gap:5px}
+.mcard .mops .btn{padding:0 8px}
+
 /* D0724-05 簡化：下拉抽屜（展開/收合）＋手機隱藏說明橫幅＋待帶入膠囊可換行 */
 .dd{position:relative;display:inline-block}
 .dd-t{border:1.5px solid #5B9BD5;background:#fff;border-radius:0;padding:0 13px;min-height:36px;font-size:14px;font-weight:700;color:#3D6EA5;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
@@ -196,7 +213,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0724-05</span></div>
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" style="display:none">登出</button><span id="verTag">D0724-06</span></div>
 </div>
 
 <div class="wrap">
@@ -264,7 +281,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
   <section id="pane-machine" style="display:none">
     <div class="row"><button class="btn primary" id="addMachine">＋ 新增機具</button><span class="muted" id="machSummary" style="font-size:15px"></span></div>
     <div class="muted" style="font-size:13.5px;margin:6px 0">卡片顯示「已派/剩餘」＝依派遣單日期膠囊選到的日子即時計算；數量 −/＋ 可直調</div>
-    <div class="grid-people" id="machineGrid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))"></div>
+    <div class="psec"><div class="psec-hd" id="machHd" style="background:#EAF4FC;color:#26476b"></div><div class="psec-bd"><div class="grid-people" id="machineGrid" style="grid-template-columns:repeat(auto-fill,minmax(272px,340px))"></div></div></div>
   </section>
 </div>
 
@@ -332,7 +349,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=25; // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=26; // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -862,6 +879,15 @@ function _pplSections(){
     {key:'mig',label:'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg> 移工',hd:'background:#fdf4ff;color:#a21caf',list:peopleSorted(DS.people.filter(function(p){return p.migrant;}))}
   ];
 }
+function _pplSecStat(list){  // D0724-06 ②C 段落摘要（原本標題列右半邊是空的）
+  var fm=0,soon=0,over=0;
+  list.forEach(function(p){if(p.foreman)fm++;var s=safetyStatus(p.safety);if(s==='soon')soon++;else if(s==='over')over++;});
+  var t='領班 '+fm+' 人';
+  if(over)t+=' · <b style="color:#dc2626">勞安已過期 '+over+'</b>';
+  if(soon)t+=' · <b style="color:#b45309">即將到期 '+soon+'</b>';
+  if(!over&&!soon&&list.length)t+=' · 勞安正常';
+  return t;
+}
 function _pplSaveOrder(secKey,newList){
   var i=0;
   _pplSections().forEach(function(s){
@@ -880,11 +906,19 @@ function renderPeople(){
   bar.querySelector('#expandAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.add('open');});};
   bar.querySelector('#collapseAll').onclick=function(){document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('open');});};
   _pplSections().forEach(function(sec){
-    var hd=document.createElement('div');hd.style.cssText=sec.hd+';border-radius:0;padding:8px 12px;font-weight:700;font-size:13.5px;margin:10px 0 0';hd.textContent=sec.label+'（'+sec.list.length+'）';host.appendChild(hd);
+    // D0724-06 ②C：段落容器化（外框＋標題右側摘要＋新增人員）；標題改 innerHTML＝修 ① SVG 亂碼
+    var box=document.createElement('div');box.className='psec';
+    var hd=document.createElement('div');hd.className='psec-hd';hd.style.cssText=sec.hd;
+    hd.innerHTML='<span>'+sec.label+'（'+sec.list.length+'）</span>'+
+      '<span class="psec-r"><span>'+_pplSecStat(sec.list)+'</span>'+
+      '<button class="btn sm _addP">＋ 新增'+(sec.key==='mig'?'移工':'人員')+'</button></span>';
+    box.appendChild(hd);
+    var bd=document.createElement('div');bd.className='psec-bd';
     var grid=document.createElement('div');grid.className='grid-people';
     sec.list.forEach(function(p){grid.appendChild(personCard(p,sec));});
     if(!sec.list.length){var e=document.createElement('div');e.className='muted';e.style.cssText='font-size:12.5px;padding:8px 4px';e.textContent='（無）';grid.appendChild(e);}
-    host.appendChild(grid);
+    bd.appendChild(grid);box.appendChild(bd);host.appendChild(box);
+    hd.querySelector('._addP').onclick=function(){enterBulk(true,sec.key==='mig');};
   });
 }
 function personCard(p,sec){
@@ -922,13 +956,13 @@ function personCard(p,sec){
   d.querySelector('.toggle').onclick=function(){d.classList.toggle('open');};
   return d;
 }
-function enterBulk(addNew){
+function enterBulk(addNew,mig){
   _pplBackup=JSON.stringify(DS.people);
   _pplEdit=true;
-  if(addNew)_pplAddBlank();
+  if(addNew)_pplAddBlank(mig);   // D0724-06：從哪一段按「＋新增」就進哪一段
   renderPeople();
 }
-function _pplAddBlank(){DS.people.push({id:uid(),name:'',migrant:false,gender:'男',birth:'',company:'',skill:'',foreman:false,laborIns:false,healthIns:false,safety:'',photo:'',note:''});}
+function _pplAddBlank(mig){DS.people.push({id:uid(),name:'',migrant:!!mig,gender:'男',birth:'',company:'',skill:'',foreman:false,laborIns:false,healthIns:false,safety:'',photo:'',note:''});}
 function renderPeopleEdit(bar,host){
   bar.innerHTML='<button class="btn" id="bulkOk" style="background:#16a34a;color:#fff;border-color:#16a34a"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 確認</button>'+
     '<button class="btn" id="bulkRevert" style="border-color:#f59e0b;color:#92400e">↩ 全部還原</button>'+
@@ -948,10 +982,18 @@ function renderPeopleEdit(bar,host){
   };
   bar.querySelector('#bulkAdd').onclick=function(){_pplAddBlank();renderPeople();};
   _pplSections().forEach(function(sec){
-    var hd=document.createElement('div');hd.style.cssText=sec.hd+';border-radius:0;padding:8px 12px;font-weight:700;font-size:13.5px;margin:10px 0 0';hd.textContent=sec.label+'（'+sec.list.length+'）— 編輯中';host.appendChild(hd);
+    // D0724-06：同上，標題改 innerHTML＝修 ① SVG 亂碼；編輯中一樣走段落容器
+    var box=document.createElement('div');box.className='psec';
+    var hd=document.createElement('div');hd.className='psec-hd';hd.style.cssText=sec.hd;
+    hd.innerHTML='<span>'+sec.label+'（'+sec.list.length+'）— 編輯中</span>'+
+      '<span class="psec-r"><button class="btn sm _addP">＋ 新增'+(sec.key==='mig'?'移工':'人員')+'</button></span>';
+    box.appendChild(hd);
+    var bd=document.createElement('div');bd.className='psec-bd';
     var grid=document.createElement('div');grid.className='grid-people';
     sec.list.forEach(function(p){grid.appendChild(personEditCard(p));});
-    host.appendChild(grid);
+    if(!sec.list.length){var e=document.createElement('div');e.className='muted';e.style.cssText='font-size:12.5px;padding:8px 4px';e.textContent='（無）';grid.appendChild(e);}
+    bd.appendChild(grid);box.appendChild(bd);host.appendChild(box);
+    hd.querySelector('._addP').onclick=function(){_pplAddBlank(sec.key==='mig');renderPeople();};
   });
 }
 function personEditCard(p){
@@ -1038,12 +1080,27 @@ function machUsedOn(day,mid){var sum=0;itemsOn(day).forEach(function(it){(it.mac
 function machMaxUsed(mid){var days={},max=0;DS.items.forEach(function(it){days[it.day]=1;});Object.keys(days).forEach(function(d){var u=machUsedOn(d,mid);if(u>max)max=u;});return max;}
 function renderMachine(){
   var g=document.getElementById('machineGrid');g.innerHTML='';
-  var total=0;DS.machines.forEach(function(m){total+=(+m.qty||0);});
-  document.getElementById('machSummary').textContent='共 '+DS.machines.length+' 種 · '+total+' 台';
+  // D0724-06 ③C：機具也走段落容器，標題右半邊放摘要（原本是空的）
+  var total=0,cert=0,ovr=0;
+  DS.machines.forEach(function(m){
+    total+=(+m.qty||0);
+    if(m.needCert)cert++;
+    var isOver=false;selOffs().forEach(function(off){if(machUsedOn(dayOf(off),m.id)>(+m.qty||0))isOver=true;});
+    if(isOver)ovr++;
+  });
+  var sm=document.getElementById('machSummary');if(sm)sm.textContent='';
+  var hd=document.getElementById('machHd');
+  if(hd){
+    var r='共 '+total+' 台';
+    if(cert)r+=' · 需證照 '+cert+' 種';
+    r+=ovr?' · <b style="color:#dc2626">超派 '+ovr+' 種</b>':(DS.machines.length?' · 無超派':'');
+    hd.innerHTML='<span>機具（'+DS.machines.length+' 種）</span><span class="psec-r"><span>'+r+'</span></span>';
+  }
   DS.machines.forEach(function(m){g.appendChild(machineCard(m));});
+  if(!DS.machines.length){var e=document.createElement('div');e.className='muted';e.style.cssText='font-size:12.5px;padding:8px 4px';e.textContent='（無）';g.appendChild(e);}
 }
 function machineCard(m){
-  var d=document.createElement('div');d.className='pcard';
+  var d=document.createElement('div');d.className='pcard mcard';
   var over=false;
   var bars=selOffs().map(function(off){
     var day=dayOf(off);var used=machUsedOn(day,m.id);var left=m.qty-used;var isOver=left<0;if(isOver)over=true;
@@ -1057,11 +1114,14 @@ function machineCard(m){
   if(m.keeper)info+='<div class="kv" style="font-size:12.5px">保管人：'+esc(m.keeper)+'</div>';
   if(m.loc)info+='<div class="kv" style="font-size:12.5px">位置：'+esc(m.loc)+'</div>';
   (DS.machineFields||[]).forEach(function(f){var v=(m.custom||{})[f.key];if(v)info+='<div class="kv" style="font-size:12.5px">'+esc(f.label)+'：'+esc(v)+'</div>';});
-  if(m.note)info+='<div class="kv muted" style="font-size:12.5px">備註：'+esc(m.note)+'</div>';
+  var _nt=String(m.note||'').trim();
+  // D0724-06 ③D(a)：備註只是「需證照」時就不重複印（右上已有徽章）
+  if(_nt&&_nt!=='需證照')info+='<div class="kv muted" style="font-size:12.5px">備註：'+esc(_nt)+'</div>';
   if(over)d.style.borderColor='#fca5a5';
-  d.innerHTML='<div class="row"><span class="nm">'+esc(m.name)+'</span><span class="dnum">'+esc(m.serial)+'</span>'+(m.needCert?'<span class="badge" style="background:#fef3c7;color:#92400e">需證照</span>':'')+'<span class="spacer"></span><span class="badge">共 '+m.qty+' 台</span></div>'+
+  // D0724-06 ③A'：標題列鎖一行（需證照徽章留在第一行，只有名稱可縮＋title 顯示全名）；③B：操作列 margin-top:auto 貼底
+  d.innerHTML='<div class="row mhead"><span class="nm" title="'+esc(m.name)+'">'+esc(m.name)+'</span><span class="dnum">'+esc(m.serial)+'</span>'+(m.needCert?'<span class="badge" style="background:#fef3c7;color:#92400e">需證照</span>':'')+'<span class="spacer"></span><span class="badge">共 '+m.qty+' 台</span></div>'+
     bars+'<div style="margin-top:7px">'+info+'</div>'+
-    '<div class="row" style="margin-top:9px"><button class="btn sm mMinus">−</button><b style="min-width:26px;text-align:center">'+m.qty+'</b><button class="btn sm mPlus">＋</button><span class="spacer"></span><button class="btn sm mDet">明細 ▾</button><button class="btn sm editM">編輯</button><button class="btn sm danger delM">刪</button></div>'+
+    '<div class="row mops"><button class="btn sm mMinus">−</button><b style="min-width:26px;text-align:center">'+m.qty+'</b><button class="btn sm mPlus">＋</button><span class="spacer"></span><button class="btn sm mDet">明細 ▾</button><button class="btn sm editM">編輯</button><button class="btn sm danger delM">刪</button></div>'+
     '<div class="mdet" style="display:none;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"></div>';
   d.querySelector('.mPlus').onclick=function(){m.qty=(+m.qty||0)+1;save();renderMachine();};
   d.querySelector('.mMinus').onclick=function(){
@@ -2054,4 +2114,4 @@ try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{p
 </script>
 </body>
 </html>
-<!-- d0724-05 index -->
+<!-- d0724-06 index -->
