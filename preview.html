@@ -155,7 +155,7 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .dayhdr .spacer{flex:1;}
 .stg-sec{margin-top:6px;}
 .stg-sec .sechdr{font-weight:700;font-size:15px;cursor:pointer;padding:5px 0;user-select:none;}
-@media(max-width:560px){.prow{flex-direction:column;gap:8px}.prow .pinfo{width:auto;}}
+@media(max-width:700px){.prow{flex-direction:column;gap:8px}.prow .pinfo{width:auto;}}
 /* V0.5 groups */
 .groups{background:#fff;border:1px solid #C9DCEE;border-left:5px solid #7c3aed;border-radius:0;padding:11px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
 .gwrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;}
@@ -179,16 +179,17 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 /* D0724-03 ②手機頂列鎖一列（比照 G95 V0724-05） */
 .sub{flex-wrap:nowrap;overflow:hidden}
 .sub>*{white-space:nowrap;flex:none}
-@media(max-width:560px){.sub{font-size:12.5px;gap:7px}}
+@media(max-width:700px){.sub{font-size:12.5px;gap:7px}}
 /* D0724-06 ②B②C③A'BC：人員/機具 段落容器化＋卡片寬度上限＋機具卡標題鎖一行/操作列貼底 */
 .psec{border:1px solid #9DC3E6;border-radius:0;margin:12px 0 0;background:#fff}
 .psec-hd{padding:8px 12px;font-weight:700;font-size:13.5px;border-bottom:1px solid #9DC3E6;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .psec-hd .psec-r{font-weight:400;font-size:12.5px;color:#475569;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 .psec-bd{padding:12px}
 .psec-bd>.grid-people{margin-top:0}
-@media(max-width:560px){.psec-bd{padding:9px}.psec-hd{padding:7px 10px;font-size:13px}}
+@media(max-width:700px){.psec-bd{padding:9px}.psec-hd{padding:7px 10px;font-size:13px}}
 /* 手機維持整寬（②B 的寬度上限只在桌機才需要，手機上限會讓右邊空一塊） */
-@media(max-width:560px){.grid-people{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important}#machineGrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important}}
+/* D0725-05：斷點統一成 700px（原本 560/700 兩套並存，iPad 直立 768 被當桌機但其實是手指在點） */
+@media(max-width:700px){.grid-people{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important}#machineGrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important}}
 .mcard{display:flex;flex-direction:column}
 .mcard .mhead{flex-wrap:nowrap;align-items:center}
 .mcard .mhead .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -354,10 +355,10 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-04</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-05</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
     <div class="dd-grp"><div class="dd-gl">同步 / 備份</div><div class="dd-gr"><button class="btn sm" onclick="dispForceResync()" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 重抓雲端資料</button><button class="btn sm" id="bkNow2" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg> 一鍵備份</button></div></div>
     <div class="dd-grp"><div class="dd-gl">其他</div><div class="dd-gr"><button class="btn sm" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 使用說明書</button><button class="btn sm danger" id="logoutBtn2" style="display:none;width:100%;justify-content:flex-start">登出</button></div></div>
-    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-04</div>
+    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-05</div>
   </div></span></div>
 </div>
 
@@ -502,11 +503,18 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=30; // D0725-04 示意圖 v4（41~52 全採納·封單選 A 分配區照常可改）：㊶~㊻封單＝DS.sealed[day]{at,by,ver,items 深拷貝,ppl,mac} 存雲端；sealDay/unsealDay＋DS.sealLog（留 50 筆·誰何時封/解）；renderSheetOne 已封單預設顯示快照（_sealView seal|live 可切），期間 window._sealLK 讓 personById/machineById 先查快照名冊＝人被改名/刪掉紙本仍印得出來、render 結束清掉；_sealDiff 比對快照 vs 目前分配區（戶別/內容/時段/起迄/管理/責任/扣款/需求人數/人員/機具；**勾完成與 seq 不算變動**）→ 工單橫幅「封單後有 N 處變動·看差異」＋_sealDiffModal；日期清單列加 已封單/未封單 徽章＋封單時間·封單人·變動數；PDF/截圖印的就是當下顯示的快照＝與簽名紙一致；_sealPrune() 快照只留 30 天（長期保存靠備份）。㊼~㊿工安：_pplRisk/_certStat/_hasCert/_itemCertWarn＝派工卡人員徽章勞安或證照過期轉紅底加註、30 天內到期轉黃，工單與 PDF 的人名也標，工項用到需證照機具但全組沒人登記證照→卡片紅字警告（**只提醒不擋**）；人員新增 p.certs[{k,d}]（editPerson 可增刪·人員卡顯示紅黃綠徽章·**不填完全不跳提醒**）。㊾㊿工單搜尋 _shQ/_shRunSearch/_shItemHay＝跨 10 天找戶別/內容/#號/流水號/人名/廠商/機具（空白分隔 AND、最多 60 筆），結果一筆一卡點擊跳該天工單。 // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=31; // D0725-05 收尾包＋修 D0725-03/04 的同步漏洞：[重要] 只有 SYNC_TYPES 五類（people/machines/groups/managers/items）＋machineFields/codeVersion/dayCap 會上雲端，其餘 DS 欄位只在 localStorage → D0725-03 的 DS.lastBackup/bkErr 與 D0725-04 的 DS.sealed/sealLog **從來沒有真的同步**（宣稱「全公司同一份」是錯的）。修法＝①封單快照改一天一份文件存 dispatch/{SITE}/seals/{day}（_sealCol/_sealPush/_sealDrop/_sealSubscribe，unseal 與 _sealPrune 也刪雲端）②備份時間/失敗原因/bkWeek/sealLog 由 _metaPush() 寫進 site doc、site doc onSnapshot 以較新者回填。B 待上傳筆數＝_pendTrack/_pendPaint 包住每個 setDoc（原本一送出就顯示「已同步」，離線時其實還在本機佇列＝現場以為存好了）。C 授權名單改「寫死清單 ∪ 雲端 company.editors」＝加人不用發版；雲端只能加不能減（讀失敗/被清空都不會鎖住全公司）。D 舊工單清理：程式從來沒有清過（DS.items 無限成長→手機變慢、備份 JSON 撐破 900KB 就換自動備份失敗）＝工單頁顯示總筆數＋「清理 30 天前的 N 件」（_oldItems/_cleanOldModal，先強制備份再刪、二次確認、列出各日筆數與是否已封單）。E 手機斷點統一 700px（原本 560/700 兩套並存，iPad 直立 768 被當桌機）。 // D0725-04 示意圖 v4（41~52 全採納·封單選 A 分配區照常可改）：㊶~㊻封單＝DS.sealed[day]{at,by,ver,items 深拷貝,ppl,mac} 存雲端；sealDay/unsealDay＋DS.sealLog（留 50 筆·誰何時封/解）；renderSheetOne 已封單預設顯示快照（_sealView seal|live 可切），期間 window._sealLK 讓 personById/machineById 先查快照名冊＝人被改名/刪掉紙本仍印得出來、render 結束清掉；_sealDiff 比對快照 vs 目前分配區（戶別/內容/時段/起迄/管理/責任/扣款/需求人數/人員/機具；**勾完成與 seq 不算變動**）→ 工單橫幅「封單後有 N 處變動·看差異」＋_sealDiffModal；日期清單列加 已封單/未封單 徽章＋封單時間·封單人·變動數；PDF/截圖印的就是當下顯示的快照＝與簽名紙一致；_sealPrune() 快照只留 30 天（長期保存靠備份）。㊼~㊿工安：_pplRisk/_certStat/_hasCert/_itemCertWarn＝派工卡人員徽章勞安或證照過期轉紅底加註、30 天內到期轉黃，工單與 PDF 的人名也標，工項用到需證照機具但全組沒人登記證照→卡片紅字警告（**只提醒不擋**）；人員新增 p.certs[{k,d}]（editPerson 可增刪·人員卡顯示紅黃綠徽章·**不填完全不跳提醒**）。㊾㊿工單搜尋 _shQ/_shRunSearch/_shItemHay＝跨 10 天找戶別/內容/#號/流水號/人名/廠商/機具（空白分隔 AND、最多 60 筆），結果一筆一卡點擊跳該天工單。 // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
-function _loginAllowed(email){var e=String(email||'').toLowerCase();return LOGIN_ALLOW.map(function(x){return String(x).toLowerCase();}).indexOf(e)>=0;}
+/* D0725-05：授權名單改成「寫死清單 ∪ 雲端 company.editors」＝加人不用發版；
+   雲端清單只能「加人」不能「減人」（讀失敗或被清空都不會把全公司鎖在外面）。移除仍要改這行＋Firestore 規則。 */
+window._cloudEditors=[];
+function _loginAllowed(email){
+  var e=String(email||'').toLowerCase();
+  var list=LOGIN_ALLOW.concat(window._cloudEditors||[]).map(function(x){return String(x||'').toLowerCase();});
+  return list.indexOf(e)>=0;
+}
 var LS_KEY='g95dispatch_v1_'+SITE;
 var DS=null;
 var _cloudOn=false,_readonly=false,_allowed=false,_userEmail='';
@@ -608,6 +616,19 @@ function _siteDoc(){return window._fb.doc(window._fb.db,'dispatch',SITE);}
 function _companyDoc(){return window._fb.doc(window._fb.db,'dispatch','company');}
 function _colRef(type){return type==='items'?window._fb.collection(_siteDoc(),'items'):window._fb.collection(_companyDoc(),type);}
 function _setSync(txt,ok){var el=document.getElementById('syncTag');if(el){el.innerHTML=txt;el.style.color=ok?'#bbf7d0':'#fecaca';}}
+/* D0725-05：真正的「待上傳 N 筆」——原本 setDoc 一送出就顯示「已同步」，
+   但離線/訊號差時那些寫入其實還躺在本機佇列，現場的人會以為存好了。 */
+var _pendW=0;
+function _pendTrack(pr){
+  _pendW++;_pendPaint();
+  try{pr.then(function(){_pendW=Math.max(0,_pendW-1);_pendPaint();},function(){_pendW=Math.max(0,_pendW-1);_pendPaint();});}
+  catch(e){_pendW=Math.max(0,_pendW-1);_pendPaint();}
+  return pr;
+}
+function _pendPaint(){
+  if(_pendW>0){_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg> 待上傳 '+_pendW+' 筆',false);}
+  else{_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);}
+}
 // D0705-01：關頁/切出分頁前把還在防抖等待的變更立刻送出
 document.addEventListener('visibilitychange',function(){
   try{if(document.visibilityState==='hidden'&&_flushTimer&&_cloudOn&&!_readonly){clearTimeout(_flushTimer);_flushTimer=null;_flush();}}catch(e){}
@@ -622,18 +643,18 @@ function _flush(){
       var j=JSON.stringify(cur[id]);
       if(last[id]===j)return;
       var data=JSON.parse(j);data._mt=Date.now();delete data._del;
-      window._fb.setDoc(window._fb.doc(_colRef(type),id),data).catch(function(e){console.warn('flush',type,id,e);_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 寫入失敗',false);});
+      _pendTrack(window._fb.setDoc(window._fb.doc(_colRef(type),id),data)).catch(function(e){console.warn('flush',type,id,e);_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 寫入失敗',false);});
       last[id]=j;_touch[type+'/'+id]=Date.now();wrote++;
     });
     Object.keys(last).forEach(function(id){
       if(cur[id])return;
-      window._fb.setDoc(window._fb.doc(_colRef(type),id),{_del:true,_mt:Date.now()}).catch(function(e){console.warn(e);});
+      _pendTrack(window._fb.setDoc(window._fb.doc(_colRef(type),id),{_del:true,_mt:Date.now()})).catch(function(e){console.warn(e);});
       delete last[id];_touch[type+'/'+id]=Date.now();wrote++;
     });
   });
   var mf=JSON.stringify(DS.machineFields||[]);
   if(_lastSync._mf!==mf){window._fb.setDoc(_companyDoc(),{machineFields:DS.machineFields||[],_mt:Date.now()},{merge:true}).catch(function(e){console.warn(e);});_lastSync._mf=mf;wrote++;}
-  if(wrote)_setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);
+  if(wrote)_pendPaint();
 }
 function _applyRemoteType(type,snap){
   if(type==='people'&&_pplEdit)return; // 全員編輯中暫停蓋入,退出後下一次快照補上
@@ -689,6 +710,15 @@ function _cloudBoot(){
       var d=ds.exists()?ds.data():{};
       if((d.serial||0)>(DS.serial||1))DS.serial=d.serial;
       if(d.dayCap!=null&&d.dayCap!==window._dayCap){window._dayCap=d.dayCap;try{if(document.getElementById('pane-board').style.display!=='none')renderBoard();}catch(e){}}
+      // D0725-05：備份狀態/封單紀錄從雲端回填（誰備份的、幾天沒備份＝全公司看到同一個）
+      try{
+        var _mc=false;
+        if(d.lastBackup&&(!DS.lastBackup||(d.lastBackup.at||0)>(DS.lastBackup.at||0))){DS.lastBackup=d.lastBackup;_mc=true;}
+        if(d.bkErr&&(!DS.bkErr||(d.bkErr.at||0)>(DS.bkErr.at||0))){DS.bkErr=d.bkErr;_mc=true;}
+        if(d.bkWeek&&d.bkWeek>(DS.bkWeek||'')){DS.bkWeek=d.bkWeek;_mc=true;}
+        if(d.sealLog&&JSON.stringify(d.sealLog)!==JSON.stringify(DS.sealLog||[])){DS.sealLog=d.sealLog;_mc=true;}
+        if(_mc){try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){}if(document.getElementById('pane-sheet').style.display!=='none')renderSheet();}
+      }catch(e){}
       if(!window._PREVIEW&&(d.codeVersion||0)>CODE_VERSION){
         _readonly=true;
         var b=document.getElementById('roBanner');b.style.display='';
@@ -706,9 +736,14 @@ function _cloudBoot(){
     });
     window._fb.onSnapshot(_companyDoc(),function(ds){
       var d=ds.exists()?ds.data():{};
+      if(Array.isArray(d.editors)&&d.editors.length){
+        var _ce=d.editors.filter(function(x){return typeof x==='string'&&x.indexOf('@')>0;});
+        if(JSON.stringify(_ce)!==JSON.stringify(window._cloudEditors)){window._cloudEditors=_ce;console.log('[授權] 雲端追加名單',_ce.length,'人');}
+      }
       if(d.machineFields){var j=JSON.stringify(d.machineFields);if(j!==JSON.stringify(DS.machineFields||[])){DS.machineFields=d.machineFields;_lastSync._mf=j;_rerender();}}
     });
     if(!window._PREVIEW&&_allowed){window._fb.setDoc(_siteDoc(),{codeVersion:CODE_VERSION},{merge:true}).catch(function(){});}
+    _sealSubscribe();   // D0725-05：封單快照訂閱
     _g95Subscribe();
     _setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);
     setTimeout(_autoWeeklyBackup,3000);   // D0721-01：雲端就緒後靜默週備份
@@ -2128,6 +2163,35 @@ function _shRunSearch(hits,days){
 //    工單顯示快照＋「封單後有 N 處變動·看差異」；PDF／截圖印的就是快照＝跟簽名的紙一致 ══
 var _sealView='seal';    // 'seal'＝看封單快照（預設）／'live'＝看目前分配區
 function _sealOf(day){return (DS.sealed||{})[day]||null;}
+/* [重要] D0725-05 修 D0725-04 的漏洞：DS.sealed / DS.lastBackup 只有 SYNC_TYPES 那五類會上雲端，
+   其餘 DS 欄位只留在本機 localStorage＝「封單存雲端、全公司同一份」根本沒發生（別人看不到封單）。
+   改法＝封單快照一天一份文件存 dispatch/{SITE}/seals/{day}（子集合·大小可控），開機訂閱回填。 */
+function _sealCol(){return window._fb.collection(_siteDoc(),'seals');}
+function _sealPush(day,payload){
+  try{
+    if(!_cloudOn||_readonly)return;
+    window._fb.setDoc(window._fb.doc(_sealCol(),day),payload).catch(function(e){console.warn('seal push',e);});
+  }catch(e){console.warn(e);}
+}
+function _sealDrop(day){
+  try{
+    if(!_cloudOn||_readonly)return;
+    window._fb.deleteDoc(window._fb.doc(_sealCol(),day)).catch(function(e){console.warn('seal drop',e);});
+  }catch(e){console.warn(e);}
+}
+function _sealSubscribe(){
+  try{
+    window._fb.onSnapshot(_sealCol(),function(snap){
+      var next={};
+      snap.forEach(function(d){next[d.id]=d.data();});
+      if(JSON.stringify(next)!==JSON.stringify(DS.sealed||{})){
+        DS.sealed=next;
+        try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){}
+        try{if(document.getElementById('pane-sheet').style.display!=='none')renderSheet();}catch(e){}
+      }
+    },function(e){console.warn('seal snap',e);});
+  }catch(e){console.warn(e);}
+}
 function _sealPplMap(day){var o={};itemsOn(day).forEach(function(it){(it.assignees||[]).forEach(function(a){var p=personById(a.personId);if(p)o[a.personId]={id:p.id,name:p.name,foreman:p.foreman,migrant:p.migrant,safety:p.safety,certs:p.certs||[]};});});return o;}
 function _sealMacMap(day){var o={};itemsOn(day).forEach(function(it){(it.machines||[]).forEach(function(m){var mc=machineById(m.machineId);if(mc)o[m.machineId]={id:mc.id,name:mc.name,needCert:mc.needCert};});});return o;}
 function _sealLog(day,act){
@@ -2144,21 +2208,22 @@ function sealDay(day){
   if(!confirm('把 '+fmtDay(day)+' 的派工單封起來？\n\n封單＝拍一張快照存起來，之後分配區再怎麼改，這張單子都不會變（跟你印出去簽名的紙一致）。\n分配區照常可以改，系統會幫你標出差異。'))return;
   DS.sealed=DS.sealed||{};
   DS.sealed[day]={at:Date.now(),by:(DS.user||window._userEmail||''),ver:CODE_VERSION,items:JSON.parse(JSON.stringify(its)),ppl:_sealPplMap(day),mac:_sealMacMap(day)};
-  _sealLog(day,'seal');save();_sealView='seal';renderSheet();
+  _sealLog(day,'seal');_sealPush(day,DS.sealed[day]);save();_metaPush();_sealView='seal';renderSheet();
   toast('已封單 '+fmtDay(day)+'（'+its.length+' 件）');
 }
 function unsealDay(day){
   if(window._readonly){alert('這個帳號是唯讀，不能解除封單');return;}
   if(!confirm('解除 '+fmtDay(day)+' 的封單？\n\n快照會刪掉，這天的工單改回跟著分配區即時變動。\n（會留下紀錄：誰在什麼時候解的）'))return;
   if(DS.sealed)delete DS.sealed[day];
-  _sealLog(day,'unseal');save();renderSheet();
+  _sealDrop(day);
+  _sealLog(day,'unseal');save();_metaPush();renderSheet();
   toast('已解除封單 '+fmtDay(day));
 }
 function _sealPrune(){        // ㊻：快照跟工單一樣不長期保存（30 天），長期保存靠備份
   try{
     if(!DS.sealed)return;
     var cut=todayISO(new Date(Date.now()-30*86400000)),n=0;
-    Object.keys(DS.sealed).forEach(function(d){if(d<cut){delete DS.sealed[d];n++;}});
+    Object.keys(DS.sealed).forEach(function(d){if(d<cut){delete DS.sealed[d];_sealDrop(d);n++;}});
     if(n)save();
   }catch(e){}
 }
@@ -2212,6 +2277,40 @@ function _sealDiffModal(day){
   box.querySelector('#cancelM').onclick=closeModal;
   openModal();
 }
+/* [重要] D0725-05：工單說「只保留近 10 天」但程式從來沒有清理過——DS.items 會無限長大
+   （手機首載變慢、備份 JSON 撐大到 >900KB 就換自動備份失敗）。
+   不自動刪：改成「看得到、要按才刪、刪前強制先備份」。 */
+var KEEP_DAYS=30;
+function _oldItems(){
+  var cut=todayISO(new Date(Date.now()-KEEP_DAYS*86400000));
+  return (DS.items||[]).filter(function(it){return it.day&&it.day<cut;});
+}
+function _cleanOldModal(){
+  var old=_oldItems();
+  if(!old.length){alert('沒有超過 '+KEEP_DAYS+' 天的舊工單。');return;}
+  var byDay={};old.forEach(function(it){byDay[it.day]=(byDay[it.day]||0)+1;});
+  var days=Object.keys(byDay).sort();
+  var box=document.getElementById('modalBox');
+  box.innerHTML='<h3 style="margin-bottom:8px">清理舊工單</h3>'
+   +'<div class="bk-bad" style="border:1px solid #E39B9B;margin-bottom:10px"><b>刪掉就救不回來（只能從備份檔還原）</b><div style="font-size:11.5px;margin-top:3px">所以下面那顆鈕會先幫你下載一份備份，再刪。</div></div>'
+   +'<div class="bsec" style="margin-bottom:10px"><div class="bsec-hd"><span>超過 '+KEEP_DAYS+' 天</span><span class="bchip red">'+old.length+' 件</span><span class="bsec-r">'+days[0]+' ~ '+days[days.length-1]+'</span></div>'
+   +'<div style="max-height:40vh;overflow:auto">'+days.map(function(d){return '<div class="dif-row">'+fmtDay(d)+'　<b>'+byDay[d]+'</b> 件'+(_sealOf(d)?'　<span class="bchip" style="background:#26476b;border-color:#26476b;color:#fff">已封單</span>':'')+'</div>';}).join('')+'</div></div>'
+   +'<div class="muted" style="font-size:12px;margin-bottom:10px">目前工單總筆數 '+((DS.items||[]).length)+' 件。清掉舊的可以讓手機開啟變快、備份檔變小（超過 900KB 自動備份就會失敗）。</div>'
+   +'<div class="row" style="gap:6px"><button class="btn" id="cancelM" style="flex:1">取消</button><button class="btn" id="clGo" style="flex:2;background:#B45309;border-color:#B45309;color:#fff">先備份，再刪 '+old.length+' 件</button></div>';
+  box.querySelector('#cancelM').onclick=closeModal;
+  box.querySelector('#clGo').onclick=function(){
+    if(!confirm('確定？\n\n1) 先下載一份完整備份檔\n2) 再刪掉 '+old.length+' 件超過 '+KEEP_DAYS+' 天的舊工單\n\n刪掉後只能從剛剛那份備份還原。'))return;
+    backupNow();
+    setTimeout(function(){
+      var ids={};_oldItems().forEach(function(it){ids[it.id]=1;});
+      var n=Object.keys(ids).length;
+      DS.items=(DS.items||[]).filter(function(it){return !ids[it.id];});
+      save();closeModal();renderSheet();
+      toast('已清掉 '+n+' 件舊工單（備份檔已下載）');
+    },900);
+  };
+  openModal();
+}
 // D0725-01 ⑫⑬⑭⑮：日期清單改「一大框分割」＝整行滿版（不再 280px 卡右邊留白）、整列可點展開、件數/人數大字
 function renderSheetList(host){
   var d=sheetDates();var t=todayISO();
@@ -2251,8 +2350,14 @@ function renderSheetList(host){
   si.oninput=function(){_shQ=this.value;_shRunSearch(hits,days);};
   if(_shQ)_shRunSearch(hits,days);
   var note=document.createElement('div');note.className='muted';note.style.cssText='font-size:12.5px;margin-top:2px';
-  note.textContent='工單＝分配區的即時鏡像，只讀不可改；歷史只保留近 10 天，請每週備份。';
+  note.textContent='工單＝分配區的即時鏡像，只讀不可改。長期保存請靠備份。';
   host.appendChild(note);
+  // D0725-05：把「資料一直長大」變成看得到、可控
+  var _old=_oldItems();
+  var cl=document.createElement('div');cl.className='muted';cl.style.cssText='font-size:12px;margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+  cl.innerHTML='<span>工單總筆數 <b>'+((DS.items||[]).length)+'</b> 件</span>'+(_old.length?'<button class="btn sm" id="clOld" style="border-color:#F0C08A;color:#9a3412">清理 '+KEEP_DAYS+' 天前的 '+_old.length+' 件</button>':'<span>（沒有超過 '+KEEP_DAYS+' 天的舊資料）</span>');
+  host.appendChild(cl);
+  var _cb=cl.querySelector('#clOld');if(_cb)_cb.onclick=_cleanOldModal;
 }
 function sheetRowCells(it){
   var ppl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?personLabelHTML(p,a.foreman):'';}).join(_sheetNameMode==='badge'?' ':'、');
@@ -2602,7 +2707,7 @@ function backupNow(){
   DS.bkWeek=_weekKey();
   DS.lastBackup={at:Date.now(),by:(DS.user||window._userEmail||''),kind:'manual'};
   DS.bkErr=null;
-  save();
+  save();_metaPush();
   try{localStorage.removeItem('disp_bkSnooze');}catch(e){}
   var b=document.getElementById('bkBanner');if(b)b.style.display='none';
   toast('已下載備份檔');
@@ -2610,8 +2715,20 @@ function backupNow(){
 }
 /* D0725-03 ㉞：自動備份失敗原因記下來（原本是默默失敗、使用者永遠不知道） */
 function _bkFail(why){
-  try{DS.bkErr={at:Date.now(),why:why};if(_cloudOn&&_allowed&&!_readonly)save();}catch(e){}
+  try{DS.bkErr={at:Date.now(),why:why};save();_metaPush();}catch(e){}
   console.warn('[備份] 失敗：'+why);
+}
+/* [重要] D0725-05：備份時間/失敗原因/封單紀錄寫進 site doc＝真的全公司同一份（D0725-03 誤以為存 DS 就會同步） */
+function _metaPush(){
+  try{
+    if(!_cloudOn||_readonly||window._PREVIEW)return;
+    window._fb.setDoc(_siteDoc(),{
+      lastBackup:DS.lastBackup||null,
+      bkErr:DS.bkErr||null,
+      bkWeek:DS.bkWeek||'',
+      sealLog:(DS.sealLog||[]).slice(0,50)
+    },{merge:true}).catch(function(e){console.warn('meta push',e);});
+  }catch(e){}
 }
 function _weekKey(){var d=new Date();var dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);return todayISO(d);}
 /* D0721-01：每週自動備份——本週首次開啟且有雲端寫入權時，靜默寫一份到 dispatch/{SITE}/backups/{週}；無雲端/唯讀/太大＝退回週一橫幅提醒。 */
@@ -2633,7 +2750,7 @@ function _autoWeeklyBackup(){
     window._fb.setDoc(window._fb.doc(_siteDoc(),'backups',wk),{week:wk,at:Date.now(),by:(DS.user||_userEmail||''),ver:CODE_VERSION,data:json}).then(function(){
       DS.bkWeek=wk;
       DS.lastBackup={at:Date.now(),by:'自動',kind:'auto'};DS.bkErr=null;
-      save();
+      save();_metaPush();
       var b=document.getElementById('bkBanner');if(b)b.style.display='none';
       console.log('[備份] 本週自動備份完成',wk,json.length+' bytes');
     }).catch(function(e){
@@ -2797,4 +2914,4 @@ try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{p
 </body>
 </html>
 
-<!-- v0725-04 preview -->
+<!-- v0725-05 preview -->
