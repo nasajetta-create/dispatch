@@ -271,15 +271,52 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .mday.over{background:#FBE0E0}
 .mday .d{flex:none;width:64px;font-weight:700;color:#334756}
 .mday .r{margin-left:auto;font-weight:700}
+
+/* ══ D0725-02（示意圖 v2·22~31）＝合併鈕＋工單展開頁手機卡片化 ══ */
+/* ㉒㉓㉔ 合併鈕：一個外框、中間分隔線切 2~3 格（取代各自一個框的零碎按鈕） */
+.mg{display:inline-flex;border:1px solid #93C5FD;background:#fff;border-radius:0}
+.mg>*{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:0 11px;font-size:13px;font-weight:700;color:#26476b;border-left:1px solid #C9DCEE;cursor:pointer;background:transparent;user-select:none;white-space:nowrap}
+.mg>*:first-child{border-left:none}
+.mg>.dg{color:#B3261E}
+.mg>.mgn{cursor:default;min-width:36px;color:#1f2937}
+.mg>*:active{background:#F1F5F9}
+/* ㉕㉖㉗㉘㉙㉚㉛ 工單展開頁：手機一筆一卡；表格保留給 PDF／截圖／列印（㉛） */
+.sh-cards{display:none}
+@media(max-width:700px){
+  .sh-tbl{display:none}
+  .sh-cards{display:block}
+  .sheet-actions{gap:6px!important}
+  #shMode{width:100%;display:flex;background:#fff;border:1px solid #93C5FD;padding:0}
+  #shMode button{flex:1;min-height:34px;border-radius:0;border-left:1px solid #C9DCEE;font-size:13px}
+  #shMode button:first-child{border-left:none}
+  #shMode button.on{background:#0d9488;color:#fff;box-shadow:none}
+  #ddSet .dd-t{min-height:34px}
+}
+.sh-mbar{display:none;align-items:center;gap:8px;margin-bottom:8px}
+@media(max-width:700px){.sh-mbar{display:flex}}
+.sh-mbar .t{font-weight:800;font-size:15px;color:#26476b;margin-left:auto;margin-right:auto}
+.sh-sec{border-top:1px solid #C9DCEE}
+.sh-bhd{display:flex;align-items:center;gap:6px;background:#EAF4FC;color:#26476b;font-weight:700;font-size:12.5px;padding:7px 9px;cursor:pointer;user-select:none}
+.sh-card{padding:9px 10px;border-top:1px solid #DDE7F0}
+.sh-card:first-child{border-top:none}
+.sh-card.done{background:#F4F6F8}
+.sh-card.done .sh-ct{text-decoration:line-through;color:#6b7280}
+.sh-ix{width:21px;height:21px;flex:none;background:#5B9BD5;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.sh-card.done .sh-ix{background:#9AA4AE}
+.sh-ct{font-weight:700;font-size:14px;line-height:1.45;margin:5px 0 3px}
+.sh-meta{font-size:11.5px;color:#6b7280}
+#sheetPaper.sh-export .sh-tbl{display:block!important}
+#sheetPaper.sh-export .sh-cards{display:none!important}
+.sh-memrow2{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:8px 9px;background:#F2F7FC;border-top:1px solid #C9DCEE}
 </style>
 </head>
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-01</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-02</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
     <div class="dd-grp"><div class="dd-gl">同步 / 備份</div><div class="dd-gr"><button class="btn sm" onclick="dispForceResync()" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 重抓雲端資料</button><button class="btn sm" id="bkNow2" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg> 一鍵備份</button></div></div>
     <div class="dd-grp"><div class="dd-gl">其他</div><div class="dd-gr"><button class="btn sm" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 使用說明書</button><button class="btn sm danger" id="logoutBtn2" style="display:none;width:100%;justify-content:flex-start">登出</button></div></div>
-    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-01</div>
+    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-02</div>
   </div></span></div>
 </div>
 
@@ -424,7 +461,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=27; // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=28; // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -842,7 +879,8 @@ function groupCard(g){
   var d=document.createElement('div');d.className='gcard brow';d.style.cssText='background:#FAF8FE;border:none;border-top:1px solid #DDD6FE;max-width:none;min-width:0';
   var mem=(g.memberIds||[]).slice().sort(function(a,b){return (b===g.leaderId?1:0)-(a===g.leaderId?1:0);});
   var chips=mem.map(function(pid){var p=personById(pid);if(!p)return'';var lead=pid===g.leaderId;return '<span class="chip'+(lead?' lead':'')+'">'+(lead?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+'</span>';}).join('');
-  d.innerHTML='<div class="row" style="gap:6px"><span class="gname" style="font-size:15px">'+esc(g.name)+'</span><span class="bchip purple">'+(g.memberIds||[]).length+' 人</span><span class="spacer"></span><button class="btn sm editG">編輯</button><button class="btn sm danger delG">刪</button></div>'+
+  // D0725-02 ㉒：編輯/刪合併成一個框切 2 格
+  d.innerHTML='<div class="row" style="gap:6px"><span class="gname" style="font-size:15px">'+esc(g.name)+'</span><span class="bchip purple">'+(g.memberIds||[]).length+' 人</span><span class="spacer"></span><span class="mg"><span class="editG">編輯</span><span class="delG dg">刪</span></span></div>'+
     '<div style="margin:6px 0 0">'+(chips||'<span class="muted" style="font-size:13.5px">（無成員）</span>')+'</div>';
   d.querySelector('.editG').onclick=function(){editGroup(g.id);};
   d.querySelector('.delG').onclick=function(){if(confirm('刪除小組「'+g.name+'」？（不影響人員資料）')){DS.groups=DS.groups.filter(function(x){return x.id!==g.id;});save();renderGroups();renderPeople();}};
@@ -906,7 +944,7 @@ function renderManagers(){
   var wrap=document.createElement('div');wrap.className='gwrap blist';
   (DS.managers||[]).forEach(function(m){
     var c=document.createElement('div');c.className='gcard brow';c.style.cssText='background:#F6FDFE;border:none;border-top:1px solid #CFEFF5;max-width:none;min-width:0';
-    c.innerHTML='<div class="row" style="gap:7px"><span class="mgr" style="width:32px;height:32px;font-size:14px;background:'+mgrColor(m.name)+'">'+esc(mgrCode(m.name))+'</span><div style="min-width:0"><div style="font-weight:700;font-size:15px">'+esc(m.name)+'</div>'+(m.phone?'<div class="muted" style="font-size:12.5px">'+esc(m.phone)+'</div>':'')+'</div><span class="spacer"></span><button class="btn sm eMg">編輯</button><button class="btn sm danger dMg">刪</button></div>'+
+    c.innerHTML='<div class="row" style="gap:7px"><span class="mgr" style="width:32px;height:32px;font-size:14px;background:'+mgrColor(m.name)+'">'+esc(mgrCode(m.name))+'</span><div style="min-width:0"><div style="font-weight:700;font-size:15px">'+esc(m.name)+'</div>'+(m.phone?'<div class="muted" style="font-size:12.5px">'+esc(m.phone)+'</div>':'')+'</div><span class="spacer"></span><span class="mg"><span class="eMg">編輯</span><span class="dMg dg">刪</span></span></div>'+
       (m.note?'<div class="muted" style="font-size:12.5px;margin:6px 0 0">備註：'+esc(m.note)+'</div>':'');
     c.querySelector('.eMg').onclick=function(){editManager(m.id);};
     c.querySelector('.dMg').onclick=function(){if(confirm('刪除管理人 '+m.name+'？（派工卡上已填的名字不受影響）')){DS.managers=DS.managers.filter(function(x){return x.id!==m.id;});save();renderManagers();}};
@@ -1199,7 +1237,8 @@ function machineCard(m){
   d.innerHTML='<div class="row mhead"><span class="nm" title="'+esc(m.name)+'">'+esc(m.name)+'</span><span class="dnum">'+esc(m.serial)+'</span>'+(m.needCert?'<span class="badge" style="background:#fef3c7;color:#92400e">需證照</span>':'')+'<span class="spacer"></span><span class="badge">共 '+m.qty+' 台</span></div>'+
     bars+'<div style="margin-top:7px">'+info+'</div>'+
     // D0725-01 b：手機操作列只留 − 數量 ＋，明細/編輯/刪收進「⋯」（功能一項不減）
-    '<div class="row mops"><button class="btn sm mMinus">−</button><b style="min-width:26px;text-align:center">'+m.qty+'</b><button class="btn sm mPlus">＋</button><span class="spacer"></span>'+
+    // D0725-02 ㉔：數量鈕合併成一個框切 3 格
+    '<div class="row mops"><span class="mg"><span class="mMinus">−</span><b class="mgn">'+m.qty+'</b><span class="mPlus">＋</span></span><span class="spacer"></span>'+
       '<button class="btn sm mDet hdOnly">明細 ▾</button><button class="btn sm editM hdOnly">編輯</button><button class="btn sm danger delM hdOnly">刪</button>'+
       '<span class="dd mbOnly"><button class="dd-t" onclick="_ddTog(this,event)" style="min-height:30px;padding:0 10px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button><div class="dd-menu" style="min-width:170px"><div class="dd-gr"><button class="btn sm mDet2" style="width:100%;justify-content:flex-start">明細（已派到哪）</button><button class="btn sm editM2" style="width:100%;justify-content:flex-start">編輯機具</button><button class="btn sm danger delM2" style="width:100%;justify-content:flex-start">刪除</button></div></div></span></div>'+
     '<div class="mdet" style="display:none;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"></div>';
@@ -1874,6 +1913,53 @@ function sheetRowCells(it){
   var mac=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?(mc.name+'×'+m.qty):'';}).join('、');
   return {ppl:ppl,mac:mac};
 }
+// ══ D0725-02 ㉗㉘㉚ 工單展開頁手機一筆一卡（表格保留給 PDF／截圖／列印＝㉛，兩者共存·CSS 切換）══
+function _shSlotChip(it){
+  var s=slotLabel(it);
+  var c=/上午/.test(s)?'green':/下午/.test(s)?'amber':'';
+  return '<span class="bchip '+c+'">'+esc(s)+'</span>';
+}
+function _shCardHTML(it,ix,opt){
+  opt=opt||{};
+  var x=sheetRowCells(it);
+  var meta=[];
+  if(it.dnum!=null)meta.push(esc(String(dnumLabel(it)).replace(/<[^>]*>/g,'')));
+  if(_sheetShowResp&&it.respVendor)meta.push('責任 '+esc(it.respVendor));
+  if(_sheetShowDed&&it.dedVendor)meta.push('扣款 '+esc(it.dedVendor));
+  if(_sheetShowMgr&&it.mgr)meta.push('管理 '+esc(it.mgr));
+  var tags='';
+  if(!opt.noPpl&&x.ppl)tags+='<span style="font-size:11.5px">'+x.ppl+'</span>';
+  if(x.mac)tags+='<span class="bchip" style="background:#ECFEFF;border-color:#A5DEE8;color:#0e6f80">'+esc(x.mac)+'</span>';
+  return '<div class="sh-card'+(it.done?' done':'')+'">'
+    +'<div class="row" style="gap:5px"><span class="sh-ix">'+ix+'</span>'+_shSlotChip(it)
+    +'<b style="font-size:15px">'+esc(unitFloorFirst(it.unit))+'</b>'
+    +(it.done?'<span class="bchip green">已完成</span>':'')
+    +'<span class="spacer"></span>'+(it.refId?'<span class="sh-meta">#'+esc(it.refId)+'</span>':'')+'</div>'
+    +'<div class="sh-ct">'+esc(it.content||'')+'</div>'
+    +(meta.length?'<div class="sh-meta">'+meta.join(' · ')+'</div>':'')
+    +(tags?'<div class="row" style="gap:4px;flex-wrap:wrap;margin-top:5px">'+tags+'</div>':'')
+    +'</div>';
+}
+function _shSecWrap(label,n,inner){   // ㉙ 棟別分段·可收合
+  return '<div class="sh-sec"><div class="sh-bhd" onclick="_shTogSec(this)"><span>'+esc(label)+'</span><span class="bchip">'+n+' 件</span><span class="spacer"></span><span class="ar">▾</span></div><div class="sh-secbd">'+inner+'</div></div>';
+}
+function _shTogSec(el){
+  var bd=el.nextElementSibling;if(!bd)return;
+  var on=bd.style.display==='none';
+  bd.style.display=on?'':'none';
+  var ar=el.querySelector('.ar');if(ar)ar.textContent=on?'▾':'▸';
+}
+function _shCardsWork(its){
+  var out='',cur='',buf='',cnt=0;
+  var flush=function(){if(cur!=='')out+=_shSecWrap(cur,cnt,buf);buf='';cnt=0;};
+  its.forEach(function(it,ix){
+    var bk=bldgKey(it.unit);
+    if(bk!==cur){flush();cur=bk;}
+    buf+=_shCardHTML(it,ix+1);cnt++;
+  });
+  flush();
+  return out||'<div class="muted" style="padding:16px">（無）</div>';
+}
 function renderSheetOne(host,day){
   var its=itemsOn(day).slice().sort(bySheet);
   var ppl=0,names={},macSum={};
@@ -1883,8 +1969,9 @@ function renderSheetOne(host,day){
   var now=new Date();
   var paper=document.createElement('div');paper.id='sheetPaper';paper.className='card';paper.style.cssText='padding:0;overflow:hidden';
   var hd='<div style="background:#0d9488;color:#fff;padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px"><b style="font-size:16px">G95 點工派工單 — '+day+'('+wd(day)+')</b><span class="spacer"></span><span style="font-size:13.5px;opacity:.9">共 '+its.length+' 件 · 出工 '+Object.keys(names).length+' 人'+(doneN?' · <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>完成 '+doneN:'')+'｜'+todayISO().slice(5).replace('-','/')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+'</span></div>';
-  var rows='';
+  var rows='',cards='';
   if(_sheetMode==='work'){
+    cards=_shCardsWork(its);   // D0725-02 ㉗：手機卡片版（與表格共存）
     var _colspan=7+(_sheetShowResp?1:0)+(_sheetShowDed?1:0)+(_sheetShowMgr?1:0)+(_sheetNoSign?0:1);   // D0707-02：欄位可切→colspan 動態
     var _bl='',_z=0,_segs=[];its.forEach(function(it){var k=bldgKey(it.unit);if(!_segs.length||_segs[_segs.length-1].k!==k)_segs.push({k:k,n:0});_segs[_segs.length-1].n++;});
     its.forEach(function(it,ix){var x=sheetRowCells(it);
@@ -1936,12 +2023,21 @@ function renderSheetOne(host,day){
         '</div>') : '';
       blocks+='<div data-shblock="1" style="border:1px solid #C9DCEE;border-radius:0;margin-bottom:10px;overflow:hidden">'+memberRow+
         '<div style="overflow-x:auto"><table><thead><tr>'+headCols+'</tr></thead><tbody>'+rows2+'</tbody></table></div>'+signStrip+'</div>';
+      // D0725-02 ㉗：依人員模式的手機卡片版（一組一框：成員列＋該組工作卡）
+      cards+='<div style="border:1px solid #C9DCEE;margin-bottom:10px">'
+        +'<div class="sh-memrow2">'+(_gname?'<span class="bchip purple">'+esc(_gname)+'</span>':'')
+        +members.map(function(m){return '<span class="bchip'+(m.foreman?' amber':'')+'">'+(m.foreman?'<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')
+        +'<span class="spacer"></span><span class="bchip grey">'+list.length+' 件</span></div>'
+        +list.map(function(it,ix){return _shCardHTML(it,ix+1,{noPpl:true});}).join('')
+        +'</div>';
     });
     var un=its.filter(function(it){return !(it.assignees||[]).length;});
     if(un.length){
       var unRows='';
       un.forEach(function(it){var x=sheetRowCells(it);unRows+='<tr style="background:#fff7ed"><td class="warn-txt">未指派</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td></td>')+'</tr>';});
       blocks+='<div data-shblock="1" style="border:1px solid #C9DCEE;border-radius:0;overflow:hidden"><div style="overflow-x:auto"><table><thead><tr><th>人員</th><th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+unRows+'</tbody></table></div></div>';
+      cards+='<div style="border:1px solid #F0C08A;margin-bottom:10px"><div class="sh-memrow2" style="background:#FFF7ED"><span class="bchip red">未指派</span><span class="spacer"></span><span class="bchip grey">'+un.length+' 件</span></div>'
+        +un.map(function(it,ix){return _shCardHTML(it,ix+1,{noPpl:true});}).join('')+'</div>';
     }
     var tbl=blocks?('<div style="padding:12px 16px">'+blocks+'</div>'):'<div class="muted" style="padding:12px 16px">（無）</div>';
   }
@@ -1949,7 +2045,8 @@ function renderSheetOne(host,day){
   var foot='<div style="margin:0 16px 14px;background:#F2F7FC;border:1px solid #C9DCEE;border-radius:0;padding:10px 12px;font-size:12.5px;color:#475569">'+
     '人員合計：'+(Object.keys(names).join('、')||'—')+'（'+Object.keys(names).length+'人）<br>'+
     '機具合計：'+(Object.keys(macSum).map(function(k){return k+'×'+macSum[k];}).join('、')||'—')+(cross?'｜跨天延續：'+cross:'')+'</div>';
-  paper.innerHTML=hd+tbl+foot;
+  // D0725-02 ㉗㉛：表格與卡片同時產生，靠 CSS 依寬度切換；匯出時強制用表格（sheetExport 加 .sh-export）
+  paper.innerHTML=hd+'<div class="sh-tbl">'+tbl+'</div><div class="sh-cards">'+(_sheetMode==='person'?'<div style="padding:9px">'+(cards||'<div class="muted">（無）</div>')+'</div>':cards)+'</div>'+foot;
   // D0724-05 工單簡化：檯面只留 回清單/表格式·依人員/PDF/截圖/去改這天；全名徽章·免簽·字體·欄位 收進「顯示設定」抽屜；刪 匯出用標準字級/只放大主要欄位/責任廠商欄
   var fsPresets=[100,115,130,150].map(function(p){return '<button data-fp="'+p+'"'+(_sheetFontPct===p?' class="on"':'')+'>'+p+'</button>';}).join('');
   var _setMenu='<div class="dd-grp"><div class="dd-gl">姓名顯示</div><div class="dd-gr">'+
@@ -1964,11 +2061,19 @@ function renderSheetOne(host,day){
       '<button class="tglb'+(_sheetShowDed?' on':'')+'" data-col="ded">'+(_sheetShowDed?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 扣款廠商':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 扣款廠商')+'</button>'+
       '<button class="tglb'+(_sheetShowMgr?' on':'')+'" data-col="mgr">'+(_sheetShowMgr?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 管理':'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="4" width="16" height="16"/></svg> 管理')+'</button>'+
     '</div></div>'):'');
+  // D0725-02 ㉕：手機工具列壓成一行＝‹回清單＋日期＋「⋯」（PDF／截圖／去分配區改這天）；桌機檯面原樣不動
+  var mbar=document.createElement('div');mbar.className='sh-mbar';
+  mbar.innerHTML='<button class="btn sm" id="shBack2">‹ 回清單</button><span class="t">'+day.slice(5).replace('-','/')+'('+wd(day)+')</span>'
+    +'<span class="dd" id="ddShM"><button class="dd-t" onclick="_ddTog(this,event)" style="min-height:34px;padding:0 10px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button><div class="dd-menu" style="min-width:190px">'
+    +'<div class="dd-grp"><div class="dd-gl">匯出（一律用表格版面）</div><div class="dd-gr"><button class="btn sm" id="shPdf2" style="width:100%;justify-content:flex-start">PDF</button><button class="btn sm" id="shCap2" style="width:100%;justify-content:flex-start">截圖</button></div></div>'
+    +'<div class="dd-grp"><div class="dd-gl">編輯</div><div class="dd-gr"><button class="btn sm" id="shFix2" style="width:100%;justify-content:flex-start">去分配區改這天</button></div></div>'
+    +'</div></span>';
+  host.appendChild(mbar);
   var act=document.createElement('div');act.className='row sheet-actions';act.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
-  act.innerHTML='<button class="pillb red" id="shPdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg> PDF</button><button class="pillb blue" id="shCap"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg> 截圖</button>'+
+  act.innerHTML='<button class="pillb red hdOnly" id="shPdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg> PDF</button><button class="pillb blue hdOnly" id="shCap"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg> 截圖</button>'+
     '<div class="seg big" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
     '<span class="dd" id="ddSet"><button class="dd-t" onclick="window._shSetOpen=!window._shSetOpen;this.parentNode.classList.toggle(\'open\',window._shSetOpen);if(event&&event.stopPropagation)event.stopPropagation();"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 15h6M9 8h6M17 16h6"/></svg> 顯示設定 ▾</button><div class="dd-menu">'+_setMenu+'</div></span>'+
-    '<span class="spacer"></span><button class="btn" id="shBack">← 回日期清單</button><button class="tglb amber on" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
+    '<span class="spacer"></span><button class="btn hdOnly" id="shBack">← 回日期清單</button><button class="tglb amber on hdOnly" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
   host.appendChild(act);
   if(window._shSetOpen){var _ds=act.querySelector('#ddSet');if(_ds)_ds.classList.add('open');}
   host.appendChild(paper);
@@ -1988,6 +2093,11 @@ function renderSheetOne(host,day){
   };
   act.querySelector('#shPdf').onclick=function(){sheetExport(day,'pdf');};
   act.querySelector('#shCap').onclick=function(){sheetExport(day,'png');};
+  // D0725-02 ㉕：手機一行工具列綁同一組行為
+  mbar.querySelector('#shBack2').onclick=function(){_sheetDay=null;renderSheet();};
+  mbar.querySelector('#shPdf2').onclick=function(){sheetExport(day,'pdf');};
+  mbar.querySelector('#shCap2').onclick=function(){sheetExport(day,'png');};
+  mbar.querySelector('#shFix2').onclick=function(){act.querySelector('#shFix').click();};
 }
 /* ── D0704-04 H：分頁匯出引擎——依人員(分組)=一組一頁;表格=每15筆一頁;每頁右上時間註記 ── */
 function _stampTxt(){var n=new Date();return todayISO()+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
@@ -2064,6 +2174,7 @@ function sheetExport(day,kind){
   var el=document.getElementById('sheetPaper');if(!el)return;
   var hide=document.querySelectorAll('.sheet-actions, .bottomnav, .appbar, .note, #bkBanner');var arr=[];
   hide.forEach(function(e){arr.push([e,e.style.display]);e.style.display='none';});
+  el.classList.add('sh-export');   // D0725-02 ㉛：匯出/截圖一律用表格版面（手機卡片版暫時隱藏）
   var useScale=!_sheetExportStd;window._shExpScale=useScale;   // D0706-02：匯出是否跟著放大
   var elHadScale=el.classList.contains('sheetScaled');
   if(!useScale&&elHadScale)el.classList.remove('sheetScaled');   // 匯出標準字級：整張 fallback 也還原
@@ -2077,7 +2188,7 @@ function sheetExport(day,kind){
       if(tbl){var dataRows=tbl.querySelectorAll('tbody tr:not(.bhdr)');if(dataRows.length>15)pages=_shChunkTable(el,tbl,15,temps);}
     }
   }catch(e){pages=[];}
-  var restore=function(){arr.forEach(function(p){p[0].style.display=p[1]||'';});temps.forEach(function(t){try{t.remove();}catch(e){}});if(!useScale&&elHadScale)el.classList.add('sheetScaled');};
+  var restore=function(){arr.forEach(function(p){p[0].style.display=p[1]||'';});temps.forEach(function(t){try{t.remove();}catch(e){}});if(!useScale&&elHadScale)el.classList.add('sheetScaled');el.classList.remove('sh-export');};
   setTimeout(function(){
     if(!pages.length)pages=[el];
     _exportPages(pages,kind==='png'?'png':'pdf','派工單_'+day,true,restore);
@@ -2270,4 +2381,4 @@ try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{p
 </body>
 </html>
 
-<!-- v0725-01 preview -->
+<!-- v0725-02 preview -->
