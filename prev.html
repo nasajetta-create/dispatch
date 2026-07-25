@@ -328,25 +328,6 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .errbox{background:#FBE0E0;border:1px solid #E39B9B;padding:11px;margin-bottom:10px}
 .errbox .errdet{margin-top:7px;background:#fff;border:1px solid #E39B9B;padding:6px;font-family:ui-monospace,monospace;font-size:10.5px;color:#7f1d1d;white-space:pre-wrap;word-break:break-all}
 /* 40 完成清單 */
-/* ══ D0725-04（示意圖 v4·41~52）＝封單／勞安·證照派工警示／工單搜尋 ══ */
-/* 41~46 封單 */
-.seal-bar{background:#26476b;color:#fff;padding:8px 10px}
-.seal-diff{background:#FDF9EE;border:1px solid #E0C766;border-top:none;padding:7px 10px;font-size:11.5px;color:#8a5a10;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.seal-sw{display:flex;border:1px solid #93C5FD;background:#fff;margin:8px 0}
-.seal-sw>button{flex:1;border:0;border-left:1px solid #C9DCEE;background:transparent;min-height:32px;font-size:12.5px;font-weight:700;color:#26476b;cursor:pointer}
-.seal-sw>button:first-child{border-left:0}
-.seal-sw>button.on{background:#26476b;color:#fff}
-.dif-row{padding:8px 9px;border-top:1px solid #DDE7F0;font-size:12.5px;line-height:1.6}
-.dif-row:first-child{border-top:none}
-/* 47~50 工安警示 */
-.chip.wsafe{background:#FBE0E0!important;color:#B3261E!important;border:1px solid #E39B9B}
-.chip.wsoon{background:#FDF3D8!important;color:#8a5a10!important;border:1px solid #E0C766}
-.certwarn{background:#FBE0E0;border:1px solid #E39B9B;padding:6px 9px;margin-top:7px;font-size:12px;color:#B3261E;font-weight:700;display:flex;align-items:center;gap:6px}
-.certrow{display:flex;gap:6px;align-items:center;margin-bottom:6px}
-.certrow input{flex:1;min-width:0}
-/* 51~52 工單搜尋 */
-.sh-srch{padding:8px 9px;border-bottom:1px solid #DDE7F0}
-.sh-shit{padding:6px 9px;background:#EAF4FC;font-size:11.5px;color:#26476b;font-weight:700}
 .dl-pre{background:#F8FAFC;border:1px solid #C9DCEE;padding:8px 9px;font-family:ui-monospace,monospace;font-size:12px;line-height:1.7;color:#334155;max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-all}
 .sh-memrow2{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:8px 9px;background:#F2F7FC;border-top:1px solid #C9DCEE}
 </style>
@@ -354,10 +335,10 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-04</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0725-03</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
     <div class="dd-grp"><div class="dd-gl">同步 / 備份</div><div class="dd-gr"><button class="btn sm" onclick="dispForceResync()" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 重抓雲端資料</button><button class="btn sm" id="bkNow2" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg> 一鍵備份</button></div></div>
     <div class="dd-grp"><div class="dd-gl">其他</div><div class="dd-gr"><button class="btn sm" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 使用說明書</button><button class="btn sm danger" id="logoutBtn2" style="display:none;width:100%;justify-content:flex-start">登出</button></div></div>
-    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-04</div>
+    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0725-03</div>
   </div></span></div>
 </div>
 
@@ -502,7 +483,7 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=30; // D0725-04 示意圖 v4（41~52 全採納·封單選 A 分配區照常可改）：㊶~㊻封單＝DS.sealed[day]{at,by,ver,items 深拷貝,ppl,mac} 存雲端；sealDay/unsealDay＋DS.sealLog（留 50 筆·誰何時封/解）；renderSheetOne 已封單預設顯示快照（_sealView seal|live 可切），期間 window._sealLK 讓 personById/machineById 先查快照名冊＝人被改名/刪掉紙本仍印得出來、render 結束清掉；_sealDiff 比對快照 vs 目前分配區（戶別/內容/時段/起迄/管理/責任/扣款/需求人數/人員/機具；**勾完成與 seq 不算變動**）→ 工單橫幅「封單後有 N 處變動·看差異」＋_sealDiffModal；日期清單列加 已封單/未封單 徽章＋封單時間·封單人·變動數；PDF/截圖印的就是當下顯示的快照＝與簽名紙一致；_sealPrune() 快照只留 30 天（長期保存靠備份）。㊼~㊿工安：_pplRisk/_certStat/_hasCert/_itemCertWarn＝派工卡人員徽章勞安或證照過期轉紅底加註、30 天內到期轉黃，工單與 PDF 的人名也標，工項用到需證照機具但全組沒人登記證照→卡片紅字警告（**只提醒不擋**）；人員新增 p.certs[{k,d}]（editPerson 可增刪·人員卡顯示紅黃綠徽章·**不填完全不跳提醒**）。㊾㊿工單搜尋 _shQ/_shRunSearch/_shItemHay＝跨 10 天找戶別/內容/#號/流水號/人名/廠商/機具（空白分隔 AND、最多 60 筆），結果一筆一卡點擊跳該天工單。 // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=29; // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
 var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
@@ -894,35 +875,12 @@ function seed(){
 }
 
 function ageOf(birth){if(!birth)return'';var b=parseISO(birth),n=new Date();var a=n.getFullYear()-b.getFullYear();var m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))a--;return a;}
-/* ══ D0725-04 ㊼~㊿ 勞安／證照：只提醒不擋 ══ */
-function _certStat(d){return safetyStatus(d);}      // 同一套紅黃綠
-function _pplRisk(p){                                // 回傳這個人的風險 {lv,txt}
-  if(!p)return {lv:'',txt:''};
-  var st=safetyStatus(p.safety);
-  if(st==='over')return {lv:'over',txt:'勞安過期'};
-  var bad=(p.certs||[]).filter(function(c){return c&&c.d&&_certStat(c.d)==='over';});
-  if(bad.length)return {lv:'over',txt:bad[0].k+'證照過期'};
-  if(st==='soon')return {lv:'soon',txt:'勞安快到期'};
-  var soon=(p.certs||[]).filter(function(c){return c&&c.d&&_certStat(c.d)==='soon';});
-  if(soon.length)return {lv:'soon',txt:soon[0].k+'證照快到期'};
-  return {lv:'',txt:''};
-}
-function _hasCert(p,key){                            // 這個人有沒有某類「未過期」證照
-  return (p&&p.certs||[]).some(function(c){return c&&c.k&&_certStat(c.d)!=='over'&&(!key||String(c.k).indexOf(key)>=0||String(key).indexOf(c.k)>=0);});
-}
-function _itemCertWarn(it){                          // 工項用到需證照機具、但這組沒人登記證照
-  var need=(it.machines||[]).map(function(m){return machineById(m.machineId);}).filter(function(mc){return mc&&mc.needCert;});
-  if(!need.length)return '';
-  var ok=(it.assignees||[]).some(function(a){return _hasCert(personById(a.personId));});
-  if(ok)return '';
-  return need.map(function(mc){return mc.name;}).join('、')+' 需證照，這組沒有人登記證照';
-}
 function safetyStatus(s){if(!s)return'';var diff=(parseISO(s)-new Date())/86400000;if(diff<0)return'over';if(diff<=30)return'soon';return'ok';}
 function safetyColor(st){return st==='over'?'var(--red)':st==='soon'?'var(--warn)':st==='ok'?'var(--ok)':'#9DC3E6';}
-function personById(id){var _s=window._sealLK;if(_s&&_s.ppl&&_s.ppl[id])return _s.ppl[id];return DS.people.filter(function(p){return p.id===id;})[0];}
+function personById(id){return DS.people.filter(function(p){return p.id===id;})[0];}
 function groupById(id){return (DS.groups||[]).filter(function(g){return g.id===id;})[0];}
 function groupsOf(pid){return (DS.groups||[]).filter(function(g){return (g.memberIds||[]).indexOf(pid)>=0;});}
-function machineById(id){var _s=window._sealLK;if(_s&&_s.mac&&_s.mac[id])return _s.mac[id];return DS.machines.filter(function(m){return m.id===id;})[0];}
+function machineById(id){return DS.machines.filter(function(m){return m.id===id;})[0];}
 function mgrCode(name){var m=(DS&&DS.managers?DS.managers:[]).filter(function(x){return x.name===name;})[0];if(m&&m.badge)return m.badge;return name?name.slice(-1):'?';}
 function mgrColor(name){var pal=['#16a34a','#7c3aed','#0891b2','#db2777','#ea580c','#0d9488'];var s=0;for(var i=0;i<(name||'').length;i++)s+=name.charCodeAt(i);return pal[s%pal.length];}
 function slotRange(it){if(it.slotType==='custom'&&it.start&&it.end){var a=it.start.split(':'),b=it.end.split(':');return[(+a[0])*60+(+a[1]),(+b[0])*60+(+b[1])];}if(it.slot==='am')return[480,720];if(it.slot==='pm')return[780,1020];return[480,1020];}
@@ -1178,8 +1136,7 @@ function personCard(p,sec){
   var thumb=p.photo?'<img class="thumb" src="'+p.photo+'">':'<span class="thumb">證照</span>';
   d.innerHTML='<div class="ph-head">'+thumb+'<div style="flex:1"><span class="nm">'+esc(p.name)+'</span>'+(p.foreman?'<span class="star"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg></span>':'')+(p.migrant?'<span class="badge">移工</span>':'')+gb+
     '<div class="muted" style="font-size:13.5px">'+esc(p.company)+' · '+esc(p.skill)+'</div>'+
-    '<div style="font-size:13.5px;margin-top:3px"><span class="dot" style="background:'+safetyColor(st)+'"></span>勞安 '+(p.safety||'—')+(st==='over'?' 已過期':st==='soon'?' 即將到期':'')+'</div>'+
-    ((p.certs||[]).length?('<div class="row" style="gap:4px;flex-wrap:wrap;margin-top:4px">'+(p.certs||[]).map(function(c){var cs=_certStat(c.d);return '<span class="bchip '+(cs==='over'?'red':cs==='soon'?'amber':'green')+'">'+esc(c.k||'證照')+' '+esc(c.d||'')+(cs==='over'?' 已過期':'')+'</span>';}).join('')+'</div>'):'')+'</div>'+
+    '<div style="font-size:13.5px;margin-top:3px"><span class="dot" style="background:'+safetyColor(st)+'"></span>勞安 '+(p.safety||'—')+(st==='over'?' 已過期':st==='soon'?' 即將到期':'')+'</div></div>'+
     '<button class="btn sm toggle">▾</button></div>'+
     '<div class="pexp"><div class="kv">性別：'+esc(p.gender||'—')+'　年齡：'+(ageOf(p.birth)||'—')+'（'+(p.birth||'—')+'）</div>'+
     '<div class="kv">勞保：'+(p.laborIns?'有':'無')+'　健保：'+(p.healthIns?'有':'無')+'　領班：'+(p.foreman?'是 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'否')+'</div>'+
@@ -1291,33 +1248,16 @@ function editPerson(id){
      '<label><input type="checkbox" id="f_labor"'+(p.laborIns?' checked':'')+'> 勞保</label>'+
      '<label><input type="checkbox" id="f_health"'+(p.healthIns?' checked':'')+'> 健保</label>'+
    '</div>'+
-   '<div class="fld"><label>證照（可留空；填了到期日才會在派工時提醒）</label><div id="certBox"></div><button class="btn sm" id="addCert" style="align-self:flex-start">＋ 新增證照</button></div>'+
    '<div class="fld"><label>證照縮圖（居留證/工作許可，自動壓縮）</label><input type="file" id="f_photo" accept="image/*"></div>'+
    '<div id="photoPrev">'+(p.photo?'<img class="thumb" src="'+p.photo+'">':'')+'</div>'+
    '<div class="fld"><label>備註</label><textarea id="f_note" rows="2">'+esc(p.note||'')+'</textarea></div>'+
    '<div class="row"><button class="btn primary" id="savePerson">儲存</button><button class="btn" id="cancelM">取消</button></div>';
-  // D0725-04 ㊿：證照列（類別＋到期日），不填＝完全不會跳提醒
-  var certs=(p.certs||[]).map(function(c){return {k:c.k||'',d:c.d||''};});
-  function _certDraw(){
-    var cb=box.querySelector('#certBox');cb.innerHTML='';
-    certs.forEach(function(c,i){
-      var r=document.createElement('div');r.className='certrow';
-      r.innerHTML='<input class="ck" placeholder="類別（例：吊車操作）" value="'+esc(c.k)+'"><input type="date" class="cd" value="'+esc(c.d)+'" style="flex:1;min-width:0"><button class="btn sm danger cx" type="button">刪</button>';
-      r.querySelector('.ck').oninput=function(){certs[i].k=this.value;};
-      r.querySelector('.cd').onchange=function(){certs[i].d=this.value;};
-      r.querySelector('.cx').onclick=function(){certs.splice(i,1);_certDraw();};
-      cb.appendChild(r);
-    });
-    if(!certs.length){var e=document.createElement('div');e.className='muted';e.style.fontSize='12.5px';e.textContent='（沒有登記證照）';cb.appendChild(e);}
-  }
-  _certDraw();
-  box.querySelector('#addCert').onclick=function(){certs.push({k:'',d:''});_certDraw();};
   var photoData=p.photo||'';
   box.querySelector('#f_photo').onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();
     rd.onload=function(){var img=new Image();img.onload=function(){var max=240,sc=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement('canvas');c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);photoData=c.toDataURL('image/jpeg',0.6);box.querySelector('#photoPrev').innerHTML='<img class="thumb" src="'+photoData+'">';};img.src=rd.result;};rd.readAsDataURL(f);};
   box.querySelector('#cancelM').onclick=closeModal;
   box.querySelector('#savePerson').onclick=function(){
-    var o={id:p.id||uid(),name:box.querySelector('#f_name').value.trim(),gender:box.querySelector('#f_gender').value,birth:box.querySelector('#f_birth').value,company:box.querySelector('#f_company').value.trim(),skill:box.querySelector('#f_skill').value.trim(),safety:box.querySelector('#f_safety').value,migrant:box.querySelector('#f_migrant').checked,foreman:box.querySelector('#f_foreman').checked,laborIns:box.querySelector('#f_labor').checked,healthIns:box.querySelector('#f_health').checked,photo:photoData,note:box.querySelector('#f_note').value,certs:certs.filter(function(c){return (c.k||'').trim();})};
+    var o={id:p.id||uid(),name:box.querySelector('#f_name').value.trim(),gender:box.querySelector('#f_gender').value,birth:box.querySelector('#f_birth').value,company:box.querySelector('#f_company').value.trim(),skill:box.querySelector('#f_skill').value.trim(),safety:box.querySelector('#f_safety').value,migrant:box.querySelector('#f_migrant').checked,foreman:box.querySelector('#f_foreman').checked,laborIns:box.querySelector('#f_labor').checked,healthIns:box.querySelector('#f_health').checked,photo:photoData,note:box.querySelector('#f_note').value};
     if(!o.name){alert('請填姓名');return;}
     if(p.id){DS.people=DS.people.map(function(x){return x.id===p.id?o:x;});}else{DS.people.push(o);}
     save();closeModal();renderPeople();};
@@ -1909,11 +1849,10 @@ function itemCard(it,conf){
   var mgrHtml=it.mgr?'<span class="mgr" style="background:'+mgrColor(it.mgr)+'">'+esc(mgrCode(it.mgr))+'</span>':'';
   var st=srcStatus(it);
   var head='<div class="wh"><span class="seq'+((bad||macBad||pBad)?' warn':'')+'">'+it.seq+'</span><span class="dnum">'+dnumLabel(it)+'</span><b>'+esc(it.unit||'(未填戶別)')+'</b>'+(it.crossId?'<span class="cross">跨兩天</span>':'')+mgrHtml+'<span class="slot">'+esc(slotLabel(it))+'</span>'+(st.chg?'<button class="srcbadge chg srcI">⟳變更</button>':'')+(st.done?'<button class="srcbadge done srcI"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18"/><path d="M8 12l3 3 5-6"/></svg>完成</button>':'')+'<span class="idtag">'+(it.refId?('#'+it.refId):'手動')+'</span></div>';
-  var pchips=(it.assignees||[]).map(function(a){var p=personById(a.personId);if(!p)return'';var cf=conf.p[it.id+'|'+a.personId];var _rk=_pplRisk(p);return '<span title="'+esc(_rk.txt||'')+'" class="chip'+(a.foreman?' lead':'')+(cf?' over':'')+(_rk.lv==='over'?' wsafe':_rk.lv==='soon'?' wsoon':'')+'">'+(a.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+(_rk.lv?'<span style="font-size:10.5px;font-weight:700"> · '+esc(_rk.txt)+'</span>':'')+'<b class="rmA" data-p="'+a.personId+'" style="cursor:pointer;color:#94a3b8"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 5l14 14M19 5L5 19"/></svg></b></span>';}).join('');
+  var pchips=(it.assignees||[]).map(function(a){var p=personById(a.personId);if(!p)return'';var cf=conf.p[it.id+'|'+a.personId];return '<span class="chip'+(a.foreman?' lead':'')+(cf?' over':'')+'">'+(a.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+'<b class="rmA" data-p="'+a.personId+'" style="cursor:pointer;color:#94a3b8"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 5l14 14M19 5L5 19"/></svg></b></span>';}).join('');
   var mchips=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);if(!mc)return'';var cf=conf.m[it.id+'|'+m.machineId];return '<span class="chip mac'+(cf?' over':'')+'">'+esc(mc.name)+'×'+m.qty+'</span>';}).join('');
   var body='<div style="margin:6px 0'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+esc(it.content||'(未填工作內容)')+'</div>'+(it.respVendor?'<div class="chip">責任廠商：'+esc(it.respVendor)+'</div>':'')+(it.dedVendor?'<div class="chip" style="background:#fee2e2;color:#991b1b">扣款：'+esc(it.dedVendor)+'</div>':'')+
     '<div style="margin-top:6px">指派：'+(pchips||'<span class="muted">未指派</span>')+' <span class="'+(bad?'warn-txt':'ok-txt')+'">需求'+it.reqCount+' / 已派'+assigned+(bad?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 不足':' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>')+'</span>'+(pBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段人員重複</span>':'')+'</div>'+
-    (function(){var _cw=_itemCertWarn(it);return _cw?('<div class="certwarn"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>'+esc(_cw)+'</div>'):'';})()+
     '<div style="margin-top:4px">機具：'+(mchips||'<span class="muted">—</span>')+(macBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段超派</span>':'')+'</div>'+
     '<div class="row" style="margin-top:8px"><label style="font-size:15px"><input type="checkbox" class="doneI"'+(it.done?' checked':'')+'> 完成</label><button class="btn sm editI">編輯/指派</button>'+(it.crossId?'':'<button class="btn sm crossI">設為跨兩天</button>')+'<button class="btn sm danger delI">刪除</button></div>';
   d.innerHTML=head+body;
@@ -2036,9 +1975,7 @@ function personLabelHTML(p,isForeman){
       (isForeman?'<span style="position:absolute;top:-4px;right:-4px;width:13px;height:13px;border-radius:50%;background:#fef3c7;color:#92400e;font-size:9px;line-height:13px;text-align:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg></span>':'')+
       '</span>';
   }
-  var _rk=_pplRisk(p);
-  return (isForeman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(nm)
-    +(_rk.lv==='over'?'<span style="color:#B3261E;font-size:11px;font-weight:700">（'+esc(_rk.txt)+'）</span>':'');
+  return (isForeman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(nm);
 }
 function sheetDates(){
   var t=todayISO();var set={};DS.items.forEach(function(i){if(i.day)set[i.day]=1;});
@@ -2092,126 +2029,6 @@ function _bkStatusRow(){
   }
   return wrap;
 }
-// ══ D0725-04 ㊾㊿ 工單搜尋：跨 10 天（工單保留期限）找戶別／內容／#號／流水號／人名／廠商／機具 ══
-var _shQ='';
-function _shItemHay(it){
-  var ppl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?p.name:'';}).join(' ');
-  var mac=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?mc.name:'';}).join(' ');
-  return [it.unit,it.content,it.refId?('#'+it.refId):'',dnumLabel(it).replace(/<[^>]*>/g,''),it.respVendor,it.dedVendor,it.mgr,ppl,mac,it.day].join(' ');
-}
-function _shRunSearch(hits,days){
-  var q=String(_shQ||'').trim();
-  if(!q){hits.style.display='none';hits.innerHTML='';days.style.display='';return;}
-  days.style.display='none';hits.style.display='';
-  var keys=q.split(/\s+/).filter(Boolean);
-  var list=(DS.items||[]).filter(function(it){
-    var hay=_shItemHay(it);
-    return keys.every(function(k){return hay.indexOf(k)>=0;});
-  }).sort(function(a,b){return (b.day||'').localeCompare(a.day||'')||bySheet(a,b);});
-  var head='<div class="sh-shit">找到 '+list.length+' 件（近 10 天工單範圍）</div>';
-  if(!list.length){hits.innerHTML=head+'<div class="brow muted" style="font-size:12.5px">找不到；更久以前的資料要從備份檔查。</div>';return;}
-  hits.innerHTML=head+list.slice(0,60).map(function(it){
-    var ppl=(it.assignees||[]).map(function(a){var p=personById(a.personId);return p?esc(p.name):'';}).filter(Boolean).join('、');
-    var mac=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);return mc?esc(mc.name)+'×'+m.qty:'';}).filter(Boolean).join('、');
-    return '<div class="brow tap _shHit" data-day="'+esc(it.day)+'">'
-      +'<div class="row" style="gap:6px"><span class="bchip grey">'+fmtDay(it.day)+'</span><b style="font-size:14px">'+esc(unitFloorFirst(it.unit))+'</b>'
-      +(it.done?'<span class="bchip green">已完成</span>':'')+'<span class="spacer"></span>'+(it.refId?'<span class="muted" style="font-size:11px">#'+esc(it.refId)+'</span>':'')+'</div>'
-      +'<div style="font-size:13px;margin-top:3px">'+esc(it.content||'')+'</div>'
-      +((ppl||mac)?'<div class="muted" style="font-size:11.5px;margin-top:2px">'+ppl+(mac?' · '+mac:'')+'</div>':'')
-      +'</div>';
-  }).join('')+(list.length>60?'<div class="brow muted" style="font-size:12px">只顯示前 60 筆，請再縮小條件。</div>':'');
-  hits.querySelectorAll('._shHit').forEach(function(el){
-    el.onclick=function(){_shQ='';_sheetDay=el.dataset.day;_sealView='seal';renderSheet();};
-  });
-}
-// ══ D0725-04 ㊶~㊻ 封單：把當天派工拍一張快照存雲端；分配區照常可改（使用者選 A），
-//    工單顯示快照＋「封單後有 N 處變動·看差異」；PDF／截圖印的就是快照＝跟簽名的紙一致 ══
-var _sealView='seal';    // 'seal'＝看封單快照（預設）／'live'＝看目前分配區
-function _sealOf(day){return (DS.sealed||{})[day]||null;}
-function _sealPplMap(day){var o={};itemsOn(day).forEach(function(it){(it.assignees||[]).forEach(function(a){var p=personById(a.personId);if(p)o[a.personId]={id:p.id,name:p.name,foreman:p.foreman,migrant:p.migrant,safety:p.safety,certs:p.certs||[]};});});return o;}
-function _sealMacMap(day){var o={};itemsOn(day).forEach(function(it){(it.machines||[]).forEach(function(m){var mc=machineById(m.machineId);if(mc)o[m.machineId]={id:mc.id,name:mc.name,needCert:mc.needCert};});});return o;}
-function _sealLog(day,act){
-  DS.sealLog=DS.sealLog||[];
-  DS.sealLog.unshift({day:day,act:act,at:Date.now(),by:(DS.user||window._userEmail||'')});
-  if(DS.sealLog.length>50)DS.sealLog.length=50;
-}
-function _sealWho(v){return String(v||'').split('@')[0]||'—';}
-function _sealTime(ts){var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-function sealDay(day){
-  if(window._readonly){alert('這個帳號是唯讀，不能封單');return;}
-  var its=itemsOn(day);
-  if(!its.length){alert('這天沒有派工，不用封單');return;}
-  if(!confirm('把 '+fmtDay(day)+' 的派工單封起來？\n\n封單＝拍一張快照存起來，之後分配區再怎麼改，這張單子都不會變（跟你印出去簽名的紙一致）。\n分配區照常可以改，系統會幫你標出差異。'))return;
-  DS.sealed=DS.sealed||{};
-  DS.sealed[day]={at:Date.now(),by:(DS.user||window._userEmail||''),ver:CODE_VERSION,items:JSON.parse(JSON.stringify(its)),ppl:_sealPplMap(day),mac:_sealMacMap(day)};
-  _sealLog(day,'seal');save();_sealView='seal';renderSheet();
-  toast('已封單 '+fmtDay(day)+'（'+its.length+' 件）');
-}
-function unsealDay(day){
-  if(window._readonly){alert('這個帳號是唯讀，不能解除封單');return;}
-  if(!confirm('解除 '+fmtDay(day)+' 的封單？\n\n快照會刪掉，這天的工單改回跟著分配區即時變動。\n（會留下紀錄：誰在什麼時候解的）'))return;
-  if(DS.sealed)delete DS.sealed[day];
-  _sealLog(day,'unseal');save();renderSheet();
-  toast('已解除封單 '+fmtDay(day));
-}
-function _sealPrune(){        // ㊻：快照跟工單一樣不長期保存（30 天），長期保存靠備份
-  try{
-    if(!DS.sealed)return;
-    var cut=todayISO(new Date(Date.now()-30*86400000)),n=0;
-    Object.keys(DS.sealed).forEach(function(d){if(d<cut){delete DS.sealed[d];n++;}});
-    if(n)save();
-  }catch(e){}
-}
-var _SEAL_FLD={unit:'戶別',content:'工作內容',slot:'時段',start:'開始',end:'結束',mgr:'管理',respVendor:'責任廠商',dedVendor:'扣款廠商',reqCount:'需求人數'};
-function _sealLbl(it){return (it.unit||'(未填戶別)')+' '+(it.content||'').slice(0,14);}
-function _sealPplTxt(it,map){
-  return (it.assignees||[]).map(function(a){
-    var p=(map&&map[a.personId])||personById(a.personId);
-    return (p?p.name:a.personId)+(a.foreman?'(領班)':'');
-  }).sort().join('、');
-}
-function _sealMacTxt(it,map){
-  return (it.machines||[]).map(function(m){
-    var mc=(map&&map[m.machineId])||machineById(m.machineId);
-    return (mc?mc.name:m.machineId)+'x'+m.qty;
-  }).sort().join('、');
-}
-function _sealDiff(day){
-  var sn=_sealOf(day);if(!sn)return {n:0,list:[]};
-  var live=itemsOn(day),out=[],snap=sn.items||[];
-  var sMap={},lMap={};
-  snap.forEach(function(it){sMap[it.id]=it;});
-  live.forEach(function(it){lMap[it.id]=it;});
-  live.forEach(function(it){if(!sMap[it.id])out.push({t:'add',txt:'新增：'+_sealLbl(it)});});
-  snap.forEach(function(it){
-    var l=lMap[it.id];
-    if(!l){out.push({t:'del',txt:'刪除：'+_sealLbl(it)});return;}
-    var ch=[];
-    Object.keys(_SEAL_FLD).forEach(function(k){
-      if(String(it[k]==null?'':it[k])!==String(l[k]==null?'':l[k]))ch.push(_SEAL_FLD[k]+'「'+(it[k]||'—')+'」→「'+(l[k]||'—')+'」');
-    });
-    var a1=_sealPplTxt(it,sn.ppl),a2=_sealPplTxt(l);
-    if(a1!==a2)ch.push('人員「'+(a1||'—')+'」→「'+(a2||'—')+'」');
-    var m1=_sealMacTxt(it,sn.mac),m2=_sealMacTxt(l);
-    if(m1!==m2)ch.push('機具「'+(m1||'—')+'」→「'+(m2||'—')+'」');
-    if(ch.length)out.push({t:'chg',txt:_sealLbl(l)+'：'+ch.join('；')});
-  });
-  return {n:out.length,list:out};   // 勾完成/流水順序不算變動（那是正常進度）
-}
-function _sealDiffModal(day){
-  var sn=_sealOf(day);if(!sn)return;
-  var df=_sealDiff(day);
-  var box=document.getElementById('modalBox');
-  var col={add:'#166534',del:'#B3261E',chg:'#8a5a10'};
-  var lab={add:'新增',del:'刪除',chg:'異動'};
-  box.innerHTML='<h3 style="margin-bottom:8px">封單後的變動（'+fmtDay(day)+'）</h3>'
-   +'<div class="muted" style="font-size:12px;margin-bottom:9px">封單 '+_sealTime(sn.at)+' · '+esc(_sealWho(sn.by))+'　比對對象＝目前分配區</div>'
-   +'<div class="bsec" style="margin-bottom:10px"><div class="bsec-hd"><span>差異</span><span class="bchip '+(df.n?'amber':'green')+'">'+df.n+' 處</span></div>'
-   +'<div style="max-height:46vh;overflow:auto">'+(df.n?df.list.map(function(x){return '<div class="dif-row"><span class="bchip" style="color:'+col[x.t]+';border-color:'+col[x.t]+'">'+lab[x.t]+'</span> '+esc(x.txt)+'</div>';}).join(''):'<div class="dif-row muted">封單後沒有任何變動，系統與紙本一致。</div>')+'</div></div>'
-   +'<div class="row"><button class="btn" id="cancelM" style="width:100%">關閉</button></div>';
-  box.querySelector('#cancelM').onclick=closeModal;
-  openModal();
-}
 // D0725-01 ⑫⑬⑭⑮：日期清單改「一大框分割」＝整行滿版（不再 280px 卡右邊留白）、整列可點展開、件數/人數大字
 function renderSheetList(host){
   var d=sheetDates();var t=todayISO();
@@ -2221,35 +2038,22 @@ function renderSheetList(host){
   box.appendChild(hd);
   hd.querySelector('#bkBtn').onclick=function(e){e.stopPropagation();backupNow();};
   box.appendChild(_bkStatusRow());   // D0725-03 ㉜㉝㉞：備份狀態列
-  // D0725-04 ㊾㊿：搜尋框（跨 10 天找戶別／內容／#號／人名／廠商／機具）
-  var srch=document.createElement('div');srch.className='sh-srch';
-  srch.innerHTML='<input id="shSearch" placeholder="搜尋戶別／工作內容／#號／人名／廠商／機具…" style="width:100%">';
-  box.appendChild(srch);
-  var hits=document.createElement('div');hits.id='shHits';hits.style.display='none';box.appendChild(hits);
-  var days=document.createElement('div');days.id='shDays';box.appendChild(days);
   function row(day,hist){
     var its=itemsOn(day);var done=0;its.forEach(function(it){if(it.done)done++;});
-    var sn=_sealOf(day);var df=sn?_sealDiff(day):null;
     var r=document.createElement('div');r.className='brow tap';
     if(!hist)r.style.background='#F3FBF4';
     r.innerHTML='<div class="row" style="gap:7px"><b style="font-size:17px;color:'+(hist?'#475569':'#15803d')+'">'+fmtDay(day)+'</b>'
       +(day===t?'<span class="bchip green">今天</span>':(hist?'<span class="bchip grey">歷史</span>':'<span class="bchip">預定</span>'))
-      +(sn?'<span class="bchip" style="background:#26476b;border-color:#26476b;color:#fff">已封單</span>':'<span class="bchip amber">未封單</span>')
       +'<span class="spacer"></span><b style="font-size:14px;color:'+(hist?'#26476b':'#15803d')+'">展開 ›</b></div>'
       +'<div class="row" style="gap:12px;margin-top:5px;font-size:12.5px;color:#475569"><span><b class="bnum">'+its.length+'</b> 件</span><span><b class="bnum">'+dayHeads(day)+'</b> 人出工</span>'
-      +(done?'<span style="color:#166534"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 完成 '+done+'</span>':'<span class="muted">完成 0</span>')+'</div>'
-      +(sn?('<div style="font-size:10.5px;color:#6b7280;margin-top:3px">封單 '+_sealTime(sn.at)+' · '+esc(_sealWho(sn.by))+(df&&df.n?'<b style="color:#B45309"> · 封單後分配區有 '+df.n+' 處變動</b>':'')+'</div>'):'');
-    r.onclick=function(){_sheetDay=day;_sealView='seal';renderSheet();};
-    days.appendChild(r);
+      +(done?'<span style="color:#166534"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 完成 '+done+'</span>':'<span class="muted">完成 0</span>')+'</div>';
+    r.onclick=function(){_sheetDay=day;renderSheet();};
+    box.appendChild(r);
   }
   d.fut.forEach(function(day){row(day,false);});
   d.past.forEach(function(day){row(day,true);});
-  if(!d.fut.length&&!d.past.length){var e=document.createElement('div');e.className='brow muted';e.textContent='（尚無任何派工，去分配區排工作）';days.appendChild(e);}
+  if(!d.fut.length&&!d.past.length){var e=document.createElement('div');e.className='brow muted';e.textContent='（尚無任何派工，去分配區排工作）';box.appendChild(e);}
   host.appendChild(box);
-  var si=srch.querySelector('#shSearch');
-  si.value=_shQ||'';
-  si.oninput=function(){_shQ=this.value;_shRunSearch(hits,days);};
-  if(_shQ)_shRunSearch(hits,days);
   var note=document.createElement('div');note.className='muted';note.style.cssText='font-size:12.5px;margin-top:2px';
   note.textContent='工單＝分配區的即時鏡像，只讀不可改；歷史只保留近 10 天，請每週備份。';
   host.appendChild(note);
@@ -2307,11 +2111,7 @@ function _shCardsWork(its){
   return out||'<div class="muted" style="padding:16px">（無）</div>';
 }
 function renderSheetOne(host,day){
-  // D0725-04 ㊶~㊺：已封單→預設顯示封單快照（可切「目前分配區」）；查表暫時指向快照，離開前清掉
-  var _sn=_sealOf(day);
-  var _viewSeal=!!_sn&&_sealView!=='live';
-  if(_viewSeal)window._sealLK={ppl:_sn.ppl||{},mac:_sn.mac||{}};
-  var its=(_viewSeal?(_sn.items||[]).slice():itemsOn(day).slice()).sort(bySheet);
+  var its=itemsOn(day).slice().sort(bySheet);
   var ppl=0,names={},macSum={};
   its.forEach(function(it){(it.assignees||[]).forEach(function(a){ppl++;var p=personById(a.personId);if(p)names[p.name]=1;});
     (it.machines||[]).forEach(function(m){var mc=machineById(m.machineId);if(mc)macSum[mc.name]=(macSum[mc.name]||0)+(+m.qty||0);});});
@@ -2416,34 +2216,15 @@ function renderSheetOne(host,day){
   mbar.innerHTML='<button class="btn sm" id="shBack2">‹ 回清單</button><span class="t">'+day.slice(5).replace('-','/')+'('+wd(day)+')</span>'
     +'<span class="dd" id="ddShM"><button class="dd-t" onclick="_ddTog(this,event)" style="min-height:34px;padding:0 10px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button><div class="dd-menu" style="min-width:190px">'
     +'<div class="dd-grp"><div class="dd-gl">匯出（一律用表格版面）</div><div class="dd-gr"><button class="btn sm" id="shPdf2" style="width:100%;justify-content:flex-start">PDF</button><button class="btn sm" id="shCap2" style="width:100%;justify-content:flex-start">截圖</button></div></div>'
-    +'<div class="dd-grp"><div class="dd-gl">封單</div><div class="dd-gr"><button class="btn sm" id="shSeal2" style="width:100%;justify-content:flex-start">'+(_sn?'解除封單':'封單（拍快照）')+'</button></div></div>'
     +'<div class="dd-grp"><div class="dd-gl">回 G95 銷案</div><div class="dd-gr"><button class="btn sm" id="shDone2" style="width:100%;justify-content:flex-start">複製今日完成清單</button></div></div>'
     +'<div class="dd-grp"><div class="dd-gl">編輯</div><div class="dd-gr"><button class="btn sm" id="shFix2" style="width:100%;justify-content:flex-start">去分配區改這天</button></div></div>'
     +'</div></span>';
   host.appendChild(mbar);
-  // ㊷㊸㊹㊺：封單橫幅＋差異提示＋「封單快照／目前分配區」切換
-  if(_sn){
-    var sb=document.createElement('div');sb.className='seal-bar';
-    sb.innerHTML='<div class="row"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><b style="font-size:13px">已封單</b><span class="spacer"></span><span style="font-size:11.5px">'+_sealTime(_sn.at)+' · '+esc(_sealWho(_sn.by))+'</span></div>'
-      +'<div style="font-size:10.5px;opacity:.9;margin-top:3px">'+(_viewSeal?'這張＝封單當下的快照，跟你印出去簽名的紙一模一樣。':'目前顯示的是「現在的分配區」，不是封單那一張。')+'</div>';
-    host.appendChild(sb);
-    var _df=_sealDiff(day);
-    if(_df.n){
-      var dfb=document.createElement('div');dfb.className='seal-diff';
-      dfb.innerHTML='<b>封單後分配區有 '+_df.n+' 處變動</b><span class="spacer"></span><button class="btn sm" id="sealDf" style="min-height:26px;font-size:11.5px">看差異</button>';
-      host.appendChild(dfb);
-      dfb.querySelector('#sealDf').onclick=function(){_sealDiffModal(day);};
-    }
-    var sw=document.createElement('div');sw.className='seal-sw';
-    sw.innerHTML='<button data-sv="seal" class="'+(_viewSeal?'on':'')+'">封單快照（印這張）</button><button data-sv="live" class="'+(_viewSeal?'':'on')+'">目前分配區</button>';
-    sw.querySelectorAll('button').forEach(function(b2){b2.onclick=function(){_sealView=b2.dataset.sv;renderSheet();};});
-    host.appendChild(sw);
-  }
   var act=document.createElement('div');act.className='row sheet-actions';act.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
   act.innerHTML='<button class="pillb red hdOnly" id="shPdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg> PDF</button><button class="pillb blue hdOnly" id="shCap"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg> 截圖</button>'+
     '<div class="seg big" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
     '<span class="dd" id="ddSet"><button class="dd-t" onclick="window._shSetOpen=!window._shSetOpen;this.parentNode.classList.toggle(\'open\',window._shSetOpen);if(event&&event.stopPropagation)event.stopPropagation();"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 15h6M9 8h6M17 16h6"/></svg> 顯示設定 ▾</button><div class="dd-menu">'+_setMenu+'</div></span>'+
-    '<button class="btn hdOnly" id="shSeal" style="'+(_sn?'border-color:#26476b;color:#26476b':'background:#26476b;border-color:#26476b;color:#fff')+'">'+(_sn?'解除封單':'封單')+'</button><button class="btn hdOnly" id="shDone">複製今日完成清單</button><span class="spacer"></span><button class="btn hdOnly" id="shBack">← 回日期清單</button><button class="tglb amber on hdOnly" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
+    '<button class="btn hdOnly" id="shDone">複製今日完成清單</button><span class="spacer"></span><button class="btn hdOnly" id="shBack">← 回日期清單</button><button class="tglb amber on hdOnly" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
   host.appendChild(act);
   if(window._shSetOpen){var _ds=act.querySelector('#ddSet');if(_ds)_ds.classList.add('open');}
   host.appendChild(paper);
@@ -2463,16 +2244,12 @@ function renderSheetOne(host,day){
   };
   act.querySelector('#shPdf').onclick=function(){sheetExport(day,'pdf');};
   act.querySelector('#shCap').onclick=function(){sheetExport(day,'png');};
-  window._sealLK=null;   // ㊶：快照查表只在這次 render 期間有效
   // D0725-02 ㉕：手機一行工具列綁同一組行為
   mbar.querySelector('#shBack2').onclick=function(){_sheetDay=null;renderSheet();};
   mbar.querySelector('#shPdf2').onclick=function(){sheetExport(day,'pdf');};
   mbar.querySelector('#shCap2').onclick=function(){sheetExport(day,'png');};
   mbar.querySelector('#shFix2').onclick=function(){act.querySelector('#shFix').click();};
   mbar.querySelector('#shDone2').onclick=function(){shDoneList(day);};
-  var _sealFn=function(){if(_sn)unsealDay(day);else sealDay(day);};
-  mbar.querySelector('#shSeal2').onclick=_sealFn;
-  act.querySelector('#shSeal').onclick=_sealFn;
   act.querySelector('#shDone').onclick=function(){shDoneList(day);};
 }
 /* ── D0704-04 H：分頁匯出引擎——依人員(分組)=一組一頁;表格=每15筆一頁;每頁右上時間註記 ── */
@@ -2783,7 +2560,6 @@ function boot(){
   var _bk2=document.getElementById('bkNow2');if(_bk2)_bk2.onclick=backupNow;
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&_curDay!==todayISO()){_curDay=todayISO();_safe('pane-board','renderBoard',renderBoard);}});
   window.addEventListener('focus',function(){if(_curDay!==todayISO()){_curDay=todayISO();_safe('pane-board','renderBoard',renderBoard);}});
-  _sealPrune();   // ㊻：封單快照只留 30 天（長期保存靠備份）
   _safe('pane-board','renderBoard',renderBoard);
 }
 boot();
@@ -2797,4 +2573,4 @@ try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{p
 </body>
 </html>
 
-<!-- v0725-04 preview -->
+<!-- v0725-03 prev（緊急回退用：網址加 /prev.html） -->
