@@ -444,15 +444,24 @@ input[type=date],input[type=time]{min-width:0;width:100%;}
 .sh-shit{padding:6px 9px;background:#EAF4FC;font-size:11.5px;color:#26476b;font-weight:700}
 .dl-pre{background:#F8FAFC;border:1px solid #C9DCEE;padding:8px 9px;font-family:ui-monospace,monospace;font-size:12px;line-height:1.7;color:#334155;max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-all}
 .sh-memrow2{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:8px 9px;background:#F2F7FC;border-top:1px solid #C9DCEE}
+/* D0827-01 外籍移工翻譯：雙語欄位／未收錄標記／安全提醒 */
+.bi{font-size:11.5px;color:#6d28d9;line-height:1.45;margin-top:1px;word-break:break-word;font-weight:400}
+th .bi{color:#5b21b6;font-weight:600}
+.lexmiss{color:#b45309;text-decoration:none;border-bottom:1px dashed #b45309}
+.sfty{display:flex;align-items:flex-start;gap:9px;flex-wrap:wrap;background:#FEF9EE;border:1px solid #E0C766;padding:8px 12px}
+.sfty-h{font-size:12.5px;font-weight:700;color:#8a5a10;flex:none;min-width:76px}
+.sfty-b{flex:1;font-size:13px;color:#7c4a08;line-height:1.65;min-width:180px}
+#langMenu{min-width:196px}
+.uin.lexin{font-size:12.5px}
 </style>
 </head>
 <body>
 <div class="appbar">
   <div class="t" id="appTitle">點工派遣</div>
-  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0726-02</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
+  <div class="sub"><span id="who"></span><span id="syncTag" style="font-size:13.5px"></span><span class="dd" id="ddLang"><button class="dd-t" onclick="_ddTog(this,event)" title="切換顯示語言 / Ganti bahasa"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg><span id="langBtnTxt">中文</span> ▾</button><div class="dd-menu" id="langMenu"></div></span><span class="hdOnly" onclick="dispForceResync()" style="cursor:pointer;font-size:13.5px;opacity:.9" title="強制重抓雲端資料：清掉這台的離線快取後重新整理。畫面和別人對不上時用（不會刪雲端、不會登出）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>重抓</span><span class="hdOnly" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="cursor:pointer;font-size:12px;opacity:.9" title="開啟使用說明書（與 G95 共用；點工派遣章節撰寫中）"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 說明</span><button id="logoutBtn" class="hdOnly" style="display:none">登出</button><span class="hdOnly" id="verTag">D0827-01</span><span class="dd mbOnly" id="ddTop"><button class="dd-t" onclick="_ddTog(this,event)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg> 更多 ▾</button><div class="dd-menu">
     <div class="dd-grp"><div class="dd-gl">同步 / 備份</div><div class="dd-gr"><button class="btn sm" onclick="dispForceResync()" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> 重抓雲端資料</button><button class="btn sm" id="bkNow2" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg> 一鍵備份</button></div></div>
     <div class="dd-grp"><div class="dd-gl">其他</div><div class="dd-gr"><button class="btn sm" onclick="window.open('https://nasajetta-create.github.io/G95/manual/','_blank')" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-2.5"/></svg> 使用說明書</button><button class="btn sm danger" id="logoutBtn2" style="display:none;width:100%;justify-content:flex-start">登出</button></div></div>
-    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0726-01</div>
+    <div class="dd-gl" style="margin:0" id="verTag2">版本 D0827-01</div>
   </div></span></div>
 </div>
 
@@ -598,10 +607,10 @@ if (window._fbReadyCb) window._fbReadyCb();
 
 <script>
 "use strict";
-var CODE_VERSION=37; // D0726-01 人員批次編輯改善（示意圖 v8·78~84 全做·選 A）＝解決使用者「好多方塊·有密集恐懼」：⑦⑧輸入框只留一條底線（.uin，focus 才變藍加粗）⑦⑨有值深/沒值淡（.uin.empty 虛線＋placeholder「—」）⑧⓪四個勾選框改成點一下切換的徽章 .ptag（移工/領班/勞保/健保，亮=有·灰=無，比小勾選框好按）⑧①隔列淡底色斑馬紋＋整列 hover ⑧②勞安到期直接上色（過期紅/30天內黃）⑧③「身分/保險」四欄併一組（表頭合併·左側分隔線，欄位 12→9）⑧④新增未填完的列淡黃底＋姓名欄金色底線。[版號] 一律用台北時間取日期（容器是 UTC，晚上會差一天 ⇒ D0725-02~09 其實都該是 D0726）。 // D0725-09 控件尺寸規格化＋修「需證照」真 bug：[真bug] `.fld input,.fld select,.fld textarea{width:100%}` 連 checkbox 也撐成滿寬 ⇒ 新增機具「需證照」文字被擠成兩行（D0725-08 我改錯方向、又沒看截圖驗證＝使用者「看來你都沒有檢查」）。修法＝`.fld input[type=checkbox]{width:20px!important;flex:none}`＋拿掉獨立外框改 `.ck-inline`（使用者：不要獨立方塊）。**新增控件尺寸規格 :root{--h-form:40px;--h-ctl:40px;--h-mini:26px;--h-tog:32px}**＋`.eqrow`（同一列並排控件一律等高·box-sizing:border-box·min-height:0）＝修分配區「篩選▾／排序」左右高度不一（使用者：我很在意這個·請列入規定）；人員卡展開鈕 `.pcard .toggle` 改 32×32 正方形（原本太小）。 // D0725-08 示意圖 v7（66~77 全做＋圖9 選 A）桌機版面：⑥⑥⑥⑦工單日期清單改「週→天」（_wkStart/_shWeekOpen，本週預設展開、其他週收合；週列彙總 幾天/幾件/幾人出工/完成/未封單N天）⑥⑧⑥⑨⑦⓪常用小組＝.grow grid（組名固定 170px→**人員名稱上下對齊**）、成員接在組名後不換第二列（超過 6 人顯示 +N＋title 全名）、人數徽章/成員徽章/編輯刪按鈕**統一 26px 同高**（使用者批註「要一樣大」）、整段可收合**預設收起**（localStorage disp_grpOpen）⑦①⑦②⑦③管理人改「停用」＝m.off（停用者不進派工 datalist、不列入計數、收到「已停用」段預設收合、可啟用）＋來源徽章 G95 同步/手動新增＋段落說明「刪了下次同步會回來、離職請用停用」＋刪除 confirm 也警告；**原因＝_g95Subscribe 收到 meta.managers 只比對同名就自動新增，刪掉必回來**⑦⑤新增機具「需證照」勾選框與文字同一行左對齊·高度齊平（原本勾選框置中在上、文字在下）⑦⑥人員批次編輯桌機改橫式表格 _pplEditTable（一人一列·格子直接改·勞安到期底色紅黃），手機維持直式卡（.ptbl-wrap/.pcards-edit 以 700px 切換）⑦⑦領班一律排最前＝新增 _byForeman()，工單表格式/依人員/PDF/分配區派工卡四處共用。圖9 A：工單開放「完成」勾選（其他欄位仍唯讀）＝表格與卡片都加 .shDoneCk、勾了一併觸發 _syncFeedback 回報 G95；**看封單快照時不給勾**（_canTick=!_viewSeal&&!_readonly）、**匯出/列印隱藏該欄**（#sheetPaper.sh-export .shDone{display:none}）＝紙本不受影響。 // D0725-07 G95 回寫（dispatch 端）：[重要] 回寫鏈路 V0701-46 早就存在（dispatch 勾完成→寫 dispatch/G95/feedback/{refId}→G95 頁首「派工回報 N」→確認完成→pwoMarkDone 正常銷項＋刪回報），SITE 預設 G95 與 G95 端寫死路徑一致、setupDispatchFeedback 也有呼叫；實際等於沒作用的三個洞：①_syncFeedback 只在 it._live 才回報，而 _live 是「帶入當下候選是否 ready」，冷開機時為 false → 那筆永遠不回報（本版改 _canReport＝_live 或 _isRealRef(refId) 現在對得到 G95 候選/列）②勾完成後零回饋（本版 toast 明說已回報/找不到對應/手動無#號）③送出後看不到狀態（本版 _fbSubscribe 訂閱 dispatch/{SITE}/feedback → 派工卡「已回報·等 G95 確認」徽章＋分配區頂部 renderFbPendBar 提示總數與去哪按）。今日完成清單同步標出 已回報N件/找不到對應N件/無#號N件。 // D0725-06 示意圖 v5（53~58，使用者選 C 統一單價）＝點工成本統計：DS.rate{local,mig} 只有兩個數字·不存任何個人薪資（無薪資隱私問題）、隨 _metaPush 上 site doc 並由 onSnapshot 回填。[重要] 人天算法＝以「一個人×一天」為單位，把他當天所有工項的 slotRange 做**聯集**再 /480 分鐘、上限 1 人天 ⇒ 同一個上午被派兩件事只算 0.5（不灌水）、上午+下午才 1.0；廠商分攤＝當天人天依各工項自己的時長比例分攤到 respVendor（合計＝當天人天）。costModal()＝本月/上月/自訂區間＋單價就地編輯＋大數字（人天/金額，本地移工拆分）＋依責任廠商（求償依據·長條圖）＋依人員＋複製摘要/存圖；入口＝工單清單標題列「成本」鈕與工單展開頁 ⋯ 抽屜。_costCalc/_costBounds/_costRate/_money/_moneyBig/_md1。 // D0725-05 收尾包＋修 D0725-03/04 的同步漏洞：[重要] 只有 SYNC_TYPES 五類（people/machines/groups/managers/items）＋machineFields/codeVersion/dayCap 會上雲端，其餘 DS 欄位只在 localStorage → D0725-03 的 DS.lastBackup/bkErr 與 D0725-04 的 DS.sealed/sealLog **從來沒有真的同步**（宣稱「全公司同一份」是錯的）。修法＝①封單快照改一天一份文件存 dispatch/{SITE}/seals/{day}（_sealCol/_sealPush/_sealDrop/_sealSubscribe，unseal 與 _sealPrune 也刪雲端）②備份時間/失敗原因/bkWeek/sealLog 由 _metaPush() 寫進 site doc、site doc onSnapshot 以較新者回填。B 待上傳筆數＝_pendTrack/_pendPaint 包住每個 setDoc（原本一送出就顯示「已同步」，離線時其實還在本機佇列＝現場以為存好了）。C 授權名單改「寫死清單 ∪ 雲端 company.editors」＝加人不用發版；雲端只能加不能減（讀失敗/被清空都不會鎖住全公司）。D 舊工單清理：程式從來沒有清過（DS.items 無限成長→手機變慢、備份 JSON 撐破 900KB 就換自動備份失敗）＝工單頁顯示總筆數＋「清理 30 天前的 N 件」（_oldItems/_cleanOldModal，先強制備份再刪、二次確認、列出各日筆數與是否已封單）。E 手機斷點統一 700px（原本 560/700 兩套並存，iPad 直立 768 被當桌機）。 // D0725-04 示意圖 v4（41~52 全採納·封單選 A 分配區照常可改）：㊶~㊻封單＝DS.sealed[day]{at,by,ver,items 深拷貝,ppl,mac} 存雲端；sealDay/unsealDay＋DS.sealLog（留 50 筆·誰何時封/解）；renderSheetOne 已封單預設顯示快照（_sealView seal|live 可切），期間 window._sealLK 讓 personById/machineById 先查快照名冊＝人被改名/刪掉紙本仍印得出來、render 結束清掉；_sealDiff 比對快照 vs 目前分配區（戶別/內容/時段/起迄/管理/責任/扣款/需求人數/人員/機具；**勾完成與 seq 不算變動**）→ 工單橫幅「封單後有 N 處變動·看差異」＋_sealDiffModal；日期清單列加 已封單/未封單 徽章＋封單時間·封單人·變動數；PDF/截圖印的就是當下顯示的快照＝與簽名紙一致；_sealPrune() 快照只留 30 天（長期保存靠備份）。㊼~㊿工安：_pplRisk/_certStat/_hasCert/_itemCertWarn＝派工卡人員徽章勞安或證照過期轉紅底加註、30 天內到期轉黃，工單與 PDF 的人名也標，工項用到需證照機具但全組沒人登記證照→卡片紅字警告（**只提醒不擋**）；人員新增 p.certs[{k,d}]（editPerson 可增刪·人員卡顯示紅黃綠徽章·**不填完全不跳提醒**）。㊾㊿工單搜尋 _shQ/_shRunSearch/_shItemHay＝跨 10 天找戶別/內容/#號/流水號/人名/廠商/機具（空白分隔 AND、最多 60 筆），結果一筆一卡點擊跳該天工單。 // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
+var CODE_VERSION=41; // D0827-01 外籍移工自動翻譯（示意圖 v1 ①~⑩⑭~⑰＋A①·使用者「依你建議去做」定案；B＝QR 公開頁本版不做，留下一版）：①頂列語言鈕（中文/印尼/越南/泰/英·只記在這台裝置 localStorage disp_lang·不上雲端 ⇒ 你用中文、移工用印尼文互不干擾）②③畫面固定文字字典 _UI（表頭/時段/狀態·查不到就回原文＝新字串不翻也不會壞）④⑤⑥⑦派工單雙語＝中文在上、外語小一號在下（同一格·不多開欄位·紙本寬度不變）；表格式/依人員/未指派三處＋手機卡片＋分配區派工卡；翻不出來的詞照印中文＋橘色虛線標「未收錄」（禁止猜測鐵律，絕不亂猜）；PDF/截圖/列印沿用既有那套＝印出來就是雙語紙本。⑧⑨⑩人員新增 p.lang「母語」（人員編輯表格＋人員 modal 兩處共用 _langSelHTML 單一出處）；依人員模式 _grpLang(members)＝**整組同一個非中文母語才切**，混合組退回畫面語言（否則同一張紙會出現兩種語言）；沒填＝跟著畫面語言走。走既有 SYNC_TYPES.people ⇒ 零同步改動。⑭⑮⑯⑰工地用語對照表 lexModal()：基底 _LEX_BASE **248 詞**＝從 defects_FULL_backup_20260720（17,976 筆真實缺失內容）抓詞頻建成，實測**中文字元覆蓋率 89.0%、整條全翻出 70.2%**（泰文 72 條未填＝顯示未收錄，不亂填）；雲端 dispatch/lexicon 單一文件（terms 校正/新增＋miss 未收錄清單）＝全員共用、可現場校正，走既有 dispatch/** 萬用字元規則 ⇒ **零 Firestore 規則改動**。[重要] 未收錄計數走 _lexScanMiss() 掃近 30 天工單重算，**不是靠畫面重繪累加**（累加會隨重繪爆量＝假數字）。[效能] _lexIdx() 首字索引＝每個位置只比對同首字的少數幾個詞，不是每字掃 248 詞；_trC 譯文快取上限 4000 筆。[零迴歸] _uiLang==='zh'（預設）時 _bi/_th 直接回 esc(原文)＝行為與 D0824-01 完全相同。A①派工單頂端雙語安全提醒 DS.safety（走 _metaPush 上 site doc＋onSnapshot 回填＝全公司同一份）。[誠實說明] 翻譯是**逐詞對照、不是通順句子**——移工看得懂「哪個房間、什麼東西、要做什麼」，詞庫 modal 已明寫建議請現場移工看過一輪。 ／ D0824-01 純名單版：LOGIN_ALLOW 10→7（移除 54jasonju/cchaling/jasonchao209·使用者 0824 指示·同步 G95 V0824-01＋Firestore 規則 10→7；雲端 company.editors 欄位不存在＝寫死名單即全部）。無 UI／邏輯改動。 ／ D0817-01 純名單版：LOGIN_ALLOW 恢復 huchingmingian（9→10 人·使用者 0817 指示·Firestore 規則同步 9→10）。無 UI／邏輯改動。 // D0816-01 純名單版：LOGIN_ALLOW 移除 huchingmingian（10→9 人·Firestore 規則已同日先行發布 10→9）。無 UI／邏輯改動。 // D0726-01 人員批次編輯改善（示意圖 v8·78~84 全做·選 A）＝解決使用者「好多方塊·有密集恐懼」：⑦⑧輸入框只留一條底線（.uin，focus 才變藍加粗）⑦⑨有值深/沒值淡（.uin.empty 虛線＋placeholder「—」）⑧⓪四個勾選框改成點一下切換的徽章 .ptag（移工/領班/勞保/健保，亮=有·灰=無，比小勾選框好按）⑧①隔列淡底色斑馬紋＋整列 hover ⑧②勞安到期直接上色（過期紅/30天內黃）⑧③「身分/保險」四欄併一組（表頭合併·左側分隔線，欄位 12→9）⑧④新增未填完的列淡黃底＋姓名欄金色底線。[版號] 一律用台北時間取日期（容器是 UTC，晚上會差一天 ⇒ D0725-02~09 其實都該是 D0726）。 // D0725-09 控件尺寸規格化＋修「需證照」真 bug：[真bug] `.fld input,.fld select,.fld textarea{width:100%}` 連 checkbox 也撐成滿寬 ⇒ 新增機具「需證照」文字被擠成兩行（D0725-08 我改錯方向、又沒看截圖驗證＝使用者「看來你都沒有檢查」）。修法＝`.fld input[type=checkbox]{width:20px!important;flex:none}`＋拿掉獨立外框改 `.ck-inline`（使用者：不要獨立方塊）。**新增控件尺寸規格 :root{--h-form:40px;--h-ctl:40px;--h-mini:26px;--h-tog:32px}**＋`.eqrow`（同一列並排控件一律等高·box-sizing:border-box·min-height:0）＝修分配區「篩選▾／排序」左右高度不一（使用者：我很在意這個·請列入規定）；人員卡展開鈕 `.pcard .toggle` 改 32×32 正方形（原本太小）。 // D0725-08 示意圖 v7（66~77 全做＋圖9 選 A）桌機版面：⑥⑥⑥⑦工單日期清單改「週→天」（_wkStart/_shWeekOpen，本週預設展開、其他週收合；週列彙總 幾天/幾件/幾人出工/完成/未封單N天）⑥⑧⑥⑨⑦⓪常用小組＝.grow grid（組名固定 170px→**人員名稱上下對齊**）、成員接在組名後不換第二列（超過 6 人顯示 +N＋title 全名）、人數徽章/成員徽章/編輯刪按鈕**統一 26px 同高**（使用者批註「要一樣大」）、整段可收合**預設收起**（localStorage disp_grpOpen）⑦①⑦②⑦③管理人改「停用」＝m.off（停用者不進派工 datalist、不列入計數、收到「已停用」段預設收合、可啟用）＋來源徽章 G95 同步/手動新增＋段落說明「刪了下次同步會回來、離職請用停用」＋刪除 confirm 也警告；**原因＝_g95Subscribe 收到 meta.managers 只比對同名就自動新增，刪掉必回來**⑦⑤新增機具「需證照」勾選框與文字同一行左對齊·高度齊平（原本勾選框置中在上、文字在下）⑦⑥人員批次編輯桌機改橫式表格 _pplEditTable（一人一列·格子直接改·勞安到期底色紅黃），手機維持直式卡（.ptbl-wrap/.pcards-edit 以 700px 切換）⑦⑦領班一律排最前＝新增 _byForeman()，工單表格式/依人員/PDF/分配區派工卡四處共用。圖9 A：工單開放「完成」勾選（其他欄位仍唯讀）＝表格與卡片都加 .shDoneCk、勾了一併觸發 _syncFeedback 回報 G95；**看封單快照時不給勾**（_canTick=!_viewSeal&&!_readonly）、**匯出/列印隱藏該欄**（#sheetPaper.sh-export .shDone{display:none}）＝紙本不受影響。 // D0725-07 G95 回寫（dispatch 端）：[重要] 回寫鏈路 V0701-46 早就存在（dispatch 勾完成→寫 dispatch/G95/feedback/{refId}→G95 頁首「派工回報 N」→確認完成→pwoMarkDone 正常銷項＋刪回報），SITE 預設 G95 與 G95 端寫死路徑一致、setupDispatchFeedback 也有呼叫；實際等於沒作用的三個洞：①_syncFeedback 只在 it._live 才回報，而 _live 是「帶入當下候選是否 ready」，冷開機時為 false → 那筆永遠不回報（本版改 _canReport＝_live 或 _isRealRef(refId) 現在對得到 G95 候選/列）②勾完成後零回饋（本版 toast 明說已回報/找不到對應/手動無#號）③送出後看不到狀態（本版 _fbSubscribe 訂閱 dispatch/{SITE}/feedback → 派工卡「已回報·等 G95 確認」徽章＋分配區頂部 renderFbPendBar 提示總數與去哪按）。今日完成清單同步標出 已回報N件/找不到對應N件/無#號N件。 // D0725-06 示意圖 v5（53~58，使用者選 C 統一單價）＝點工成本統計：DS.rate{local,mig} 只有兩個數字·不存任何個人薪資（無薪資隱私問題）、隨 _metaPush 上 site doc 並由 onSnapshot 回填。[重要] 人天算法＝以「一個人×一天」為單位，把他當天所有工項的 slotRange 做**聯集**再 /480 分鐘、上限 1 人天 ⇒ 同一個上午被派兩件事只算 0.5（不灌水）、上午+下午才 1.0；廠商分攤＝當天人天依各工項自己的時長比例分攤到 respVendor（合計＝當天人天）。costModal()＝本月/上月/自訂區間＋單價就地編輯＋大數字（人天/金額，本地移工拆分）＋依責任廠商（求償依據·長條圖）＋依人員＋複製摘要/存圖；入口＝工單清單標題列「成本」鈕與工單展開頁 ⋯ 抽屜。_costCalc/_costBounds/_costRate/_money/_moneyBig/_md1。 // D0725-05 收尾包＋修 D0725-03/04 的同步漏洞：[重要] 只有 SYNC_TYPES 五類（people/machines/groups/managers/items）＋machineFields/codeVersion/dayCap 會上雲端，其餘 DS 欄位只在 localStorage → D0725-03 的 DS.lastBackup/bkErr 與 D0725-04 的 DS.sealed/sealLog **從來沒有真的同步**（宣稱「全公司同一份」是錯的）。修法＝①封單快照改一天一份文件存 dispatch/{SITE}/seals/{day}（_sealCol/_sealPush/_sealDrop/_sealSubscribe，unseal 與 _sealPrune 也刪雲端）②備份時間/失敗原因/bkWeek/sealLog 由 _metaPush() 寫進 site doc、site doc onSnapshot 以較新者回填。B 待上傳筆數＝_pendTrack/_pendPaint 包住每個 setDoc（原本一送出就顯示「已同步」，離線時其實還在本機佇列＝現場以為存好了）。C 授權名單改「寫死清單 ∪ 雲端 company.editors」＝加人不用發版；雲端只能加不能減（讀失敗/被清空都不會鎖住全公司）。D 舊工單清理：程式從來沒有清過（DS.items 無限成長→手機變慢、備份 JSON 撐破 900KB 就換自動備份失敗）＝工單頁顯示總筆數＋「清理 30 天前的 N 件」（_oldItems/_cleanOldModal，先強制備份再刪、二次確認、列出各日筆數與是否已封單）。E 手機斷點統一 700px（原本 560/700 兩套並存，iPad 直立 768 被當桌機）。 // D0725-04 示意圖 v4（41~52 全採納·封單選 A 分配區照常可改）：㊶~㊻封單＝DS.sealed[day]{at,by,ver,items 深拷貝,ppl,mac} 存雲端；sealDay/unsealDay＋DS.sealLog（留 50 筆·誰何時封/解）；renderSheetOne 已封單預設顯示快照（_sealView seal|live 可切），期間 window._sealLK 讓 personById/machineById 先查快照名冊＝人被改名/刪掉紙本仍印得出來、render 結束清掉；_sealDiff 比對快照 vs 目前分配區（戶別/內容/時段/起迄/管理/責任/扣款/需求人數/人員/機具；**勾完成與 seq 不算變動**）→ 工單橫幅「封單後有 N 處變動·看差異」＋_sealDiffModal；日期清單列加 已封單/未封單 徽章＋封單時間·封單人·變動數；PDF/截圖印的就是當下顯示的快照＝與簽名紙一致；_sealPrune() 快照只留 30 天（長期保存靠備份）。㊼~㊿工安：_pplRisk/_certStat/_hasCert/_itemCertWarn＝派工卡人員徽章勞安或證照過期轉紅底加註、30 天內到期轉黃，工單與 PDF 的人名也標，工項用到需證照機具但全組沒人登記證照→卡片紅字警告（**只提醒不擋**）；人員新增 p.certs[{k,d}]（editPerson 可增刪·人員卡顯示紅黃綠徽章·**不填完全不跳提醒**）。㊾㊿工單搜尋 _shQ/_shRunSearch/_shItemHay＝跨 10 天找戶別/內容/#號/流水號/人名/廠商/機具（空白分隔 AND、最多 60 筆），結果一筆一卡點擊跳該天工單。 // D0725-03 示意圖 v3（32~40 全採納·順延選 A 搬過去）＋修一個從沒被發現的真 bug：[BUG] toast() 全站被呼叫 5 次卻從未定義＝每次 ReferenceError，最嚴重是 fwdMove()「順延到今天」與每日上限設定的 `save();toast();renderBoard();` 同一行→renderBoard 永不執行＝資料改了畫面不動（看起來像功能壞掉）；本版補上 toast()＋_copyTxt/_copyFallback。㉜㉝㉞備份提醒＝DS.lastBackup{at,by,kind} 記在雲端（全公司同一個日期）＋工單頁常駐狀態列 _bkStatusRow()（≤10天綠字／>10天紅色警告條含 立即備份·稍後提醒[localStorage disp_bkSnooze 壓一天]／自動備份失敗原因 DS.bkErr 由 _bkFail() 寫入並顯示）㉟㊱㊲㊳順延改版（功能本來就有＝_fwdList/fwdMove/fwdPick，只是手機難按）＝橘色提示條主鈕滿版「看清單並順延到今天」＋標題自動判斷昨天/區間、fwdPick 確認清單改版（戶別/時段/日期/#號/人員·預設全勾·可個別取消·全選鈕·底部即時「順延 N 件到 今天」）㊴錯誤邊界 _safe(paneId,name,fn)+_errBox＝switchTab 四頁與 boot 的 renderBoard 全包，出錯只壞那一頁並顯示「你的資料沒有受影響」＋重抓/切分頁/展開技術訊息/複製訊息 ㊵今日完成清單 shDoneList(day)＝當天已勾完成且有 #號者一鍵複製（純 #號 or 完整清單），手動新增無 #號者另外標示；入口＝手機⋯抽屜 #shDone2＋桌機 #shDone。 // D0725-02 示意圖 v2（㉒~㉛ 全採納）：㉒㉓小組/管理人「編輯｜刪」合併成一個框切2格（.mg）㉔機具數量合併成一框3格「− N ＋」㉕工單展開頁手機工具列壓成一行（‹回清單＋日期＋⋯抽屜含 PDF/截圖/去分配區改這天；桌機檯面不動·四顆加 .hdOnly）㉖表格式/依人員在手機變成一框切2格等寬 ㉗手機把派工單表格改一筆一卡（表格與卡片同時產生·靠 .sh-tbl/.sh-cards CSS 依 700px 切換；依人員模式也卡片化＝一組一框：成員列＋工作卡＋未指派框）㉘卡片欄位＝項次+時段+戶別+#號 → 工作內容整行 → 流水號/責任/扣款/管理 → 人員·機具徽章 ㉙棟別分段可收合（_shTogSec，純 DOM 切換不重繪）㉚已完成＝淡灰底+已完成徽章+內容刪除線 ㉛PDF/截圖/列印一律用表格＝sheetExport 期間加 #sheetPaper.sh-export 強制顯示表格隱藏卡片、restore 移除。 // D0725-01 手機版面大改（示意圖 v1 全採納 1~21＋a/b）：①②頂列手機只留頁名/同步狀態/⋯更多（重抓·說明·備份·登出·版本收抽屜＝版號不再被切）③④分配區日期膠囊獨佔一行等寬＋第二行依工作/依人員＋更多同高 ⑤待帶入標題只留名稱＋筆數徽章·來源/更新時間降第二行 ⑥搜尋整行＋篩選/排序兩顆等寬（排序從抽屜拉出來）⑦⑧⑨⑩⑪手機待帶入改 stgMobRender＝依戶別分段可收合（整戶N筆帶入放段標）＋一筆一卡（逾期淡紅底·不用左色條）＋帶入三日鈕等寬滿版＋一次20筆 a待帶入手機預設收合（toggle 改收 #stgCtl）⑫⑬⑭⑮工單日期清單改 .bsec 大框分割＝整行滿版·整列可點展開·件數/人數大字·說明移到最下 ⑯⑰⑱⑲常用小組/管理人改 .bsec＝去左側色條（鐵律）·整行滿版·組名/人數/編輯刪同列 ⑳機具段落摘要徽章化 ㉑每天一列改 日期|狀態徽章|剩餘 三段對齊＋底色分辨·未派出不畫空進度條·超派整卡淡紅底 b手機操作列只留 −數量＋、明細/編輯/刪收進⋯（功能不減）。手機斷點統一 700px；人員/機具手機單欄併大框改分隔線。 // D0724-06 人員/機具清單版面：①修人員頁段落標題 SVG 亂碼（textContent→innerHTML，同 D0724-05 第 4 例）②B 卡片寬度上限 240px（原 1fr 會被 auto-fill 切成滿排、右邊空一大塊）②C 人員段落容器化（外框＋標題右側摘要：領班數/勞安過期/即將到期＋各段自己的「＋新增人員/移工」）③A' 機具卡標題列鎖一行（需證照徽章留第一行，只有名稱可縮＋title 顯示全名）③B 操作列 margin-top:auto 貼底＝同排卡片按鈕對齊 ③C 機具段落容器化（標題摘要：共N台/需證照N種/超派）③D(a) 備註內容只是「需證照」時不重複印。 // D0724-05 全站簡化：①分配區控制列只留三日膠囊+依工作/依人員+「更多」抽屜（小組/PDF/截圖收入），刪卡片/條列(固定卡片)、並排/上下 ②待帶入只留搜尋+「篩選」抽屜（輪次/初驗拆分/棟別/排序/天數收入），刪橫卡/直列(固定直列)、膠囊改可換行不溢出 ③手機隱藏說明橫幅 ④拖曳區上下分兩區(小組/人員)+虛線分隔 ⑤修 pchip/健檢/離線 SVG textContent→innerHTML 亂碼 ⑥工單只留 回清單/表格式·依人員/PDF/截圖/去改這天+「顯示設定」抽屜（全名徽章/免簽/字體/欄位收入），刪 匯出用標準字級/只放大主要欄位/責任廠商欄。 // D0724-01 比照 G95 防護三件套：①頂列「重抓」dispForceResync（清離線快取＋本機快照後重載＝卡舊資料解藥）②閒置守門 5 分鐘鎖存檔＋黃橫幅「重新連線」＋分頁背景≥5分回前景自動重抓（防舊分頁寫回）③版本閘門升級＝偵測新版 10 秒倒數自動重整（原本只轉唯讀要手動重整）。 ／ D0721-02 讀取成本根治：待帶入優先讀 G95 存好的精簡候選文件 _fields/dispatch_cands（_g95Subscribe 先訂閱 candRef，exists→cands 模式用 _g95CandList/_g95CandById，_g95Cands/srcStatus/importCandidate 走候選清單；不 exists→退回整包 defects _g95SubscribeDefects＝維持 D0718-01、可平滑上線）＝冷開讀 1 份取代 ~8000 筆。meta 訂閱不變。 ／ D0721-01 韌性小批：①登入文案不寫死人數（授權名單）②每週自動備份 _autoWeeklyBackup（本週首開靜默寫 dispatch/{SITE}/backups/{週}，無雲端/唯讀/>900KB 退回橫幅）③開機健檢 _dispHealthCheck（掃各集合同內容多份，>3 跳金色橫幅唯讀提示）。 ／ D0718-01 G95連動根治：待帶入改讀 live defects 集合（原讀凍結的 _fields/rows＝看不到 G95 勾選完成/刪除）＝_g95Subscribe 改 onSnapshot(projects/main/defects)：del墓碑排除、st:'d'完成補 actualDone（既有 _g95Cands/srcStatus 邏輯不動）；同時開 Firestore 本地快取 persistentLocalCache(多分頁、try/catch 保底退回 getFirestore)＝控讀取量。meta 訂閱不變。 ／ D0714-01 LOGIN_ALLOW 加第10人 jasonchao209（同步 G95 V0714-03＋Firestore 規則 isEditor）；D0707-02 工單微調：小組列跟著放大、表格式三欄(責任/扣款/管理)各自可切(責任預設隱藏)、字放大戶別等欄nowrap不擠、工具列改分段控制器+彩色圖示鈕(C+D混搭)；D0707-01=字體/排序/小組名稱;每次部署遞增
 window._PREVIEW=/preview\.html$/i.test(location.pathname||'');
 var SITE=(function(){try{return (new URLSearchParams(location.search).get('site')||'G95').toUpperCase().replace(/[^A-Z0-9]/g,'')||'G95';}catch(e){return 'G95';}})();
-var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','54jasonju@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com','cchaling@gmail.com','jasonchao209@gmail.com'];
+var LOGIN_ALLOW=['a0972955084@gmail.com','benchiapj@gmail.com','nasa.jetta@gmail.com','guoxiang0821@gmail.com','chenbobin371@gmail.com','abc128154614@gmail.com','huchingmingian@gmail.com'];
 /* D0725-05：授權名單改成「寫死清單 ∪ 雲端 company.editors」＝加人不用發版；
    雲端清單只能「加人」不能「減人」（讀失敗或被清空都不會把全公司鎖在外面）。移除仍要改這行＋Firestore 規則。 */
 window._cloudEditors=[];
@@ -703,6 +712,728 @@ function dispForceResync(){
 })();
 function load(){try{var r=localStorage.getItem(LS_KEY);if(r)return JSON.parse(r);}catch(e){}
   try{var o=localStorage.getItem('g95dispatch_v1');if(o)return JSON.parse(o);}catch(e){}return null;}
+
+/* ══════════ D0827-01 外籍移工自動翻譯（示意圖 v1：①~⑩ ⑭~⑰ ＋A①） ══════════
+   設計三原則：
+   ① _uiLang==='zh'（預設）時，所有行為與 D0824-01 完全相同＝零迴歸。
+   ② 翻譯＝「詞庫最長匹配」，翻不出來的詞照印中文並標「未收錄」，絕不亂猜（禁止猜測鐵律）。
+   ③ 詞庫存雲端單一文件 dispatch/lexicon（全員共用、可校正），走既有萬用字元規則，零 Firestore 規則改動。
+   基底詞庫 227 詞＝從 defects_FULL_backup_20260720（17,976 筆真實缺失內容）抓詞頻建成，
+   實測中文字元覆蓋率 89.0%、整條全翻出 70.2%；泰文有 72 條尚未填（顯示為未收錄）。      */
+var _LG=[{k:'zh',n:'中文',s:'中'},{k:'id',n:'Bahasa Indonesia',s:'ID'},{k:'vi',n:'Tiếng Việt',s:'VI'},{k:'th',n:'ไทย',s:'TH'},{k:'en',n:'English',s:'EN'}];
+var _LGX={id:0,vi:1,th:2,en:3};
+var _uiLang='zh';
+var _LEX_CLOUD={},_LEX_MISS={},_lexK=null,_lexM=null,_lexMissDirty=null;
+var _LEX_BASE={
+/* 位置 · 空間 */
+'全室':['seluruh unit','toàn bộ căn hộ','ทั้งยูนิต','whole unit'],
+'室內':['dalam ruangan','trong nhà','ภายในห้อง','indoor'],
+'戶內':['dalam unit','trong căn hộ','ในยูนิต','inside unit'],
+'主客浴':['kamar mandi utama & tamu','phòng tắm chính & khách','','master & guest bathroom'],
+'主臥室':['kamar tidur utama','phòng ngủ chính','ห้องนอนใหญ่','master bedroom'],
+'主臥':['kamar tidur utama','phòng ngủ chính','ห้องนอนใหญ่','master bedroom'],
+'臥室一':['kamar tidur 1','phòng ngủ 1','ห้องนอน 1','bedroom 1'],
+'臥室二':['kamar tidur 2','phòng ngủ 2','ห้องนอน 2','bedroom 2'],
+'臥室三':['kamar tidur 3','phòng ngủ 3','ห้องนอน 3','bedroom 3'],
+'臥室':['kamar tidur','phòng ngủ','ห้องนอน','bedroom'],
+'客浴':['kamar mandi tamu','phòng tắm khách','ห้องน้ำแขก','guest bathroom'],
+'主浴':['kamar mandi utama','phòng tắm chính','ห้องน้ำใหญ่','master bathroom'],
+'次浴':['kamar mandi kedua','phòng tắm phụ','','second bathroom'],
+'浴室':['kamar mandi','phòng tắm','ห้องน้ำ','bathroom'],
+'廚房':['dapur','nhà bếp','ห้องครัว','kitchen'],
+'後陽台':['balkon belakang','ban công sau','ระเบียงหลัง','rear balcony'],
+'陽台':['balkon','ban công','ระเบียง','balcony'],
+'玄關門框':['kusen pintu masuk','khung cửa lối vào','','entrance door frame'],
+'玄關門':['pintu masuk','cửa lối vào','ประตูทางเข้า','entrance door'],
+'玄關':['lorong masuk','lối vào','ทางเข้า','entrance hall'],
+'客餐廳':['ruang tamu & makan','phòng khách & ăn','','living & dining room'],
+'客廳':['ruang tamu','phòng khách','ห้องนั่งเล่น','living room'],
+'餐廳':['ruang makan','phòng ăn','ห้องอาหาร','dining room'],
+'梯廳':['lobi tangga','sảnh thang','','stair lobby'],
+'梯間':['ruang tangga','khu cầu thang','ช่องบันได','stairwell'],
+'梯側':['sisi tangga','bên cầu thang','','stair side'],
+'電梯口':['depan lift','trước thang máy','หน้าลิฟต์','lift entrance'],
+'公設':['fasilitas umum','tiện ích chung','ส่วนกลาง','public facility'],
+'水錶室':['ruang meteran air','phòng đồng hồ nước','','water meter room'],
+'管道間':['shaft pipa','hộp kỹ thuật','','pipe shaft'],
+'大廳':['lobi','sảnh lớn','ล็อบบี้','lobby'],
+'中庭':['halaman tengah','sân trong','','courtyard'],
+'圍牆':['pagar tembok','tường rào','','boundary wall'],
+'車道':['jalur mobil','đường xe','','driveway'],
+'車位':['tempat parkir','chỗ đậu xe','ที่จอดรถ','parking space'],
+'機車':['motor','xe máy','มอเตอร์ไซค์','motorcycle'],
+'樓梯':['tangga','cầu thang','บันได','stairs'],
+'地坪':['lantai','mặt sàn','','floor slab'],
+/* 元件 · 門窗 */
+'木門框':['kusen pintu kayu','khung cửa gỗ','','wooden door frame'],
+'門框':['kusen pintu','khung cửa','วงกบประตู','door frame'],
+'木門':['pintu kayu','cửa gỗ','ประตูไม้','wooden door'],
+'門扇':['daun pintu','cánh cửa','บานประตู','door leaf'],
+'門片調整':['penyetelan daun pintu','chỉnh cánh cửa','','door leaf adjustment'],
+'門片':['daun pintu','cánh cửa','บานประตู','door leaf'],
+'門樘':['kusen pintu','khung bao cửa','','door casing'],
+'外框':['kusen luar','khung ngoài','','outer frame'],
+'窗框':['kusen jendela','khung cửa sổ','วงกบหน้าต่าง','window frame'],
+'鋁窗':['jendela aluminium','cửa sổ nhôm','หน้าต่างอลูมิเนียม','aluminium window'],
+'紗窗':['kasa nyamuk','lưới chống muỗi','มุ้งลวด','insect screen'],
+'落地窗':['jendela lantai','cửa sổ sát sàn','','floor-to-ceiling window'],
+'玻璃':['kaca','kính','กระจก','glass'],
+'烤玻':['kaca lapis cat','kính sơn men','','painted glass'],
+'鋁企口':['profil aluminium','nẹp nhôm','','aluminium trim'],
+'三合一門':['pintu tiga fungsi','cửa ba chức năng','','3-in-1 door'],
+'三合門':['pintu tiga fungsi','cửa ba chức năng','','3-in-1 door'],
+'把手':['gagang','tay nắm','มือจับ','handle'],
+'門鎖':['kunci pintu','khóa cửa','กุญแจประตู','door lock'],
+'鉸鏈':['engsel','bản lề','บานพับ','hinge'],
+'五金':['perangkat keras','phụ kiện kim khí','','hardware'],
+'壓條':['list penutup','nẹp','','trim strip'],
+/* 元件 · 面材 */
+'天花及牆面':['plafon & dinding','trần & tường','','ceiling & wall'],
+'天花板':['plafon','trần nhà','ฝ้าเพดาน','ceiling'],
+'天花':['plafon','trần','ฝ้าเพดาน','ceiling'],
+'牆面':['dinding','tường','ผนัง','wall'],
+'木地板':['lantai kayu','sàn gỗ','พื้นไม้','wooden floor'],
+'地板':['lantai','sàn','พื้น','floor'],
+'地磚':['keramik lantai','gạch sàn','กระเบื้องพื้น','floor tile'],
+'壁磚':['keramik dinding','gạch tường','กระเบื้องผนัง','wall tile'],
+'二丁掛':['keramik dinding luar','gạch ốp ngoài','','exterior wall tile'],
+'外牆磚':['keramik dinding luar','gạch ốp tường ngoài','','exterior wall tile'],
+'磨角磚':['keramik sudut','gạch góc','','corner tile'],
+'磁磚':['keramik','gạch men','กระเบื้อง','tile'],
+'淋浴門檻':['ambang pintu shower','ngưỡng cửa tắm','','shower threshold'],
+'門檻':['ambang pintu','ngưỡng cửa','ธรณีประตู','threshold'],
+'踢腳板':['plin lantai','len chân tường','','skirting board'],
+'踢腳':['plin lantai','len chân tường','','skirting'],
+'木作':['pekerjaan kayu','đồ gỗ','งานไม้','carpentry'],
+'矽利康':['silikon','keo silicon','ซิลิโคน','silicone'],
+'矽力康':['silikon','keo silicon','ซิลิโคน','silicone'],
+'Silcone':['silikon','keo silicon','ซิลิโคน','silicone'],
+'silicone':['silikon','keo silicon','ซิลิโคน','silicone'],
+'補土':['dempul','bột trét','','putty'],
+'防火填塞':['penyekat api','chèn chống cháy','','fire stopping'],
+'氣密':['kedap udara','kín khí','','airtight'],
+/* 設備 · 衛浴廚具 */
+'馬桶':['kloset','bồn cầu','โถส้วม','toilet bowl'],
+'浴缸':['bak mandi','bồn tắm','อ่างอาบน้ำ','bathtub'],
+'浴櫃':['lemari kamar mandi','tủ phòng tắm','','bathroom cabinet'],
+'浴鏡':['cermin kamar mandi','gương phòng tắm','','bathroom mirror'],
+'面盆':['wastafel','chậu rửa','อ่างล้างหน้า','washbasin'],
+'洗手台':['wastafel','bồn rửa tay','','washbasin'],
+'檯面':['meja atas','mặt bàn','เคาน์เตอร์','countertop'],
+'廚具':['perabot dapur','tủ bếp','','kitchen cabinet'],
+'淨水器':['penyaring air','máy lọc nước','เครื่องกรองน้ำ','water purifier'],
+'熱水器':['pemanas air','bình nóng lạnh','เครื่องทำน้ำอุ่น','water heater'],
+'洗衣機':['mesin cuci','máy giặt','เครื่องซักผ้า','washing machine'],
+'排風扇':['exhaust fan','quạt hút','พัดลมดูดอากาศ','exhaust fan'],
+'花灑':['shower','vòi sen','ฝักบัว','shower head'],
+'龍頭':['keran','vòi nước','ก๊อกน้ำ','faucet'],
+'地排':['saluran lantai','thoát sàn','','floor drain'],
+'排水':['saluran air','thoát nước','ระบายน้ำ','drainage'],
+'排煙':['saluran asap','hút khói','','smoke exhaust'],
+'曬衣架':['jemuran','giàn phơi','ราวตากผ้า','clothes drying rack'],
+'置物架':['rak','kệ để đồ','ชั้นวางของ','storage rack'],
+'毛巾架':['gantungan handuk','giá khăn','ราวแขวนผ้า','towel rack'],
+'O型環':['O-ring','vòng đệm O','','O-ring'],
+'水路':['jalur air','đường nước','แนวท่อน้ำ','water line'],
+'吊仔':['rangka plafon','khung trần','','ceiling frame batten'],
+'槽鐵':['besi kanal','sắt hộp U','','channel steel'],
+/* 設備 · 水電消防 */
+'欄杆':['pagar besi','lan can','ราวกันตก','railing'],
+'扶手':['pegangan tangga','tay vịn','ราวจับ','handrail'],
+'插座':['stopkontak','ổ cắm điện','ปลั๊กไฟ','power socket'],
+'開關':['saklar','công tắc','สวิตช์','switch'],
+'燈具':['lampu','đèn','โคมไฟ','light fixture'],
+'崁燈':['lampu downlight','đèn âm trần','','downlight'],
+'電箱':['panel listrik','tủ điện','ตู้ไฟ','electrical panel'],
+'配電':['distribusi listrik','phân phối điện','','power distribution'],
+'弱電':['arus lemah','điện nhẹ','','low-voltage system'],
+'對講機':['interkom','chuông hình','','intercom'],
+'警報器':['alarm','chuông báo','สัญญาณเตือน','alarm'],
+'灑水頭':['sprinkler','đầu phun nước','','sprinkler head'],
+'消防':['pemadam kebakaran','phòng cháy','ดับเพลิง','fire protection'],
+'瓦斯':['gas','gas','แก๊ส','gas'],
+'信箱':['kotak surat','hộp thư','','mailbox'],
+/* 動作 · 工項 */
+'油漆修補':['perbaikan cat','sửa sơn','ซ่อมสี','paint touch-up'],
+'油漆':['cat','sơn','สี','paint'],
+'補漆':['cat ulang','sơn dặm','','touch-up paint'],
+'修補後':['setelah perbaikan','sau khi sửa','','after repair'],
+'修補':['perbaikan','sửa chữa','ซ่อมแซม','repair'],
+'補平':['diratakan','trát phẳng','','level flat'],
+'補縫':['isi nat','trám khe','','fill joint'],
+'抹縫':['pengisian nat','chà ron','ยาแนว','grouting'],
+'磚縫':['nat keramik','mạch gạch','','tile joint'],
+'收邊':['finishing tepi','hoàn thiện viền','','edge finishing'],
+'安裝':['pemasangan','lắp đặt','ติดตั้ง','install'],
+'未安裝':['belum dipasang','chưa lắp đặt','ยังไม่ติดตั้ง','not installed'],
+'未裝':['belum dipasang','chưa lắp','ยังไม่ติดตั้ง','not installed'],
+'施作':['pengerjaan','thi công','ดำเนินการ','execute work'],
+'未施作':['belum dikerjakan','chưa thi công','ยังไม่ได้ทำ','not done yet'],
+'未完成':['belum selesai','chưa hoàn thành','ยังไม่เสร็จ','not finished'],
+'完畢':['selesai','đã xong','เสร็จแล้ว','completed'],
+'打膠':['aplikasi sealant','bơm keo','ยิงซิลิโคน','apply sealant'],
+'未打膠':['belum diberi sealant','chưa bơm keo','ยังไม่ยิงซิลิโคน','sealant not applied'],
+'重打':['pasang ulang','làm lại','ทำใหม่','redo'],
+'切釘':['potong paku','cắt đinh','','cut nails'],
+'更換':['penggantian','thay thế','เปลี่ยน','replace'],
+'拆除':['pembongkaran','tháo dỡ','รื้อถอน','demolish'],
+'搬運':['pengangkutan','vận chuyển','ขนย้าย','transport'],
+'廢料':['sisa material','phế liệu','เศษวัสดุ','waste material'],
+'清潔加強':['pembersihan menyeluruh','vệ sinh kỹ','','deep cleaning'],
+'清潔':['pembersihan','vệ sinh','ทำความสะอาด','cleaning'],
+'美容':['pemolesan','đánh bóng','','surface polishing'],
+'調整':['penyetelan','điều chỉnh','ปรับ','adjust'],
+'復原':['pemulihan','khôi phục','','restore'],
+'加強':['diperkuat','tăng cường','','reinforce'],
+'品質改善':['perbaikan mutu','cải thiện chất lượng','','quality improvement'],
+'交界':['sambungan','mối nối','','junction'],
+/* 狀態 · 缺失 */
+'汙損':['kotor & rusak','bẩn & hỏng','','stained/damaged'],
+'污損':['kotor & rusak','bẩn & hỏng','','stained/damaged'],
+'汙染':['kotor','bị bẩn','สกปรก','stained'],
+'污染':['kotor','bị bẩn','สกปรก','stained'],
+'髒污':['kotor','bẩn','สกปรก','dirty'],
+'受損':['rusak','hư hỏng','เสียหาย','damaged'],
+'刮傷':['tergores','trầy xước','เป็นรอยขีด','scratched'],
+'刮損':['tergores','trầy xước','เป็นรอยขีด','scratched'],
+'破損':['pecah','vỡ hỏng','แตกหัก','broken'],
+'破磚':['keramik pecah','gạch vỡ','','broken tile'],
+'破口':['bagian pecah','chỗ vỡ','','breakage'],
+'空心':['kopong','bộp rỗng','','hollow (drummy)'],
+'不平整':['tidak rata','không phẳng','ไม่เรียบ','uneven'],
+'不平':['tidak rata','không phẳng','ไม่เรียบ','uneven'],
+'不整':['tidak rapi','không đều','ไม่เรียบร้อย','untidy'],
+'縫隙過大':['celah terlalu besar','khe hở quá lớn','','gap too wide'],
+'縫隙':['celah','khe hở','ช่องว่าง','gap'],
+'過大':['terlalu besar','quá lớn','ใหญ่เกินไป','too large'],
+'缺失':['cacat','lỗi','ข้อบกพร่อง','defect'],
+'交屋前':['sebelum serah terima','trước bàn giao','','before handover'],
+'依紙膠帶指示':['ikuti tanda selotip kertas','theo dấu băng giấy','','follow the masking-tape marks'],
+'依膠帶指示':['ikuti tanda selotip','theo dấu băng dính','','follow the tape marks'],
+'現有':['yang ada','hiện có','','existing'],
+/* 單字 · 方位虛詞 */
+'主':['utama','chính','หลัก','main'],
+'及':['dan','và','และ','and'],
+'後':['belakang','phía sau','ด้านหลัง','rear'],
+'前':['depan','phía trước','ด้านหน้า','front'],
+'外':['luar','ngoài','ด้านนอก','outer'],
+'上':['atas','trên','ด้านบน','upper'],
+'處':['titik','vị trí','จุด','spot'],
+'破':['pecah','vỡ','แตก','broken'],
+'扇':['daun','cánh','บาน','leaf'],
+'地':['lantai','sàn','พื้น','floor'],
+'窗':['jendela','cửa sổ','หน้าต่าง','window'],
+'木':['kayu','gỗ','ไม้','wood'],
+'縫':['nat','khe','ร่อง','joint'],
+'室':['ruang','phòng','ห้อง','room'],
+'損':['rusak','hỏng','เสีย','damaged'],
+'樘':['kusen','khung bao','','casing'],
+'管':['pipa','ống','ท่อ','pipe'],
+'補':['perbaikan','vá sửa','ซ่อม','patch'],
+'未':['belum','chưa','ยัง','not yet'],
+'含':['termasuk','bao gồm','รวม','including'],
+'缺':['kurang','thiếu','ขาด','missing'],
+'邊':['tepi','viền','ขอบ','edge'],
+'清':['bersihkan','làm sạch','ทำความสะอาด','clean'],
+'爐':['kompor','bếp lò','เตา','stove'],
+'戶':['unit','căn hộ','ยูนิต','unit'],
+'傷':['luka gores','vết xước','รอย','mark'],
+'推':['dorong','đẩy','ผลัก','push'],
+'填':['isi','trám','อุด','fill'],
+/* 補遺（真實資料實測後補） */
+'次臥':['kamar tidur kedua','phòng ngủ phụ','','second bedroom'],
+'客臥':['kamar tidur tamu','phòng ngủ khách','','guest bedroom'],
+'廊道':['koridor','hành lang','ทางเดิน','corridor'],
+'格柵':['kisi-kisi','lam chắn','','grille/louver'],
+'蓋板':['penutup','nắp đậy','ฝาปิด','cover plate'],
+'土屎':['sisa adukan semen','vữa thừa','','mortar residue'],
+'處理':['penanganan','xử lý','จัดการ','handle/treat'],
+'整理':['perapian','dọn dẹp','จัดระเบียบ','tidy up'],
+'牆':['dinding','tường','ผนัง','wall'],
+'門':['pintu','cửa','ประตู','door'],
+'檻':['ambang','ngưỡng','ธรณี','threshold'],
+'條':['batang','thanh','เส้น','strip'],
+'打':['kerjakan','thi công','ทำ','apply'],
+'理':['rapikan','chỉnh lý','','tidy'],
+'角':['sudut','góc','มุม','corner'],
+'面':['permukaan','bề mặt','ผิว','surface'],
+'口':['bukaan','miệng','ช่อง','opening'],
+'板':['papan','tấm','แผ่น','board'],
+'台':['meja','bệ','แท่น','platform'],
+'櫃':['lemari','tủ','ตู้','cabinet'],
+/* 補遺2（node 實測後補） */
+'空鼓':['kopong','bộp rỗng','','hollow/drummy'],
+'敲除':['dibongkar','đục bỏ','ทุบออก','chip off'],
+'重貼':['pasang ulang','dán lại','','re-lay'],
+'重做':['kerjakan ulang','làm lại','ทำใหม่','redo'],
+'打除':['dibongkar','đục phá','','demolish'],
+'切割':['pemotongan','cắt','ตัด','cutting'],
+'研磨':['penggerindaan','mài','ขัด','grinding'],
+'上蠟':['pemolesan lilin','đánh sáp','','waxing'],
+'驗收':['pemeriksaan serah terima','nghiệm thu','ตรวจรับ','inspection'],
+'初驗':['pemeriksaan pertama','nghiệm thu lần 1','','first inspection'],
+'複驗':['pemeriksaan ulang','nghiệm thu lại','','re-inspection'],
+'交屋':['serah terima','bàn giao nhà','ส่งมอบบ้าน','handover'],
+'拋光':['pemolesan','đánh bóng','','polishing'],
+'矯正':['pelurusan','nắn chỉnh','','straighten'],
+'變形':['berubah bentuk','biến dạng','','deformed'],
+'檢修':['periksa & perbaiki','kiểm tra sửa','','inspect & repair'],
+'批土':['dempul dinding','bả matit','','skim coat'],
+'鏡':['cermin','gương','กระจกเงา','mirror'],
+'金屬':['logam','kim loại','โลหะ','metal'],
+'與':['dan','và','และ','and'],
+'多':['berlebih','dư thừa','เกิน','excess'],
+};
+/* 整句片語庫：逐詞翻在「安全提醒」這種完整句子上很難讀（實測「高處作業」被拆成「高＋處」），
+   所以整句先查一次；查不到才退回逐詞。雲端 dispatch/lexicon.phrases 可再加。 */
+var _LEX_PHRASE={
+/* 安全提醒常用整句（逐詞翻會很難讀，整句預先翻好） */
+'進場請戴安全帽':['Wajib pakai helm keselamatan saat masuk lokasi','Vào công trường phải đội mũ bảo hộ','','Wear a safety helmet on site'],
+'高處作業繫安全帶':['Pakai sabuk pengaman untuk kerja di ketinggian','Làm việc trên cao phải đeo dây an toàn','','Use a safety harness when working at height'],
+'進場請戴安全帽，高處作業繫安全帶':['Wajib pakai helm di lokasi; pakai sabuk pengaman untuk kerja di ketinggian','Vào công trường đội mũ bảo hộ; làm việc trên cao đeo dây an toàn','','Wear a helmet on site; use a harness when working at height'],
+'注意腳下':['Perhatikan pijakan','Chú ý dưới chân','ระวังพื้น','Watch your step'],
+'禁止吸菸':['Dilarang merokok','Cấm hút thuốc','ห้ามสูบบุหรี่','No smoking'],
+'請勿獨自作業':['Jangan bekerja sendirian','Không làm việc một mình','','Do not work alone'],
+'下班前請清理現場':['Bersihkan area sebelum pulang','Dọn dẹp hiện trường trước khi về','','Clean up the area before leaving'],
+'有問題請找領班':['Ada masalah, hubungi mandor','Có vấn đề hãy báo tổ trưởng','','Report any problem to the foreman'],
+'用電請確認漏電斷路器':['Pastikan ELCB aktif sebelum pakai listrik','Kiểm tra cầu dao chống giật trước khi dùng điện','','Check the earth-leakage breaker before using power'],
+'物料請堆放整齊勿擋逃生動線':['Tumpuk material rapi, jangan halangi jalur evakuasi','Xếp vật tư gọn gàng, không chắn lối thoát hiểm','','Stack materials tidily; keep escape routes clear'],
+/* 高頻整句工項（真實資料 TOP 片語，整句翻比逐詞順） */
+'室內油漆修補':['perbaikan cat dalam ruangan','sửa sơn trong nhà','','indoor paint touch-up'],
+'全室油漆修補':['perbaikan cat seluruh unit','sửa sơn toàn căn','','repaint whole unit'],
+'陽台曬衣架未安裝':['jemuran balkon belum dipasang','giàn phơi ban công chưa lắp','','balcony drying rack not installed'],
+'全室清潔':['pembersihan seluruh unit','vệ sinh toàn bộ căn hộ','','clean the whole unit'],
+'全室清潔（交屋前）':['pembersihan seluruh unit sebelum serah terima','vệ sinh toàn căn trước bàn giao','','whole-unit cleaning before handover'],
+'梯側油漆未施作':['cat sisi tangga belum dikerjakan','sơn bên cầu thang chưa thi công','','stair-side painting not done'],
+'主客浴淋浴門檻清潔加強':['bersihkan ambang shower kamar mandi utama & tamu secara menyeluruh','vệ sinh kỹ ngưỡng cửa tắm phòng tắm chính & khách','','deep-clean shower thresholds in both bathrooms'],
+'不平整':['permukaan tidak rata','bề mặt không phẳng','','surface uneven'],
+'二丁掛修補後品質改善':['perbaiki mutu setelah tambal keramik dinding luar','cải thiện chất lượng sau khi vá gạch ốp ngoài','','improve finish after exterior tile repair'],
+'天花及牆面油漆髒污':['cat plafon & dinding kotor','sơn trần và tường bị bẩn','','ceiling and wall paint stained'],
+'木門框汙染':['kusen pintu kayu kotor','khung cửa gỗ bị bẩn','','wooden door frame stained'],
+'門框受損':['kusen pintu rusak','khung cửa bị hỏng','','door frame damaged'],
+'廚具未安裝':['perabot dapur belum dipasang','tủ bếp chưa lắp đặt','','kitchen cabinets not installed'],
+'客浴馬桶未安裝':['kloset kamar mandi tamu belum dipasang','bồn cầu phòng tắm khách chưa lắp','','guest toilet bowl not installed'],
+'全室紗窗未安裝':['kasa nyamuk seluruh unit belum dipasang','lưới chống muỗi toàn căn chưa lắp','','insect screens not installed'],
+'天花板修補':['perbaikan plafon','sửa trần nhà','','ceiling repair'],
+'落地窗水路修補':['perbaikan jalur air jendela lantai','sửa đường nước cửa sổ sát sàn','','repair water line at floor window'],
+'戶內門檻未打膠':['ambang pintu dalam unit belum diberi sealant','ngưỡng cửa trong căn chưa bơm keo','','interior thresholds not sealed'],
+'吊仔補平':['ratakan rangka plafon','trát phẳng khung trần','','level the ceiling battens'],
+'吊仔切釘':['potong paku rangka plafon','cắt đinh khung trần','','trim ceiling batten nails'],
+'牆面修補':['perbaikan dinding','sửa tường','','wall repair'],
+'壁磚抹縫':['isi nat keramik dinding','chà ron gạch tường','','grout the wall tiles'],
+'鋁窗汙損':['jendela aluminium kotor & rusak','cửa sổ nhôm bẩn & hỏng','','aluminium window stained/damaged'],
+'全室木門汙損':['pintu kayu seluruh unit kotor','cửa gỗ toàn căn bị bẩn','','all wooden doors stained'],
+'全室木門框縫隙過大':['celah kusen pintu kayu terlalu besar','khe hở khung cửa gỗ quá lớn','','door frame gaps too wide'],
+'電梯口磨角磚縫過大':['nat keramik sudut depan lift terlalu besar','mạch gạch góc trước thang máy quá lớn','','corner tile joints at lift too wide'],
+'依紙膠帶指示':['ikuti tanda selotip kertas','làm theo dấu băng giấy','','follow the masking-tape marks'],
+'破磚':['keramik pecah','gạch bị vỡ','','broken tile'],
+'清潔加強':['pembersihan menyeluruh','vệ sinh kỹ','','deep cleaning'],
+'廢料搬運':['angkut sisa material','vận chuyển phế liệu','','haul away waste material'],
+};
+var _LEX_PHR_CLOUD={},_phrM=null;
+/* UI 固定文字（key＝中文原文）。查不到就回原文＝新字串不翻也不會壞。 */
+var _UI={
+'分配區':['Area Penugasan','Khu phân công','','Assignment'],
+'工單':['Surat Perintah Kerja','Phiếu công việc','','Work Order'],
+'人員':['Pekerja','Nhân sự','','Workers'],
+'機具':['Alat','Máy móc','','Equipment'],
+'項次':['No.','STT','ลำดับ','No.'],
+'時段':['Waktu','Thời gian','เวลา','Time'],
+'戶別':['Unit','Căn hộ','ยูนิต','Unit'],
+'工作內容':['Isi Pekerjaan','Nội dung công việc','รายละเอียดงาน','Work Description'],
+'責任廠商':['Kontraktor','Nhà thầu','','Contractor'],
+'管理':['Pengawas','Quản lý','','Supervisor'],
+'簽名':['Tanda tangan','Chữ ký','ลายเซ็น','Signature'],
+'完成':['Selesai','Hoàn thành','เสร็จ','Done'],
+'已完成':['Sudah selesai','Đã hoàn thành','เสร็จแล้ว','Completed'],
+'上午':['Pagi','Buổi sáng','เช้า','Morning'],
+'下午':['Siang','Buổi chiều','บ่าย','Afternoon'],
+'全天':['Sehari penuh','Cả ngày','ทั้งวัน','Full day'],
+'件':['item','việc','งาน','items'],
+'人':['orang','người','คน','persons'],
+'流水號':['No. seri','Số thứ tự','','Serial'],
+'小組成員':['Anggota tim','Thành viên tổ','','Team members'],
+'成員':['Anggota','Thành viên','สมาชิก','Members'],
+'安全提醒':['Peringatan Keselamatan','Nhắc nhở an toàn','เตือนความปลอดภัย','Safety Notice'],
+'移工':['Pekerja migran','Lao động nước ngoài','','Migrant worker'],
+'領班':['Mandor','Tổ trưởng','หัวหน้างาน','Foreman'],
+'母語':['Bahasa','Ngôn ngữ','ภาษา','Language'],
+'未收錄':['belum terdaftar','chưa có trong từ điển','ยังไม่มีในพจนานุกรม','not in glossary'],
+'工地用語對照表':['Glosarium Istilah Proyek','Bảng thuật ngữ công trường','','Site Glossary']
+};
+/* ── 詞庫合併：雲端(校正/新增) 蓋 基底；_del 為墓碑 ── */
+function _lexMap(){
+  if(_lexM)return _lexM;
+  var m={},k;
+  for(k in _LEX_BASE)if(_LEX_BASE.hasOwnProperty(k))m[k]=_LEX_BASE[k].slice(0,4);
+  for(k in _LEX_CLOUD)if(_LEX_CLOUD.hasOwnProperty(k)){
+    var c=_LEX_CLOUD[k];if(!c)continue;
+    if(c._del){delete m[k];continue;}
+    var b=(m[k]||['','','','']).slice(0,4);
+    for(var i=0;i<4;i++)if(c[i])b[i]=c[i];
+    m[k]=b;
+  }
+  _lexM=m;return m;
+}
+/* 首字索引＝每個位置只比對同首字的少數幾個詞（227 詞全掃會拖慢工單重繪） */
+function _lexIdx(){
+  if(_lexK)return _lexK;
+  var m=_lexMap(),ix={};
+  Object.keys(m).forEach(function(w){var c=w.charAt(0);(ix[c]=ix[c]||[]).push(w);});
+  Object.keys(ix).forEach(function(c){ix[c].sort(function(a,b){return b.length-a.length;});});
+  _lexK=ix;return ix;
+}
+function _phrMap(){
+  if(_phrM)return _phrM;
+  var m={},k;
+  for(k in _LEX_PHRASE)if(_LEX_PHRASE.hasOwnProperty(k))m[k]=_LEX_PHRASE[k].slice(0,4);
+  for(k in _LEX_PHR_CLOUD)if(_LEX_PHR_CLOUD.hasOwnProperty(k)){
+    var c=_LEX_PHR_CLOUD[k];if(!c)continue;
+    if(c._del){delete m[k];continue;}
+    var b=(m[k]||['','','','']).slice(0,4);
+    for(var i=0;i<4;i++)if(c[i])b[i]=c[i];
+    m[k]=b;
+  }
+  _phrM=m;return m;
+}
+function _phrAt(s,xi){
+  var k=String(s||'').trim();if(!k)return null;
+  var a=_phrMap()[k];
+  return (a&&a[xi])?a[xi]:null;
+}
+function _lexClear(){_lexK=null;_lexM=null;_phrM=null;_trC={};}
+var _trC={};
+var _ZHRE=/[一-鿿]/;
+function _lexAt(s,i,ix){
+  var cand=ix[s.charAt(i)];if(!cand)return null;
+  for(var j=0;j<cand.length;j++)if(s.substr(i,cand[j].length)===cand[j])return cand[j];
+  return null;
+}
+/* 一段文字 → [{t:譯文或原文, m:是否未收錄}]；最長匹配、由左而右 */
+function _trSeg(s,xi){
+  var map=_lexMap(),ix=_lexIdx(),out=[],i=0,n=s.length;
+  while(i<n){
+    var hit=_lexAt(s,i,ix);
+    if(hit){
+      var t=(map[hit]||[])[xi]||'';
+      if(t)out.push({t:t,m:false});else out.push({t:hit,m:true});   /* 該語言沒填＝當未收錄，不亂猜 */
+      i+=hit.length;continue;
+    }
+    var ch=s.charAt(i),j=i+1;
+    if(_ZHRE.test(ch)){
+      while(j<n&&_ZHRE.test(s.charAt(j))&&!_lexAt(s,j,ix))j++;
+      out.push({t:s.slice(i,j),m:true});
+    }else{
+      while(j<n&&!_ZHRE.test(s.charAt(j))&&!_lexAt(s,j,ix))j++;
+      out.push({t:s.slice(i,j),m:false});                            /* 數字/英文/標點原樣保留 */
+    }
+    i=j;
+  }
+  return out;
+}
+/* 整條工作內容 → {parts:[…], miss:[…]}；先用「、，；/」切段再逐段翻 */
+function _tr(text,lang){
+  var s=String(text==null?'':text);
+  var xi=_LGX[lang];
+  if(!s||xi==null)return {parts:[{t:s,m:false}],miss:[]};
+  var ck=lang+''+s;if(_trC[ck])return _trC[ck];
+  var r,whole=_phrAt(s,xi);
+  if(whole){r={parts:[{t:whole,m:false}],miss:[]};}   /* 整句片語命中＝直接用（安全提醒這種完整句子逐詞翻會很難讀） */
+  else{
+    var parts=[],miss=[],segs=s.split(/([、,，;；\/／\n\r]+)/);
+    segs.forEach(function(p){
+      if(!p)return;
+      if(/^[、,，;；\/／\n\r]+$/.test(p)){parts.push({t:',',m:false});return;}
+      var ph=_phrAt(p,xi);
+      if(ph){parts.push({t:ph,m:false});return;}      /* 逐段也先查片語 */
+      _trSeg(p,xi).forEach(function(o){parts.push(o);if(o.m&&_ZHRE.test(o.t))miss.push(o.t);});
+    });
+    r={parts:parts,miss:miss};
+  }
+  if(Object.keys(_trC).length>4000)_trC={};
+  _trC[ck]=r;return r;
+}
+/* 譯文組裝：未收錄片段標橘色虛線底線（示意圖⑤）；標點前後不補空格 */
+function _trJoin(parts,html){
+  var h='';
+  for(var i=0;i<parts.length;i++){
+    var o=parts[i],t=o.t;
+    if(t===','){h+='、';continue;}
+    if(h&&!/[\s、]$/.test(h)&&!/^[，。、）)\]】》」＊*×~～:：;；%!?]/.test(t)&&!/[（(\[【《「]$/.test(h))h+=' ';
+    h+=(html&&o.m&&_ZHRE.test(t))?('<u class="lexmiss" title="'+esc(_t('未收錄'))+'">'+esc(t)+'</u>'):(html?esc(t):t);
+  }
+  return h;
+}
+function _trHTML(text,lang){return _trJoin(_tr(text,lang).parts,true);}
+function _trTxt(text,lang){return _trJoin(_tr(text,lang).parts,false);}
+/* 雙語欄位（示意圖④）：中文在上、外語小一號在下。中文模式＝完全等同舊版。 */
+function _bi(text){
+  var s=String(text==null?'':text);
+  if(_uiLang==='zh')return esc(s);
+  if(_UI[s])return esc(s)+'<div class="bi">'+esc(_t(s))+'</div>';
+  return esc(s)+'<div class="bi">'+_trHTML(s,_uiLang)+'</div>';
+}
+/* 指定語言版（示意圖⑨：依人員模式用該移工自己的母語） */
+function _biL(text,lang){
+  var s=String(text==null?'':text);
+  if(!lang||lang==='zh'||_LGX[lang]==null)return _bi(s);
+  if(_UI[s])return esc(s)+'<div class="bi">'+esc(_tL(s,lang))+'</div>';
+  return esc(s)+'<div class="bi">'+_trHTML(s,lang)+'</div>';
+}
+/* UI 固定文字（示意圖②）：查不到就回原文 */
+function _t(zh){
+  var xi=_LGX[_uiLang];if(xi==null)return zh;
+  var a=_UI[zh];return (a&&a[xi])?a[xi]:zh;
+}
+function _tL(zh,lang){
+  var xi=_LGX[lang];if(xi==null)return zh;
+  var a=_UI[zh];return (a&&a[xi])?a[xi]:zh;
+}
+/* 雙語表頭（示意圖⑥） */
+function _thx(zh,suf){
+  if(_uiLang==='zh')return esc(zh)+esc(suf||'');
+  return esc(zh)+esc(suf||'')+'<div class="bi">'+esc(_t(zh))+esc(suf||'')+'</div>';
+}
+function _th(zh){
+  if(_uiLang==='zh')return esc(zh);
+  return esc(zh)+'<div class="bi">'+esc(_t(zh))+'</div>';
+}
+function _thxL(zh,suf,lang){
+  if(!lang||lang==='zh'||_LGX[lang]==null)return _thx(zh,suf);
+  return esc(zh)+esc(suf||'')+'<div class="bi">'+esc(_tL(zh,lang))+esc(suf||'')+'</div>';
+}
+function _thL(zh,lang){
+  if(!lang||lang==='zh'||_LGX[lang]==null)return _th(zh);
+  return esc(zh)+'<div class="bi">'+esc(_tL(zh,lang))+'</div>';
+}
+/* ── 語言切換（示意圖①②③）：只記在這台裝置，不上雲端 ── */
+function _langInit(){
+  try{var v=localStorage.getItem('disp_lang');if(v&&_LGX[v]!=null||v==='zh')_uiLang=v;}catch(e){}
+  _langPaint();
+}
+function _setLang(v){
+  if(!v||(v!=='zh'&&_LGX[v]==null))return;
+  _uiLang=v;
+  try{localStorage.setItem('disp_lang',v);}catch(e){}
+  _langPaint();
+  closeDD();
+  _rerender();
+}
+function _langName(k){for(var i=0;i<_LG.length;i++)if(_LG[i].k===k)return _LG[i].n;return '中文';}
+function _langShort(k){for(var i=0;i<_LG.length;i++)if(_LG[i].k===k)return _LG[i].s;return '中';}
+function _langPaint(){
+  var b=document.getElementById('langBtnTxt');
+  if(b)b.textContent=(_uiLang==='zh'?'中文':'中文 / '+_langShort(_uiLang));
+  try{document.body.setAttribute('data-lang',_uiLang);}catch(e){}
+  var m=document.getElementById('langMenu');
+  if(m)m.innerHTML=_LG.map(function(g){
+    return '<button class="btn sm'+(g.k===_uiLang?' primary':'')+'" onclick="_setLang(\''+g.k+'\')" style="width:100%;justify-content:flex-start;margin-bottom:4px">'+esc(g.n)+'</button>';
+  }).join('')+
+    '<div class="dd-gl" style="margin:6px 0 4px">工地用語</div>'+
+    '<button class="btn sm" onclick="closeDD();lexModal()" style="width:100%;justify-content:flex-start"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 5h16M4 12h16M4 19h10"/><path d="M17 17l2 2 3-3"/></svg>工地用語對照表</button>';
+}
+function closeDD(){try{Array.prototype.forEach.call(document.querySelectorAll('.dd.open'),function(d){d.classList.remove('open');});}catch(e){}}
+/* ⑭ 工單「顯示設定」抽屜裡的翻譯區塊 */
+function _shLangMenu(){
+  return '<div class="dd-grp"><div class="dd-gl">外籍移工翻譯</div><div class="dd-gr">'+
+    '<select class="btn sm" style="width:100%" onchange="_setLang(this.value)">'+
+      _LG.map(function(g){return '<option value="'+g.k+'"'+(g.k===_uiLang?' selected':'')+'>'+esc(g.n)+'</option>';}).join('')+
+    '</select>'+
+    '<button class="btn sm" onclick="closeDD();lexModal()" style="width:100%;justify-content:flex-start;margin-top:5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 5h16M4 12h16M4 19h10"/><path d="M17 17l2 2 3-3"/></svg>工地用語對照表</button>'+
+    '<button class="btn sm" onclick="closeDD();_safetyEdit()" style="width:100%;justify-content:flex-start;margin-top:5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>設定安全提醒</button>'+
+    '</div></div>';
+}
+/* 母語下拉（示意圖⑧⑨⑩）：空白＝跟著畫面語言走 */
+function _langSelHTML(v,cls){
+  v=v||'';
+  var o='<option value=""'+(v?'':' selected')+'>—</option>';
+  _LG.forEach(function(g){ if(g.k==='zh')return;
+    o+='<option value="'+g.k+'"'+(v===g.k?' selected':'')+'>'+esc(g.n)+'</option>'; });
+  return '<select class="'+(cls||'')+(v?'':' empty')+'">'+o+'</select>';
+}
+/* 一組人共同的語言：全組同一個非中文母語才用它，否則跟著畫面語言（紙張才不會一組兩種語言） */
+function _grpLang(members){
+  var L=null;
+  for(var i=0;i<members.length;i++){
+    var p=members[i]&&members[i].p;var l=(p&&p.lang)||'';
+    if(!l)return _uiLang;
+    if(L===null)L=l; else if(L!==l)return _uiLang;
+  }
+  return L||_uiLang;
+}
+/* ── 詞庫雲端（示意圖⑯）：單一文件 dispatch/lexicon，走既有萬用字元規則、零規則改動 ── */
+function _lexDoc(){return window._fb.doc(window._fb.db,'dispatch','lexicon');}
+function _lexSubscribe(){
+  try{
+    window._fb.onSnapshot(_lexDoc(),function(ds){
+      var d=ds.exists()?ds.data():{};
+      var t=d.terms||{},j=JSON.stringify(t);
+      var ph=d.phrases||{},jp=JSON.stringify(ph);
+      if(j!==JSON.stringify(_LEX_CLOUD)||jp!==JSON.stringify(_LEX_PHR_CLOUD)){_LEX_CLOUD=t;_LEX_PHR_CLOUD=ph;_lexClear();if(_uiLang!=='zh')_rerender();}
+      _LEX_MISS=d.miss||{};
+      if(document.getElementById('lexBody'))_lexRender();
+    },function(e){console.warn('lex snap',e);});
+  }catch(e){console.warn('lexSubscribe',e);}
+}
+function _lexCanEdit(){return _cloudOn&&_allowed&&!_readonly&&!window._PREVIEW;}
+function _lexSave(zh,arr){
+  if(!_lexCanEdit()){toast('這個帳號沒有編輯權限');return false;}
+  var o={};for(var i=0;i<4;i++)o[i]=arr[i]||'';
+  _LEX_CLOUD[zh]=o;_lexClear();
+  var p={};p['terms.'+zh]=o;
+  window._fb.setDoc(_lexDoc(),{terms:_LEX_CLOUD,_mt:Date.now(),_by:(DS.user||_userEmail||'')},{merge:true})
+    .then(function(){toast('已存入詞庫（全公司共用）');}).catch(function(e){toast('存詞庫失敗：'+((e&&e.code)||e));});
+  if(_uiLang!=='zh')_rerender();
+  return true;
+}
+function _lexDel(zh){
+  if(!_lexCanEdit()){toast('這個帳號沒有編輯權限');return;}
+  if(!confirm('確定把「'+zh+'」從詞庫移除？\n（基底詞會變成不翻譯、標未收錄）'))return;
+  _LEX_CLOUD[zh]={_del:true};_lexClear();
+  window._fb.setDoc(_lexDoc(),{terms:_LEX_CLOUD,_mt:Date.now()},{merge:true}).catch(function(e){toast('移除失敗');});
+  _lexRender();if(_uiLang!=='zh')_rerender();
+}
+/* 未收錄清單（示意圖⑮）＝掃近 30 天工單的工作內容重算一次，不是靠畫面重繪累加（會爆量） */
+function _lexScanMiss(){
+  var map=_lexMap(),ix=_lexIdx(),cnt={},lim=todayISO(new Date(Date.now()-30*86400000));
+  (DS.items||[]).forEach(function(it){
+    if(!it||!it.content)return;
+    if(it.day&&it.day<lim)return;
+    var s=String(it.content),i=0,n=s.length,seen={};
+    while(i<n){
+      var hit=_lexAt(s,i,ix);
+      if(hit){i+=hit.length;continue;}
+      var ch=s.charAt(i),j=i+1;
+      if(_ZHRE.test(ch)){
+        while(j<n&&_ZHRE.test(s.charAt(j))&&!_lexAt(s,j,ix))j++;
+        var f=s.slice(i,j);if(f&&!seen[f]){seen[f]=1;cnt[f]=(cnt[f]||0)+1;}
+      }
+      i=j;
+    }
+  });
+  return cnt;
+}
+function _lexMissPush(cnt){
+  if(!_lexCanEdit())return;
+  var ks=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}).slice(0,300),top={};
+  ks.forEach(function(k){top[k]=cnt[k];});
+  _LEX_MISS=top;
+  window._fb.setDoc(_lexDoc(),{miss:top,_mt:Date.now()},{merge:true}).catch(function(){});
+}
+/* ── 工地用語對照表 modal（示意圖⑭⑮⑯⑰） ── */
+var _lexQ='',_lexTab='all';
+function lexModal(){
+  var box=document.getElementById('modalBox');
+  box.innerHTML='<h3 style="margin:0 0 4px">工地用語對照表</h3>'+
+    '<div class="muted" style="font-size:12.5px;line-height:1.75;margin-bottom:9px">'+
+    '基底 227 詞是從本系統 17,976 筆真實缺失內容抓詞頻建的，實測涵蓋 89% 的字。'+
+    '<b>翻譯是逐詞對照、不是通順句子</b>——移工看得懂「哪個房間、什麼東西、要做什麼」，'+
+    '<b>建議請現場移工看過一輪再上工用</b>。在這裡改的詞<b>全公司共用、永久生效</b>。</div>'+
+    '<div class="eqrow" style="margin-bottom:8px">'+
+      '<input id="lexQ" placeholder="搜尋中文或譯文…" style="flex:1" value="'+esc(_lexQ)+'">'+
+      '<button class="btn sm" onclick="_lexTabSet(\'all\')" id="lexTabAll">全部</button>'+
+      '<button class="btn sm" onclick="_lexTabSet(\'miss\')" id="lexTabMiss">未收錄</button>'+
+      '<button class="btn sm primary" onclick="_lexAddRow()">＋ 新增詞</button>'+
+    '</div>'+
+    '<div id="lexBody" style="max-height:52vh;overflow:auto"></div>'+
+    '<div class="row" style="margin-top:10px"><span class="spacer"></span><button class="btn" onclick="closeModal()">關閉</button></div>';
+  openModal();
+  var q=document.getElementById('lexQ');
+  if(q)q.oninput=function(){_lexQ=this.value;_lexRender();};
+  try{var c=_lexScanMiss();_lexMissPush(c);}catch(e){console.warn('scanMiss',e);}
+  _lexRender();
+}
+function _lexTabSet(t){_lexTab=t;_lexRender();}
+function _lexRender(){
+  var el=document.getElementById('lexBody');if(!el)return;
+  var ta=document.getElementById('lexTabAll'),tm=document.getElementById('lexTabMiss');
+  if(ta)ta.className='btn sm'+(_lexTab==='all'?' primary':'');
+  if(tm)tm.className='btn sm'+(_lexTab==='miss'?' primary':'');
+  var ed=_lexCanEdit(),q=(_lexQ||'').trim().toLowerCase();
+  if(_lexTab==='miss'){
+    var ks=Object.keys(_LEX_MISS).sort(function(a,b){return _LEX_MISS[b]-_LEX_MISS[a];});
+    if(q)ks=ks.filter(function(k){return k.toLowerCase().indexOf(q)>=0;});
+    if(!ks.length){el.innerHTML='<div class="muted" style="padding:14px 4px">目前近 30 天的工單裡沒有翻不出來的詞。</div>';return;}
+    el.innerHTML='<div class="muted" style="font-size:12px;margin-bottom:6px">近 30 天工單裡翻不出來的字詞，依出現筆數排序。點「補」直接加進詞庫。</div>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'+
+      '<colgroup><col><col style="width:78px"><col style="width:64px"></colgroup>'+
+      '<thead><tr><th style="text-align:left;padding:5px 7px;border:1px solid #C9DCEE;background:#EAF4FC">未收錄字詞</th>'+
+      '<th style="text-align:left;padding:5px 7px;border:1px solid #C9DCEE;background:#EAF4FC">出現筆數</th>'+
+      '<th style="padding:5px 7px;border:1px solid #C9DCEE;background:#EAF4FC"></th></tr></thead><tbody>'+
+      ks.slice(0,200).map(function(k){
+        return '<tr><td style="padding:5px 7px;border:1px solid #C9DCEE"><b>'+esc(k)+'</b></td>'+
+          '<td style="padding:5px 7px;border:1px solid #C9DCEE">'+_LEX_MISS[k]+'</td>'+
+          '<td style="padding:4px;border:1px solid #C9DCEE;text-align:center">'+
+          (ed?'<button class="btn sm primary" onclick="_lexAddRow(\''+esc(k).replace(/'/g,"&#39;")+'\')">補</button>':'<span class="muted">—</span>')+
+          '</td></tr>';
+      }).join('')+'</tbody></table>';
+    return;
+  }
+  var map=_lexMap(),keys=Object.keys(map).sort(function(a,b){return a.localeCompare(b,'zh-Hant');});
+  if(q)keys=keys.filter(function(k){
+    if(k.toLowerCase().indexOf(q)>=0)return true;
+    return (map[k]||[]).join(' ').toLowerCase().indexOf(q)>=0;
+  });
+  el.innerHTML='<div class="muted" style="font-size:12px;margin-bottom:6px">共 '+keys.length+' 詞'+(ed?'（欄位可直接改，離開欄位就存）':'（唯讀）')+'。空白＝該語言未收錄，畫面上會標橘色虛線。</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">'+
+    '<colgroup><col style="width:110px"><col><col><col style="width:120px"><col style="width:120px"><col style="width:44px"></colgroup>'+
+    '<thead><tr>'+['中文','Bahasa Indonesia','Tiếng Việt','ไทย','English',''].map(function(h){
+      return '<th style="text-align:left;padding:5px 7px;border:1px solid #C9DCEE;background:#EAF4FC">'+esc(h)+'</th>';}).join('')+
+    '</tr></thead><tbody>'+
+    keys.slice(0,400).map(function(k){
+      var a=map[k]||[];
+      var tds=[0,1,2,3].map(function(i){
+        return '<td style="padding:2px;border:1px solid #C9DCEE">'+(ed?
+          ('<input class="uin lexin'+(a[i]?'':' empty')+'" data-zh="'+esc(k)+'" data-i="'+i+'" value="'+esc(a[i]||'')+'" placeholder="—" style="width:100%">'):
+          ('<span'+(a[i]?'':' class="muted"')+'>'+esc(a[i]||'—')+'</span>'))+'</td>';
+      }).join('');
+      return '<tr><td style="padding:5px 7px;border:1px solid #C9DCEE"><b>'+esc(k)+'</b></td>'+tds+
+        '<td style="padding:3px;border:1px solid #C9DCEE;text-align:center">'+
+        (ed?'<button class="btn sm" title="移除" onclick="_lexDel(\''+esc(k).replace(/'/g,"&#39;")+'\')">×</button>':'')+'</td></tr>';
+    }).join('')+'</tbody></table>'+
+    (keys.length>400?'<div class="muted" style="font-size:12px;padding:6px 2px">只列出前 400 筆，用上面的搜尋縮小範圍。</div>':'');
+  if(ed)el.querySelectorAll('.lexin').forEach(function(inp){
+    inp.onchange=function(){
+      var zh=this.getAttribute('data-zh'),i=+this.getAttribute('data-i');
+      var cur=(_lexMap()[zh]||['','','','']).slice(0,4);
+      cur[i]=this.value.trim();
+      _lexSave(zh,cur);
+      this.classList.toggle('empty',!this.value.trim());
+    };
+  });
+}
+function _lexAddRow(zh){
+  if(!_lexCanEdit()){toast('這個帳號沒有編輯權限');return;}
+  var w=zh||prompt('要加進詞庫的中文字詞：','');
+  if(!w)return;w=String(w).trim();if(!w)return;
+  var cur=(_lexMap()[w]||['','','','']).slice(0,4);
+  var id=prompt('「'+w+'」的印尼文（Bahasa Indonesia）：',cur[0]||'');
+  if(id===null)return;
+  cur[0]=String(id).trim();
+  _lexSave(w,cur);
+  _lexTab='all';_lexQ=w;
+  var q=document.getElementById('lexQ');if(q)q.value=w;
+  _lexRender();
+}
+/* ── A①：派工單頂端雙語安全提醒（存 site doc，全公司同一份） ── */
+function _safetyHTML(){
+  var s=(DS.safety||'').trim();
+  var ed=_cloudOn&&_allowed&&!_readonly&&!window._PREVIEW;
+  if(!s&&!ed)return '';
+  if(!s)return '<div class="sfty no-print"><span class="muted" style="font-size:12px">尚未設定安全提醒</span>'+
+    '<button class="btn sm" onclick="_safetyEdit()" style="margin-left:8px">設定</button></div>';
+  return '<div class="sfty"><div class="sfty-h">'+_th('安全提醒')+'</div>'+
+    '<div class="sfty-b">'+_bi(s)+'</div>'+
+    (ed?'<button class="btn sm no-print" onclick="_safetyEdit()">改</button>':'')+'</div>';
+}
+function _safetyEdit(){
+  if(!(_cloudOn&&_allowed&&!_readonly)){toast('這個帳號沒有編輯權限');return;}
+  var v=prompt('派工單頂端的安全提醒（全公司同一份，會自動翻成移工的語言）：\n例：進場請戴安全帽、高處作業繫安全帶',DS.safety||'');
+  if(v===null)return;
+  DS.safety=String(v).trim();save();_metaPush();
+  if(document.getElementById('pane-sheet').style.display!=='none')renderSheet();
+  toast(DS.safety?'已更新安全提醒':'已清除安全提醒');
+}
 
 /* ── 雲端同步引擎(V1.0):per-doc、_mt 新的贏、10分近期編輯保護盾、_del 墓碑 ── */
 var SYNC_TYPES=['people','machines','groups','managers','items'];
@@ -813,6 +1544,7 @@ function _cloudBoot(){
         if(d.bkWeek&&d.bkWeek>(DS.bkWeek||'')){DS.bkWeek=d.bkWeek;_mc=true;}
         if(d.sealLog&&JSON.stringify(d.sealLog)!==JSON.stringify(DS.sealLog||[])){DS.sealLog=d.sealLog;_mc=true;}
         if(d.rate&&JSON.stringify(d.rate)!==JSON.stringify(DS.rate||null)){DS.rate=d.rate;_mc=true;}
+        if(d.safety!=null&&d.safety!==(DS.safety||'')){DS.safety=d.safety;_mc=true;}   // D0827-01 A①
         if(_mc){try{localStorage.setItem(LS_KEY,JSON.stringify(DS));}catch(e){}if(document.getElementById('pane-sheet').style.display!=='none')renderSheet();}
       }catch(e){}
       if(!window._PREVIEW&&(d.codeVersion||0)>CODE_VERSION){
@@ -842,6 +1574,7 @@ function _cloudBoot(){
     _sealSubscribe();   // D0725-05：封單快照訂閱
     _fbSubscribe();     // D0725-07：G95 回報待確認清單
     _g95Subscribe();
+    _lexSubscribe();    // D0827-01 ⑯：工地用語對照表（dispatch/lexicon·全員共用）
     _setSync('<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> 已同步',true);
     setTimeout(_autoWeeklyBackup,3000);   // D0721-01：雲端就緒後靜默週備份
     setTimeout(_dispHealthCheck,8000);    // D0721-01：開機健檢（延遲跑，讓快照先到）
@@ -1463,9 +2196,10 @@ function _pplEditTable(list){
     +'<th style="width:112px">姓名</th><th style="width:122px">公司</th><th style="width:102px">專長</th>'
     +'<th style="width:58px">性別</th><th style="width:120px">出生</th><th style="width:128px">勞安到期</th>'
     +'<th class="grp" style="width:252px">身分 / 保險</th>'          // ⑧③ 四欄併一組
+    +'<th style="width:112px">母語</th>'                            // D0827-01 ⑧：派工單自動用他看得懂的語言
     +'<th style="min-width:110px">備註</th><th style="width:84px"></th></tr></thead><tbody></tbody>';
   var tb=t.querySelector('tbody');
-  if(!list.length){tb.innerHTML='<tr><td colspan="9" class="muted" style="padding:10px">（無）</td></tr>';return t;}
+  if(!list.length){tb.innerHTML='<tr><td colspan="10" class="muted" style="padding:10px">（無）</td></tr>';return t;}
   function ui(cls,val,extra){                                   // ⑦⑧⑦⑨ 底線式＋有值/沒值分深淡
     var e=String(val==null?'':val);
     return '<input type="text" class="uin '+cls+(e?'':' empty')+'" value="'+esc(e)+'" placeholder="—"'+(extra||'')+'>';
@@ -1486,6 +2220,7 @@ function _pplEditTable(list){
         +'<span class="ptag tFore'+(p.foreman?' on lead':'')+'"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班</span>'
         +'<span class="ptag tLab'+(p.laborIns?' on':'')+'">勞保</span>'
         +'<span class="ptag tHea'+(p.healthIns?' on':'')+'">健保</span></td>'
+      +'<td>'+_langSelHTML(p.lang,'uin eLang')+'</td>'          // D0827-01 ⑧
       +'<td>'+ui('eNote',p.note)+'</td>'
       +'<td><span class="mg"><span class="rvP" title="還原這筆">↩</span><span class="delP dg">刪</span></span></td>';
     var q=function(c){return tr.querySelector(c);};
@@ -1493,6 +2228,7 @@ function _pplEditTable(list){
     txt('.eName','name');txt('.eCompany','company');txt('.eSkill','skill');txt('.eNote','note');
     q('.eName').oninput=function(){p.name=this.value;this.classList.toggle('need',!String(this.value||'').trim());};
     q('.eGender').onchange=function(){p.gender=this.value;};
+    q('.eLang').onchange=function(){p.lang=this.value;this.classList.toggle('empty',!this.value);};   // D0827-01 ⑧
     q('.eBirth').onchange=function(){p.birth=this.value;this.classList.toggle('empty',!this.value);};
     q('.eSafety').onchange=function(){p.safety=this.value;renderPeople();};
     function tag(cls,key,re){
@@ -1571,6 +2307,7 @@ function editPerson(id){
     '<div class="fld"><label>公司</label><input id="f_company" value="'+esc(p.company)+'"></div>'+
     '<div class="fld"><label>專長</label><input id="f_skill" value="'+esc(p.skill)+'"></div>'+
     '<div class="fld"><label>勞安六小時 到期日</label><input type="date" id="f_safety" value="'+esc(p.safety)+'"></div>'+
+    '<div class="fld"><label>母語（派工單自動用這個語言）</label>'+_langSelHTML(p.lang,'f_lang_sel')+'</div>'+
    '</div>'+
    '<div class="row" style="margin:6px 0;gap:16px">'+
      '<label><input type="checkbox" id="f_migrant"'+(p.migrant?' checked':'')+'> 移工</label>'+
@@ -1604,7 +2341,7 @@ function editPerson(id){
     rd.onload=function(){var img=new Image();img.onload=function(){var max=240,sc=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement('canvas');c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);photoData=c.toDataURL('image/jpeg',0.6);box.querySelector('#photoPrev').innerHTML='<img class="thumb" src="'+photoData+'">';};img.src=rd.result;};rd.readAsDataURL(f);};
   box.querySelector('#cancelM').onclick=closeModal;
   box.querySelector('#savePerson').onclick=function(){
-    var o={id:p.id||uid(),name:box.querySelector('#f_name').value.trim(),gender:box.querySelector('#f_gender').value,birth:box.querySelector('#f_birth').value,company:box.querySelector('#f_company').value.trim(),skill:box.querySelector('#f_skill').value.trim(),safety:box.querySelector('#f_safety').value,migrant:box.querySelector('#f_migrant').checked,foreman:box.querySelector('#f_foreman').checked,laborIns:box.querySelector('#f_labor').checked,healthIns:box.querySelector('#f_health').checked,photo:photoData,note:box.querySelector('#f_note').value,certs:certs.filter(function(c){return (c.k||'').trim();})};
+    var o={id:p.id||uid(),name:box.querySelector('#f_name').value.trim(),gender:box.querySelector('#f_gender').value,birth:box.querySelector('#f_birth').value,company:box.querySelector('#f_company').value.trim(),skill:box.querySelector('#f_skill').value.trim(),safety:box.querySelector('#f_safety').value,migrant:box.querySelector('#f_migrant').checked,foreman:box.querySelector('#f_foreman').checked,laborIns:box.querySelector('#f_labor').checked,healthIns:box.querySelector('#f_health').checked,lang:(box.querySelector('.f_lang_sel')||{}).value||'',photo:photoData,note:box.querySelector('#f_note').value,certs:certs.filter(function(c){return (c.k||'').trim();})};
     if(!o.name){alert('請填姓名');return;}
     if(p.id){DS.people=DS.people.map(function(x){return x.id===p.id?o:x;});}else{DS.people.push(o);}
     save();closeModal();renderPeople();};
@@ -2278,7 +3015,7 @@ function itemCard(it,conf){
   var head='<div class="wh"><span class="seq'+((bad||macBad||pBad)?' warn':'')+'">'+it.seq+'</span><span class="dnum">'+dnumLabel(it)+'</span><b>'+esc(it.unit||'(未填戶別)')+'</b>'+(it.crossId?'<span class="cross">跨兩天</span>':'')+mgrHtml+'<span class="slot">'+esc(slotLabel(it))+'</span>'+(st.chg?'<button class="srcbadge chg srcI">⟳變更</button>':'')+(_fbIsPending(it.refId)?'<span class="srcbadge" style="background:#FDF3D8;color:#8a5a10;border:1px solid #E0C766">已回報·等 G95 確認</span>':'')+(st.done?'<button class="srcbadge done srcI"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18"/><path d="M8 12l3 3 5-6"/></svg>完成</button>':'')+'<span class="idtag">'+(it.refId?('#'+it.refId):'手動')+'</span></div>';
   var pchips=_byForeman(it.assignees).map(function(a){var p=personById(a.personId);if(!p)return'';var cf=conf.p[it.id+'|'+a.personId];var _rk=_pplRisk(p);return '<span title="'+esc(_rk.txt||'')+'" class="chip'+(a.foreman?' lead':'')+(cf?' over':'')+(_rk.lv==='over'?' wsafe':_rk.lv==='soon'?' wsoon':'')+'">'+(a.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(p.name)+(_rk.lv?'<span style="font-size:10.5px;font-weight:700"> · '+esc(_rk.txt)+'</span>':'')+'<b class="rmA" data-p="'+a.personId+'" style="cursor:pointer;color:#94a3b8"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 5l14 14M19 5L5 19"/></svg></b></span>';}).join('');
   var mchips=(it.machines||[]).map(function(m){var mc=machineById(m.machineId);if(!mc)return'';var cf=conf.m[it.id+'|'+m.machineId];return '<span class="chip mac'+(cf?' over':'')+'">'+esc(mc.name)+'×'+m.qty+'</span>';}).join('');
-  var body='<div style="margin:6px 0'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+esc(it.content||'(未填工作內容)')+'</div>'+(it.respVendor?'<div class="chip">責任廠商：'+esc(it.respVendor)+'</div>':'')+(it.dedVendor?'<div class="chip" style="background:#fee2e2;color:#991b1b">扣款：'+esc(it.dedVendor)+'</div>':'')+
+  var body='<div style="margin:6px 0'+(it.done?';text-decoration:line-through;color:#94a3b8':'')+'">'+_bi(it.content||'(未填工作內容)')+'</div>'+(it.respVendor?'<div class="chip">責任廠商：'+esc(it.respVendor)+'</div>':'')+(it.dedVendor?'<div class="chip" style="background:#fee2e2;color:#991b1b">扣款：'+esc(it.dedVendor)+'</div>':'')+
     '<div style="margin-top:6px">指派：'+(pchips||'<span class="muted">未指派</span>')+' <span class="'+(bad?'warn-txt':'ok-txt')+'">需求'+it.reqCount+' / 已派'+assigned+(bad?' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 不足':' <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg>')+'</span>'+(pBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段人員重複</span>':'')+'</div>'+
     (function(){var _cw=_itemCertWarn(it);return _cw?('<div class="certwarn"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg>'+esc(_cw)+'</div>'):'';})()+
     '<div style="margin-top:4px">機具：'+(mchips||'<span class="muted">—</span>')+(macBad?' <span class="warn-txt"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></svg> 同時段超派</span>':'')+'</div>'+
@@ -2861,9 +3598,9 @@ function _shCardHTML(it,ix,opt){
   return '<div class="sh-card'+(it.done?' done':'')+'">'
     +'<div class="row" style="gap:5px">'+(opt.tick?'<input type="checkbox" class="shDoneCk" data-id="'+esc(it.id)+'" style="margin:0 2px 0 0">':'')+'<span class="sh-ix">'+ix+'</span>'+_shSlotChip(it)
     +'<b style="font-size:15px">'+esc(unitFloorFirst(it.unit))+'</b>'
-    +(it.done?'<span class="bchip green">已完成</span>':'')
+    +(it.done?'<span class="bchip green">'+esc(_t('已完成'))+'</span>':'')
     +'<span class="spacer"></span>'+(it.refId?'<span class="sh-meta">#'+esc(it.refId)+'</span>':'')+'</div>'
-    +'<div class="sh-ct">'+esc(it.content||'')+'</div>'
+    +'<div class="sh-ct">'+_bi(it.content||'')+'</div>'
     +(meta.length?'<div class="sh-meta">'+meta.join(' · ')+'</div>':'')
     +(tags?'<div class="row" style="gap:4px;flex-wrap:wrap;margin-top:5px">'+tags+'</div>':'')
     +'</div>';
@@ -2913,8 +3650,8 @@ function renderSheetOne(host,day){
     its.forEach(function(it,ix){var x=sheetRowCells(it);
       var bk=bldgKey(it.unit);if(bk!==_bl){rows+='<tr class="bhdr"><td colspan="'+_colspan+'">'+bk+'（'+_segs.shift().n+' 件）</td></tr>';_bl=bk;_z=0;}
       var st=(it.done?'color:#94a3b8;':'')+(_z%2?'background:#F2F7FC;':'');_z++;
-      rows+='<tr'+(st?' style="'+st+'"':'')+'>'+(_canTick?'<td class="shDone"><input type="checkbox" class="shDoneCk" data-id="'+esc(it.id)+'"'+(it.done?' checked':'')+'></td>':'')+'<td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+(ix+1)+'</td><td style="white-space:nowrap">'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td style="white-space:nowrap"><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td>'+(_sheetShowResp?'<td style="white-space:nowrap">'+esc(it.respVendor||'')+'</td>':'')+(_sheetShowDed?'<td style="white-space:nowrap">'+esc(it.dedVendor||'')+'</td>':'')+(_sheetShowMgr?'<td style="white-space:nowrap">'+esc(it.mgr||'')+'</td>':'')+'<td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
-    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr>'+(_canTick?'<th class="shDoneH shDone">完成</th>':'')+'<th>項次</th><th style="white-space:nowrap">時段</th><th>流水號/#G95</th><th>戶別</th><th>工作內容</th>'+(_sheetShowResp?'<th style="white-space:nowrap">責任廠商</th>':'')+(_sheetShowDed?'<th style="white-space:nowrap">扣款廠商</th>':'')+(_sheetShowMgr?'<th>管理</th>':'')+'<th style="white-space:nowrap">人員(<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+_colspan+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
+      rows+='<tr'+(st?' style="'+st+'"':'')+'>'+(_canTick?'<td class="shDone"><input type="checkbox" class="shDoneCk" data-id="'+esc(it.id)+'"'+(it.done?' checked':'')+'></td>':'')+'<td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+(ix+1)+'</td><td style="white-space:nowrap">'+_bi(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td style="white-space:nowrap"><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+_bi(it.content||'')+'</td>'+(_sheetShowResp?'<td style="white-space:nowrap">'+esc(it.respVendor||'')+'</td>':'')+(_sheetShowDed?'<td style="white-space:nowrap">'+esc(it.dedVendor||'')+'</td>':'')+(_sheetShowMgr?'<td style="white-space:nowrap">'+esc(it.mgr||'')+'</td>':'')+'<td>'+(x.ppl||'—')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';});
+    var tbl='<div style="overflow-x:auto;padding:12px 16px"><table><thead><tr>'+(_canTick?'<th class="shDoneH shDone">完成</th>':'')+'<th>'+_th('項次')+'</th><th style="white-space:nowrap">'+_th('時段')+'</th><th>'+_thx('流水號','/#G95')+'</th><th>'+_th('戶別')+'</th><th>'+_th('工作內容')+'</th>'+(_sheetShowResp?'<th style="white-space:nowrap">責任廠商</th>':'')+(_sheetShowDed?'<th style="white-space:nowrap">扣款廠商</th>':'')+(_sheetShowMgr?'<th>管理</th>':'')+'<th style="white-space:nowrap">人員(<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>領班)</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+_colspan+'" class="muted">（無）</td></tr>')+'</tbody></table></div>';
   }else{
     var by={};its.forEach(function(it){(it.assignees||[]).forEach(function(a){(by[a.personId]=by[a.personId]||[]).push(it);});});
     var pids=Object.keys(by);
@@ -2937,6 +3674,7 @@ function renderSheetOne(host,day){
       });
       members.sort(function(a,b){return (b.foreman?1:0)-(a.foreman?1:0);});
       var _gname=isTeam?_teamNameFor(grp):'';
+      var _gl=_grpLang(members);        // D0827-01 ⑨：這一段用他們看得懂的語言
       var memberRow=isTeam?
         ('<div class="sh-memrow" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 16px;background:#F2F7FC;border-bottom:1px solid #C9DCEE">'+
         (_gname?'<span style="font-size:12.5px;font-weight:700;color:#5b21b6;background:#ede9fe;border:1px solid #c4b5fd;border-radius:0;padding:1px 9px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M14.5 20v-1a5 5 0 0 1 7 0v1"/></svg> '+esc(_gname)+'</span>':'')+
@@ -2950,9 +3688,9 @@ function renderSheetOne(host,day){
         var bk=bldgKey(it.unit);if(bk!==_bl2){rows2+='<tr class="bhdr"><td colspan="'+_colN+'">'+bk+'（'+_segs2.shift().n+' 件）</td></tr>';_bl2=bk;_z2=0;}
         var st=(it.done?'color:#94a3b8;':'')+(_z2%2?'background:#F2F7FC;':'');_z2++;
         var nameCell=isTeam?'':'<td>'+(ix===0?personLabelHTML(members[0].p,members[0].foreman):'')+'</td>';
-        rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+(_canTick?'<td class="shDone"><input type="checkbox" class="shDoneCk" data-id="'+esc(it.id)+'"'+(it.done?' checked':'')+'></td>':'')+nameCell+'<td>'+esc(slotLabel(it))+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
+        rows2+='<tr'+(st?' style="'+st+'"':'')+'>'+(_canTick?'<td class="shDone"><input type="checkbox" class="shDoneCk" data-id="'+esc(it.id)+'"'+(it.done?' checked':'')+'></td>':'')+nameCell+'<td>'+_biL(slotLabel(it),_gl)+'</td><td style="white-space:nowrap">'+dnumLabel(it)+(it.refId?'<br><span style="color:#94a3b8;font-size:12.5px">#'+esc(it.refId)+'</span>':'')+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+(it.done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 12l5 5 11-11"/></svg> ':'')+_biL(it.content||'',_gl)+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td style="min-width:70px"></td>')+'</tr>';
       });
-      var headCols=(_canTick?'<th class="shDoneH shDone">完成</th>':'')+(isTeam?'':'<th>人員</th>')+'<th>時段</th><th>流水號 / #G95</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>');
+      var headCols=(_canTick?'<th class="shDoneH shDone">完成</th>':'')+(isTeam?'':'<th>人員</th>')+'<th>'+_thL('時段',_gl)+'</th><th>'+_thxL('流水號',' / #G95',_gl)+'</th><th>'+_thL('戶別',_gl)+'</th><th>'+_thL('工作內容',_gl)+'</th><th>'+_thL('機具',_gl)+'</th>'+(_sheetNoSign?'':'<th>'+_thL('簽名',_gl)+'</th>');
       var signStrip=(!_sheetNoSign&&isTeam)?
         ('<div style="display:flex;flex-wrap:wrap;gap:18px;padding:10px 16px;border-top:1px solid #C9DCEE;background:#F2F7FC"><span class="muted" style="font-size:11.5px">簽名：</span>'+
         members.map(function(m){return '<span style="font-size:12.5px;border-bottom:1px solid #9DC3E6;padding:0 22px 2px 0">'+(m.foreman?'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L2 9.5l6.3-.7z"/></svg>':'')+esc(m.p?m.p.name:'?')+'</span>';}).join('')+
@@ -2970,8 +3708,8 @@ function renderSheetOne(host,day){
     var un=its.filter(function(it){return !(it.assignees||[]).length;});
     if(un.length){
       var unRows='';
-      un.forEach(function(it){var x=sheetRowCells(it);unRows+='<tr style="background:#fff7ed"><td class="warn-txt">未指派</td><td>'+esc(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+esc(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td></td>')+'</tr>';});
-      blocks+='<div data-shblock="1" style="border:1px solid #C9DCEE;border-radius:0;overflow:hidden"><div style="overflow-x:auto"><table><thead><tr><th>人員</th><th>時段</th><th>流水號</th><th>戶別</th><th>工作內容</th><th>機具</th>'+(_sheetNoSign?'':'<th>簽名</th>')+'</tr></thead><tbody>'+unRows+'</tbody></table></div></div>';
+      un.forEach(function(it){var x=sheetRowCells(it);unRows+='<tr style="background:#fff7ed"><td class="warn-txt">未指派</td><td>'+_bi(slotLabel(it))+'</td><td>'+dnumLabel(it)+'</td><td><b>'+esc(unitFloorFirst(it.unit))+'</b></td><td>'+_bi(it.content||'')+'</td><td>'+esc(x.mac||'—')+'</td>'+(_sheetNoSign?'':'<td></td>')+'</tr>';});
+      blocks+='<div data-shblock="1" style="border:1px solid #C9DCEE;border-radius:0;overflow:hidden"><div style="overflow-x:auto"><table><thead><tr><th>'+_th('人員')+'</th><th>'+_th('時段')+'</th><th>'+_th('流水號')+'</th><th>'+_th('戶別')+'</th><th>'+_th('工作內容')+'</th><th>'+_th('機具')+'</th>'+(_sheetNoSign?'':'<th>'+_th('簽名')+'</th>')+'</tr></thead><tbody>'+unRows+'</tbody></table></div></div>';
       cards+='<div style="border:1px solid #F0C08A;margin-bottom:10px"><div class="sh-memrow2" style="background:#FFF7ED"><span class="bchip red">未指派</span><span class="spacer"></span><span class="bchip grey">'+un.length+' 件</span></div>'
         +un.map(function(it,ix){return _shCardHTML(it,ix+1,{noPpl:true,tick:_shTick});}).join('')+'</div>';
     }
@@ -2982,7 +3720,7 @@ function renderSheetOne(host,day){
     '人員合計：'+(Object.keys(names).join('、')||'—')+'（'+Object.keys(names).length+'人）<br>'+
     '機具合計：'+(Object.keys(macSum).map(function(k){return k+'×'+macSum[k];}).join('、')||'—')+(cross?'｜跨天延續：'+cross:'')+'</div>';
   // D0725-02 ㉗㉛：表格與卡片同時產生，靠 CSS 依寬度切換；匯出時強制用表格（sheetExport 加 .sh-export）
-  paper.innerHTML=hd+'<div class="sh-tbl">'+tbl+'</div><div class="sh-cards">'+(_sheetMode==='person'?'<div style="padding:9px">'+(cards||'<div class="muted">（無）</div>')+'</div>':cards)+'</div>'+foot;
+  paper.innerHTML=hd+_safetyHTML()+'<div class="sh-tbl">'+tbl+'</div><div class="sh-cards">'+(_sheetMode==='person'?'<div style="padding:9px">'+(cards||'<div class="muted">（無）</div>')+'</div>':cards)+'</div>'+foot;
   // D0724-05 工單簡化：檯面只留 回清單/表格式·依人員/PDF/截圖/去改這天；全名徽章·免簽·字體·欄位 收進「顯示設定」抽屜；刪 匯出用標準字級/只放大主要欄位/責任廠商欄
   var fsPresets=[100,115,130,150].map(function(p){return '<button data-fp="'+p+'"'+(_sheetFontPct===p?' class="on"':'')+'>'+p+'</button>';}).join('');
   var _setMenu='<div class="dd-grp"><div class="dd-gl">姓名顯示</div><div class="dd-gr">'+
@@ -3029,7 +3767,7 @@ function renderSheetOne(host,day){
   var act=document.createElement('div');act.className='row sheet-actions';act.style.cssText='margin:0 0 10px;gap:8px;flex-wrap:wrap;align-items:center';
   act.innerHTML='<button class="pillb red hdOnly" id="shPdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg> PDF</button><button class="pillb blue hdOnly" id="shCap"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg> 截圖</button>'+
     '<div class="seg big" id="shMode"><button data-m="work"'+(_sheetMode==='work'?' class="on"':'')+'>表格式</button><button data-m="person"'+(_sheetMode==='person'?' class="on"':'')+'>依人員</button></div>'+
-    '<span class="dd" id="ddSet"><button class="dd-t" onclick="window._shSetOpen=!window._shSetOpen;this.parentNode.classList.toggle(\'open\',window._shSetOpen);if(event&&event.stopPropagation)event.stopPropagation();"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 15h6M9 8h6M17 16h6"/></svg> 顯示設定 ▾</button><div class="dd-menu">'+_setMenu+'</div></span>'+
+    '<span class="dd" id="ddSet"><button class="dd-t" onclick="window._shSetOpen=!window._shSetOpen;this.parentNode.classList.toggle(\'open\',window._shSetOpen);if(event&&event.stopPropagation)event.stopPropagation();"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 15h6M9 8h6M17 16h6"/></svg> 顯示設定 ▾</button><div class="dd-menu">'+_setMenu+_shLangMenu()+'</div></span>'+
     '<button class="btn hdOnly" id="shSeal" style="'+(_sn?'border-color:#26476b;color:#26476b':'background:#26476b;border-color:#26476b;color:#fff')+'">'+(_sn?'解除封單':'封單')+'</button><button class="btn hdOnly" id="shDone">複製今日完成清單</button><span class="spacer"></span><button class="btn hdOnly" id="shBack">← 回日期清單</button><button class="tglb amber on hdOnly" id="shFix"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L8 20l-5 1 1-5z"/></svg> 去分配區改這天</button>';
   host.appendChild(act);
   if(window._shSetOpen){var _ds=act.querySelector('#ddSet');if(_ds)_ds.classList.add('open');}
@@ -3227,7 +3965,8 @@ function _metaPush(){
       bkErr:DS.bkErr||null,
       bkWeek:DS.bkWeek||'',
       rate:DS.rate||null,
-      sealLog:(DS.sealLog||[]).slice(0,50)
+      sealLog:(DS.sealLog||[]).slice(0,50),
+      safety:DS.safety||''
     },{merge:true}).catch(function(e){console.warn('meta push',e);});
   }catch(e){}
 }
@@ -3329,6 +4068,7 @@ var _curDay=null;
 function boot(){
   DS=load();if(!DS){DS=seed();}
   migrate();save();
+  _langInit();                                   // D0827-01 ①：語言只記在這台裝置
   _curDay=todayISO();
   // 登入(V1.0):Google 彈窗+轉頁 fallback;連不上雲端 6 秒後開放離線試用
   document.getElementById('loginBtn').onclick=function(){
@@ -3416,4 +4156,4 @@ try{document.addEventListener('gesturestart',function(e){e.preventDefault();},{p
 </body>
 </html>
 
-<!-- v0726-02 preview -->
+<!-- v0827-01 preview -->
